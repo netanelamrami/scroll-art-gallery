@@ -1,13 +1,24 @@
+
 import { useState } from "react";
 import { GalleryImage } from "@/types/gallery";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface GalleryImageCardProps {
   image: GalleryImage;
   onClick: () => void;
+  isSelectionMode?: boolean;
+  isSelected?: boolean;
+  onSelectionChange?: () => void;
 }
 
-export const GalleryImageCard = ({ image, onClick }: GalleryImageCardProps) => {
+export const GalleryImageCard = ({ 
+  image, 
+  onClick, 
+  isSelectionMode = false,
+  isSelected = false,
+  onSelectionChange
+}: GalleryImageCardProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -20,15 +31,25 @@ export const GalleryImageCard = ({ image, onClick }: GalleryImageCardProps) => {
     setIsLoaded(true);
   };
 
+  const handleClick = () => {
+    if (isSelectionMode && onSelectionChange) {
+      onSelectionChange();
+    } else {
+      onClick();
+    }
+  };
+
   return (
     <div
       className={cn(
         "group relative overflow-hidden rounded-lg cursor-pointer",
         "bg-gallery-card hover:bg-gallery-hover",
         "transform transition-gallery hover:scale-[1.02]",
-        "shadow-card hover:shadow-gallery"
+        "shadow-card hover:shadow-gallery",
+        isSelectionMode && "ring-2 ring-transparent",
+        isSelected && "ring-2 ring-primary ring-offset-2"
       )}
-      onClick={onClick}
+      onClick={handleClick}
     >
       {!isLoaded && (
         <div 
@@ -58,13 +79,32 @@ export const GalleryImageCard = ({ image, onClick }: GalleryImageCardProps) => {
         />
       )}
       
-      <div className="absolute inset-0 bg-gradient-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Selection mode overlay */}
+      {isSelectionMode && (
+        <>
+          <div className="absolute inset-0 bg-black/20 transition-opacity duration-200" />
+          <div className="absolute top-2 right-2">
+            <Checkbox
+              checked={isSelected}
+              onChange={onSelectionChange}
+              className="bg-white shadow-lg"
+            />
+          </div>
+        </>
+      )}
       
-      <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="px-2 py-1 bg-black/50 rounded text-white text-xs">
-          {image.size}
-        </div>
-      </div>
+      {/* Regular hover overlay - only show when not in selection mode */}
+      {!isSelectionMode && (
+        <>
+          <div className="absolute inset-0 bg-gradient-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          
+          <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="px-2 py-1 bg-black/50 rounded text-white text-xs">
+              {image.size}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

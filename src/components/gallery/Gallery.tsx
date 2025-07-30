@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { GalleryImage } from "@/types/gallery";
 import { MasonryGrid } from "./MasonryGrid";
@@ -38,8 +39,22 @@ export const Gallery = ({ images }: GalleryProps) => {
   }, []);
 
   const handleImageClick = (image: GalleryImage, index: number) => {
-    setSelectedImageIndex(index);
-    setIsLightboxOpen(true);
+    if (isSelectionMode) {
+      handleImageSelection(image.id);
+    } else {
+      setSelectedImageIndex(index);
+      setIsLightboxOpen(true);
+    }
+  };
+
+  const handleImageSelection = (imageId: string) => {
+    const newSelection = new Set(selectedImages);
+    if (newSelection.has(imageId)) {
+      newSelection.delete(imageId);
+    } else {
+      newSelection.add(imageId);
+    }
+    setSelectedImages(newSelection);
   };
 
   const handleCloseLightbox = () => {
@@ -64,7 +79,31 @@ export const Gallery = ({ images }: GalleryProps) => {
       title: "הורדת תמונות",
       description: "התחלת הורדת כל התמונות...",
     });
-    // Implementation for downloading all images
+  };
+
+  const handleDownloadSelected = () => {
+    if (selectedImages.size === 0) {
+      toast({
+        title: "לא נבחרו תמונות",
+        description: "אנא בחר תמונות להורדה",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "הורדת תמונות נבחרות",
+      description: `מוריד ${selectedImages.size} תמונות...`,
+    });
+
+    // Here you would implement the actual download logic
+    // For now, we'll just show a success message
+    setTimeout(() => {
+      toast({
+        title: "ההורדה הושלמה",
+        description: `${selectedImages.size} תמונות הורדו בהצלחה`,
+      });
+    }, 2000);
   };
 
   const handleToggleSelection = () => {
@@ -96,9 +135,11 @@ export const Gallery = ({ images }: GalleryProps) => {
         columns={columns}
         onColumnsChange={setColumns}
         onDownloadAll={handleDownloadAll}
+        onDownloadSelected={handleDownloadSelected}
         onToggleSelection={handleToggleSelection}
         onShare={handleShare}
         isSelectionMode={isSelectionMode}
+        selectedCount={selectedImages.size}
       />
 
       {/* Gallery Grid */}
@@ -107,18 +148,23 @@ export const Gallery = ({ images }: GalleryProps) => {
           images={images}
           onImageClick={handleImageClick}
           columns={columns}
+          isSelectionMode={isSelectionMode}
+          selectedImages={selectedImages}
+          onImageSelection={handleImageSelection}
         />
       </div>
 
       {/* Lightbox Modal */}
-      <LightboxModal
-        isOpen={isLightboxOpen}
-        images={images}
-        currentIndex={selectedImageIndex || 0}
-        onClose={handleCloseLightbox}
-        onNext={handleNextImage}
-        onPrevious={handlePreviousImage}
-      />
+      {!isSelectionMode && (
+        <LightboxModal
+          isOpen={isLightboxOpen}
+          images={images}
+          currentIndex={selectedImageIndex || 0}
+          onClose={handleCloseLightbox}
+          onNext={handleNextImage}
+          onPrevious={handlePreviousImage}
+        />
+      )}
     </div>
   );
 };

@@ -43,5 +43,4 @@ export const generateGalleryImages = async (count: number = 2000): Promise<Galle
   });
 };
 
-// שימוש: galleryImages הוא Promise
-export const galleryImages = await generateGalleryImages();
+// הוסר top-level await - נשתמש בפונקציה async במקום

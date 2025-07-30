@@ -77,11 +77,11 @@ export const LightboxModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 bg-background/95 dark:bg-black/90 backdrop-blur-sm">
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 p-4">
         <div className="flex items-center justify-between">
-          <div className="text-white">
+          <div className="text-foreground">
             <span className="text-sm opacity-80">
               {currentIndex + 1} מתוך {images.length}
             </span>
@@ -92,7 +92,7 @@ export const LightboxModal = ({
               variant="ghost"
               size="icon"
               onClick={() => setIsZoomed(!isZoomed)}
-              className="text-white hover:bg-white/10"
+              className="text-foreground hover:bg-accent"
             >
               {isZoomed ? <ZoomOut className="h-4 w-4" /> : <ZoomIn className="h-4 w-4" />}
             </Button>
@@ -101,7 +101,7 @@ export const LightboxModal = ({
               variant="ghost"
               size="icon"
               onClick={handleDownload}
-              className="text-white hover:bg-white/10"
+              className="text-foreground hover:bg-accent"
             >
               <Download className="h-4 w-4" />
             </Button>
@@ -110,7 +110,7 @@ export const LightboxModal = ({
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="text-white hover:bg-white/10"
+              className="text-foreground hover:bg-accent"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -124,7 +124,7 @@ export const LightboxModal = ({
           variant="ghost"
           size="icon"
           onClick={onPrevious}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white hover:bg-white/10 w-12 h-12"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-foreground hover:bg-accent w-12 h-12"
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
@@ -135,7 +135,7 @@ export const LightboxModal = ({
           variant="ghost"
           size="icon"
           onClick={onNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white hover:bg-white/10 w-12 h-12"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-foreground hover:bg-accent w-12 h-12"
         >
           <ChevronRight className="h-6 w-6" />
         </Button>
@@ -155,7 +155,7 @@ export const LightboxModal = ({
         >
           {!imageLoaded && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full"></div>
+              <div className="animate-spin w-8 h-8 border-2 border-foreground border-t-transparent rounded-full"></div>
             </div>
           )}
           
@@ -174,7 +174,7 @@ export const LightboxModal = ({
 
       {/* Bottom Info */}
       <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
-        <div className="text-center text-white">
+        <div className="text-center text-foreground">
           <p className="text-sm opacity-80">
             {currentImage.alt} • גודל: {currentImage.size}
           </p>

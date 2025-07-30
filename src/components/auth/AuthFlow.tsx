@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PhoneInput } from "./PhoneInput";
+import { PhoneCountryInput } from "./PhoneCountryInput";
 import { OTPVerification } from "./OTPVerification";
 import { SelfieCapture } from "./SelfieCapture";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -89,9 +89,9 @@ export const AuthFlow = ({ onComplete, onCancel }: AuthFlowProps) => {
         {/* Content */}
         <div className="p-6">
           {currentStep === "phone" && (
-            <PhoneInput 
+            <PhoneCountryInput 
               onSubmit={handlePhoneSubmit}
-              onCancel={onCancel}
+              onBack={onCancel}
             />
           )}
           

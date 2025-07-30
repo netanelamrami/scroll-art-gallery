@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, RotateCcw, Check } from "lucide-react";
+import { Camera, RotateCcw, Check, Upload } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 interface SelfieCaptureProps {
@@ -15,7 +15,11 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
+
+  // Check if device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   const startCamera = async () => {
     try {
@@ -82,6 +86,22 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
     }
   };
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageData = e.target?.result as string;
+        setCapturedImage(imageData);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
@@ -96,18 +116,45 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
           <div className="text-center">
             <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground mb-4">
-              הפעל מצלמה לצילום סלפי
+              {isMobile ? "צלם סלפי" : "בחר תמונה או צלם"}
             </p>
-            <Button onClick={startCamera} disabled={isLoading}>
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  טוען...
-                </div>
+            <div className="flex gap-2 justify-center">
+              {isMobile ? (
+                <Button onClick={startCamera} disabled={isLoading}>
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      טוען...
+                    </div>
+                  ) : (
+                    <>
+                      <Camera className="w-4 h-4 mr-2" />
+                      צלם סלפי
+                    </>
+                  )}
+                </Button>
               ) : (
-                "התחל צילום"
+                <>
+                  <Button onClick={handleFileUpload} variant="outline">
+                    <Upload className="w-4 h-4 mr-2" />
+                    בחר קובץ
+                  </Button>
+                  <Button onClick={startCamera} disabled={isLoading}>
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        טוען...
+                      </div>
+                    ) : (
+                      <>
+                        <Camera className="w-4 h-4 mr-2" />
+                        מצלמה
+                      </>
+                    )}
+                  </Button>
+                </>
               )}
-            </Button>
+            </div>
           </div>
         )}
 
@@ -142,6 +189,14 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       </div>
 
       <canvas ref={canvasRef} className="hidden" />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="user"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
 
       {/* Action buttons */}
       <div className="flex gap-3">

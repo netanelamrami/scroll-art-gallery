@@ -18,7 +18,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 142.1 76.2% 36.3%;
+    --primary: 179 40% 60%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 210 40% 96%;
@@ -35,7 +35,7 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142.1 76.2% 36.3%;
+    --ring: 179 40% 60%;
 
     --radius: 0.75rem;
 
@@ -43,11 +43,11 @@ All colors MUST be HSL.
     --gallery-bg: 0 0% 100%;
     --gallery-card: 0 0% 98%;
     --gallery-hover: 210 40% 96%;
-    --gallery-primary: 142.1 76.2% 36.3%;
+    --gallery-primary: 179 40% 60%;
     --gallery-secondary: 270 91% 65%;
     
     /* Gradients - Light mode */
-    --gradient-primary: linear-gradient(135deg, hsl(142.1 76.2% 36.3%), hsl(270 91% 65%));
+    --gradient-primary: linear-gradient(135deg, hsl(179 40% 60%), hsl(270 91% 65%));
     --gradient-overlay: linear-gradient(0deg, hsl(0 0% 0% / 0.3), transparent);
     
     /* Shadows - Light mode */
@@ -102,11 +102,11 @@ All colors MUST be HSL.
     --gallery-bg: 222.2 84% 4.9%;
     --gallery-card: 217.2 32.6% 17.5%;
     --gallery-hover: 217.2 32.6% 25%;
-    --gallery-primary: 142.1 76.2% 36.3%;
+    --gallery-primary: 179 40% 60%;
     --gallery-secondary: 270 91% 65%;
     
     /* Gradients - Dark mode */
-    --gradient-primary: linear-gradient(135deg, hsl(142.1 76.2% 36.3%), hsl(270 91% 65%));
+    --gradient-primary: linear-gradient(135deg, hsl(179 40% 60%), hsl(270 91% 65%));
     --gradient-overlay: linear-gradient(0deg, hsl(222.2 84% 4.9% / 0.8), transparent);
     
     /* Shadows - Dark mode */

@@ -4,6 +4,7 @@ import { GalleryImage } from "@/types/gallery";
 import { MasonryGrid } from "./MasonryGrid";
 import { LightboxModal } from "./LightboxModal";
 import { GalleryHeader } from "./GalleryHeader";
+import { AlbumSection } from "./AlbumSection";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
@@ -19,6 +20,7 @@ export const Gallery = ({ event, images }: GalleryProps) => {
   const [columns, setColumns] = useState(4);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
   // Responsive columns based on screen size
@@ -26,13 +28,13 @@ export const Gallery = ({ event, images }: GalleryProps) => {
     const updateColumns = () => {
       const width = window.innerWidth;
       if (width < 640) {
-        setColumns(1);
-      } else if (width < 768) {
         setColumns(2);
-      } else if (width < 1024) {
+      } else if (width < 768) {
         setColumns(3);
-      } else {
+      } else if (width < 1024) {
         setColumns(4);
+      } else {
+        setColumns(5);
       }
     };
 
@@ -130,6 +132,14 @@ export const Gallery = ({ event, images }: GalleryProps) => {
     }
   };
 
+  const handleAlbumClick = (albumId: string) => {
+    setSelectedAlbum(albumId);
+    toast({
+      title: "אלבום נבחר",
+      description: `נבחר אלבום: ${albumId}`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -144,6 +154,12 @@ export const Gallery = ({ event, images }: GalleryProps) => {
         onShare={handleShare}
         isSelectionMode={isSelectionMode}
         selectedCount={selectedImages.size}
+      />
+
+      {/* Albums Section */}
+      <AlbumSection 
+        albums={[]}
+        onAlbumClick={handleAlbumClick}
       />
 
       {/* Gallery Grid */}

@@ -40,11 +40,19 @@ export const GalleryHeader = ({
   selectedCount
 }: GalleryHeaderProps) => {
   const { t } = useLanguage();
-  const columnOptions = [
-    { value: 2, icon: Grid, label: t('gallery.columns') + " 2" },
-    { value: 3, icon: LayoutGrid, label: t('gallery.columns') + " 3" },
-    { value: 4, icon: Grid3x3, label: t('gallery.columns') + " 4" },
-  ];
+  // Check if mobile for different column options
+  const isMobile = window.innerWidth < 768;
+  const columnOptions = isMobile 
+    ? [
+        { value: 1, icon: Grid, label: "עמודה 1" },
+        { value: 2, icon: LayoutGrid, label: "עמודות 2" },
+        { value: 3, icon: Grid3x3, label: "עמודות 3" },
+      ]
+    : [
+        { value: 3, icon: Grid, label: "עמודות 3" },
+        { value: 4, icon: LayoutGrid, label: "עמודות 4" },
+        { value: 5, icon: Grid3x3, label: "עמודות 5" },
+      ];
 
   return (
     <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">

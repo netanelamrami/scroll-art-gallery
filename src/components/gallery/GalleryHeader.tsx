@@ -84,29 +84,6 @@ export const GalleryHeader = ({
               </div>
             )}
 
-            {/* Column selector for desktop - hide in selection mode */}
-            {!isSelectionMode && (
-              <div className="hidden md:flex items-center gap-2">
-                <span className="text-sm text-muted-foreground mr-3">{t('gallery.columns')}:</span>
-                {columnOptions.map(({ value, icon: Icon, label }) => (
-                  <Button
-                    key={value}
-                    variant={columns === value ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => onColumnsChange(value)}
-                    className={cn(
-                      "gap-2",
-                      columns === value && "bg-primary text-primary-foreground"
-                    )}
-                    title={label}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span className="hidden lg:inline">{value}</span>
-                  </Button>
-                ))}
-              </div>
-            )}
-
             {/* More options menu */}
             {!isSelectionMode && (
               <DropdownMenu>
@@ -115,7 +92,30 @@ export const GalleryHeader = ({
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="w-48">
+                  {/* Column options in dropdown */}
+                  <div className="px-2 py-1.5">
+                    <span className="text-sm font-medium text-muted-foreground">{t('gallery.columns')}</span>
+                    <div className="flex items-center gap-1 mt-2">
+                      {columnOptions.map(({ value, icon: Icon, label }) => (
+                        <Button
+                          key={value}
+                          variant={columns === value ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => onColumnsChange(value)}
+                          className={cn(
+                            "gap-1 h-8 px-2",
+                            columns === value && "bg-primary text-primary-foreground"
+                          )}
+                          title={label}
+                        >
+                          <Icon className="h-3 w-3" />
+                          <span className="text-xs">{value}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onDownloadAll}>
                     <Download className="h-4 w-4 mr-2" />
                     {t('gallery.downloadAll')}

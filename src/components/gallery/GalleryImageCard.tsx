@@ -138,32 +138,30 @@ export const GalleryImageCard = ({
           <div className="absolute top-2 right-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 bg-black/70 backdrop-blur-sm text-white hover:bg-black/90"
+                <button
+                  className="h-8 w-8 p-0 bg-black/70 backdrop-blur-sm text-white hover:bg-black/90 rounded-md flex items-center justify-center transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
-                    e.preventDefault();
+                  }}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
                   }}
                 >
                   <MoreVertical className="h-4 w-4" />
-                </Button>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="end" 
-                className="bg-background border border-border shadow-lg min-w-[150px]"
+                className="bg-background border border-border shadow-xl"
                 style={{ zIndex: 999999 }}
                 onCloseAutoFocus={(e) => e.preventDefault()}
                 side="bottom"
-                sideOffset={5}
-                avoidCollisions={true}
-                collisionPadding={20}
+                sideOffset={8}
               >
                 <DropdownMenuItem 
-                  className="cursor-pointer hover:bg-accent focus:bg-accent"
-                  onSelect={(e) => {
-                    e.preventDefault();
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     handleDownload();
                   }}
                 >
@@ -171,9 +169,9 @@ export const GalleryImageCard = ({
                   הורד תמונה
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  className="cursor-pointer hover:bg-accent focus:bg-accent"
-                  onSelect={(e) => {
-                    e.preventDefault();
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     handleCopyLink();
                   }}
                 >

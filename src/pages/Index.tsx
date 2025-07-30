@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Gallery } from "@/components/gallery/Gallery";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
+import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { galleryImages } from "@/data/galleryData";
 
 const Index = () => {
@@ -29,6 +30,10 @@ const Index = () => {
     }, 100);
   };
 
+  const handleToggleGalleryType = () => {
+    setGalleryType(galleryType === 'all' ? 'my' : 'all');
+  };
+
   // Filter images based on gallery type
   const filteredImages = galleryType === 'all' 
     ? galleryImages 
@@ -43,6 +48,10 @@ const Index = () => {
       {showGallery && (
         <div id="gallery">
           <Gallery images={filteredImages} />
+          <FloatingNavbar 
+            galleryType={galleryType}
+            onToggleGalleryType={handleToggleGalleryType}
+          />
         </div>
       )}
     </div>

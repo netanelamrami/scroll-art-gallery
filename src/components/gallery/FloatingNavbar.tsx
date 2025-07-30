@@ -4,20 +4,29 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Share2, Images, MessageCircle, QrCode } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
+import { FAQSupportDialog } from './FAQSupportDialog';
+import { question } from '../../types/question';
 import QRCode from 'qrcode';
+import { event } from "@/types/event";
 
 interface FloatingNavbarProps {
   galleryType: 'all' | 'my';
   onToggleGalleryType: () => void;
   className?: string;
+  event: event;
 }
 
-export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: FloatingNavbarProps) => {
+export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, className }: FloatingNavbarProps) => {
   const [qrCode, setQrCode] = useState<string>('');
   const [isQrOpen, setIsQrOpen] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
 
+  const questions: question[] = [
+    { title: "איך מעלים תמונה?", answer: "לחץ על כפתור ההעלאה ובחר קובץ מהמכשיר." },
+    { title: "איך משתפים תמונה?", answer: "לחץ על כפתור השיתוף ליד התמונה." }
+  ];
   const generateQRCode = async () => {
     try {
       const url = window.location.href;
@@ -48,25 +57,23 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
   };
 
   return (
-    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 ${className}`}>
-      <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-6 py-3 flex items-center gap-4">
+    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 ${className}`}>
+      <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-6 py-3 flex items-center gap-3 ">
         {/* Support */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleSupport}
-          className="rounded-full hover:bg-accent"
-        >
-          <MessageCircle className="h-4 w-4 ml-2" />
-          {t('navbar.support')}
-        </Button>
+ 
+          <FAQSupportDialog
+          isOpen={isSupportOpen}
+          setIsOpen={setIsSupportOpen}
+          questions={questions}
+          event={event}
+        />
 
         {/* Gallery Toggle */}
         <Button
           variant="outline"
           size="sm"
           onClick={onToggleGalleryType}
-          className="rounded-full min-w-[120px]"
+          className="rounded-full min-w-[60px] px-1 py-1 text-sm sm:px-4 sm:py-2"
         >
           <Images className="h-4 w-4 ml-2" />
           {galleryType === 'all' ? t('navbar.allPhotos') : t('navbar.myPhotos')}
@@ -79,7 +86,7 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
               variant="ghost"
               size="sm"
               onClick={generateQRCode}
-              className="rounded-full hover:bg-accent"
+              className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-4 sm:py-2"
             >
               <Share2 className="h-4 w-4 ml-2" />
               {t('navbar.shareEvent')}

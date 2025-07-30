@@ -42,9 +42,9 @@ export const GalleryImageCard = ({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-lg cursor-pointer",
+        "group relative overflow-hidden rounded-none  cursor-pointer",
         "bg-card hover:bg-accent/50 dark:bg-card dark:hover:bg-accent/50",
-        "transform transition-all duration-300 hover:scale-[1.02]",
+        "transform transition-all duration-300 hover:scale-[1.00]",
         "shadow-md hover:shadow-xl border border-border",
         isSelectionMode && "ring-2 ring-transparent",
         isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-background"
@@ -53,14 +53,14 @@ export const GalleryImageCard = ({
     >
       {!isLoaded && (
         <div 
-          className="w-full bg-muted animate-pulse rounded-lg"
+          className="w-full bg-muted animate-pulse rounded-none "
           style={{ height: `${image.height}px` }}
         />
       )}
       
       {hasError ? (
         <div 
-          className="w-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg"
+          className="w-full bg-muted flex items-center justify-center text-muted-foreground rounded-none "
           style={{ height: `${image.height}px` }}
         >
           <span>שגיאה בטעינת התמונה</span>

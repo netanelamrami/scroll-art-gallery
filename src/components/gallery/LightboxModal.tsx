@@ -23,6 +23,7 @@ export const LightboxModal = ({
 }: LightboxModalProps) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const currentImage = images[currentIndex];
 
@@ -124,7 +125,7 @@ export const LightboxModal = ({
           variant="ghost"
           size="icon"
           onClick={onPrevious}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-foreground hover:bg-accent w-12 h-12"
+          className="absolute left-1 top-1/2 -translate-y-1/2 z-10 text-foreground hover:bg-accent w-12 h-12"
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
@@ -135,7 +136,7 @@ export const LightboxModal = ({
           variant="ghost"
           size="icon"
           onClick={onNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-foreground hover:bg-accent w-12 h-12"
+          className="absolute right-1 top-1/2 -translate-y-1/2 z-10 text-foreground hover:bg-accent w-12 h-12"
         >
           <ChevronRight className="h-6 w-6" />
         </Button>
@@ -143,7 +144,7 @@ export const LightboxModal = ({
 
       {/* Image Container */}
       <div
-        className="absolute inset-0 flex items-center justify-center p-16 cursor-pointer"
+        className="absolute inset-0 flex items-center justify-center p-12 cursor-pointer"
         onClick={onClose}
       >
         <div
@@ -160,10 +161,10 @@ export const LightboxModal = ({
           )}
           
           <img
-            src={currentImage.src.replace(/w=\d+&h=\d+/, 'w=1200&h=800')}
+            src={currentImage.src}
             alt={currentImage.alt}
             className={cn(
-              "max-w-full max-h-full object-contain rounded-lg shadow-gallery transition-opacity duration-300",
+              "max-w-full max-h-full object-contain  shadow-gallery transition-opacity duration-300",
               imageLoaded ? "opacity-100" : "opacity-0"
             )}
             onLoad={() => setImageLoaded(true)}

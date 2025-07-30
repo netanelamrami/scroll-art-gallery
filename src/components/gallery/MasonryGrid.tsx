@@ -1,4 +1,3 @@
-
 import React from "react";
 import { GalleryImage } from "@/types/gallery";
 import { MasonryColumn } from "./MasonryColumn";
@@ -12,26 +11,30 @@ interface MasonryGridProps {
   onImageSelection?: (imageId: string) => void;
 }
 
-export const MasonryGrid = ({ 
-  images, 
-  onImageClick, 
-  columns, 
+export const MasonryGrid = ({
+  images,
+  onImageClick,
+  columns,
   isSelectionMode = false,
   selectedImages = new Set(),
   onImageSelection
 }: MasonryGridProps) => {
-  // Create column arrays
+  // יצירת מערך עמודות ומערך גבהים
   const columnArrays = Array.from({ length: columns }, () => [] as GalleryImage[]);
-  
-  // Distribute images across columns
+  const columnHeights = Array.from({ length: columns }, () => 0);
+
   images.forEach((image, index) => {
-    const columnIndex = index % columns;
-    columnArrays[columnIndex].push(image);
+    // חישוב גובה התמונה (או 1 אם לא מוגדר)
+    const imgHeight = image.height || 1;
+    // מציאת העמודה עם הגובה הנמוך ביותר
+    const minCol = columnHeights.indexOf(Math.min(...columnHeights));
+    columnArrays[minCol].push(image);
+    columnHeights[minCol] += imgHeight;
   });
 
   return (
-    <div 
-      className="grid gap-4"
+    <div
+      className="grid gap-1"
       style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
     >
       {columnArrays.map((columnImages, columnIndex) => (

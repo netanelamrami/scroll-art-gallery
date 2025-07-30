@@ -6,12 +6,14 @@ import { LightboxModal } from "./LightboxModal";
 import { GalleryHeader } from "./GalleryHeader";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
+import { event } from "@/types/event";
 
 interface GalleryProps {
+  event: event; 
   images: GalleryImage[];
 }
 
-export const Gallery = ({ images }: GalleryProps) => {
+export const Gallery = ({ event, images }: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [columns, setColumns] = useState(4);
@@ -19,7 +21,6 @@ export const Gallery = ({ images }: GalleryProps) => {
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { t } = useLanguage();
-
   // Responsive columns based on screen size
   useEffect(() => {
     const updateColumns = () => {
@@ -133,6 +134,7 @@ export const Gallery = ({ images }: GalleryProps) => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <GalleryHeader
+        event={event}
         totalImages={images.length}
         columns={columns}
         onColumnsChange={setColumns}
@@ -145,7 +147,7 @@ export const Gallery = ({ images }: GalleryProps) => {
       />
 
       {/* Gallery Grid */}
-      <div className="container mx-auto px-4 py-8">
+      <div className=" w-full px-2 py-8">
         <MasonryGrid
           images={images}
           onImageClick={handleImageClick}

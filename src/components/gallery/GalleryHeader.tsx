@@ -4,6 +4,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import { Grid, LayoutGrid, Grid3x3, MoreVertical, Download, CheckSquare, Share2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { event } from "@/types/event";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface GalleryHeaderProps {
+  event: event;
   totalImages: number;
   columns: number;
   onColumnsChange: (columns: number) => void;
@@ -25,6 +28,7 @@ interface GalleryHeaderProps {
 }
 
 export const GalleryHeader = ({
+  event,
   totalImages,
   columns,
   onColumnsChange,
@@ -47,15 +51,15 @@ export const GalleryHeader = ({
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              {t('gallery.title')}
+            <h1 className="text-xl font-bold text-foreground">
+              {event.name} 
             </h1>
-            <p className="text-muted-foreground mt-1">
+            {/* <p className="text-muted-foreground mt-1">
               {isSelectionMode && selectedCount > 0 
                 ? `${selectedCount} ${t('gallery.selectedImages')} ${totalImages.toLocaleString()}`
                 : `${totalImages.toLocaleString()} ${t('gallery.totalImages')}`
               }
-            </p>
+            </p> */}
           </div>
           
           <div className="flex items-center gap-2">

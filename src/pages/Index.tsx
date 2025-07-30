@@ -3,7 +3,9 @@ import { Gallery } from "@/components/gallery/Gallery";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { AuthFlow } from "@/components/auth/AuthFlow";
-import { galleryImages } from "@/data/galleryData";
+import { generateGalleryImages } from "@/data/galleryData";
+import { log } from "console";
+import { apiService } from "../data/services/apiService";
 
 const Index = () => {
   const [showGallery, setShowGallery] = useState(false);
@@ -12,6 +14,17 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthFlow, setShowAuthFlow] = useState(false);
   const [userData, setUserData] = useState<{phone: string; otp: string; selfieData: string} | null>(null);
+  const [event, setEvent] = useState(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  useEffect(() => {
+    apiService.getEvent().then(setEvent);
+  }, []);
+  const [galleryImages, setGalleryImages] = useState([]);
+
+  useEffect(() => {
+    generateGalleryImages().then(setGalleryImages);
+  }, []);
 
   const handleViewAllPhotos = () => {
     setGalleryType('all');
@@ -83,7 +96,7 @@ const Index = () => {
       
       // Hide floating navbar if user scrolled back near the hero section
       // Show it when user is well into the gallery
-      const shouldShow = scrollTop > galleryTop + windowHeight * 0.3;
+      const shouldShow = scrollTop > galleryTop;
       setShowFloatingNavbar(shouldShow);
     };
 
@@ -99,18 +112,21 @@ const Index = () => {
     : isAuthenticated 
       ? galleryImages.filter(img => img.id.includes('couple')) // Mock filter for authenticated user's photos
       : [];
-
   return (
     <div>
       <WeddingHero 
+        event={event}
         onViewAllPhotos={handleViewAllPhotos}
         onViewMyPhotos={handleViewMyPhotos}
       />
       {showGallery && (
         <div id="gallery">
-          <Gallery images={filteredImages} />
-          {showFloatingNavbar && (
+          <Gallery 
+            event={event} images={filteredImages} />
+
+          {showFloatingNavbar && !isLightboxOpen && (
             <FloatingNavbar 
+              event={event}
               galleryType={galleryType}
               onToggleGalleryType={handleToggleGalleryType}
             />

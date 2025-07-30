@@ -21,7 +21,7 @@ export const MasonryColumn = ({
   onImageSelection
 }: MasonryColumnProps) => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-1">
       {images.map((image) => {
         const globalIndex = allImages.findIndex(img => img.id === image.id);
         return (

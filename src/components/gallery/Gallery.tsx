@@ -5,6 +5,7 @@ import { MasonryGrid } from "./MasonryGrid";
 import { LightboxModal } from "./LightboxModal";
 import { GalleryHeader } from "./GalleryHeader";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface GalleryProps {
   images: GalleryImage[];
@@ -17,6 +18,7 @@ export const Gallery = ({ images }: GalleryProps) => {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Responsive columns based on screen size
   useEffect(() => {
@@ -76,32 +78,32 @@ export const Gallery = ({ images }: GalleryProps) => {
 
   const handleDownloadAll = () => {
     toast({
-      title: "הורדת תמונות",
-      description: "התחלת הורדת כל התמונות...",
+      title: t('toast.downloadAll.title'),
+      description: t('toast.downloadAll.description'),
     });
   };
 
   const handleDownloadSelected = () => {
     if (selectedImages.size === 0) {
       toast({
-        title: "לא נבחרו תמונות",
-        description: "אנא בחר תמונות להורדה",
+        title: t('toast.noSelection.title'),
+        description: t('toast.noSelection.description'),
         variant: "destructive",
       });
       return;
     }
 
     toast({
-      title: "הורדת תמונות נבחרות",
-      description: `מוריד ${selectedImages.size} תמונות...`,
+      title: t('toast.downloadSelected.title'),
+      description: t('toast.downloadSelected.description').replace('{count}', selectedImages.size.toString()),
     });
 
     // Here you would implement the actual download logic
     // For now, we'll just show a success message
     setTimeout(() => {
       toast({
-        title: "ההורדה הושלמה",
-        description: `${selectedImages.size} תמונות הורדו בהצלחה`,
+        title: t('toast.downloadComplete.title'),
+        description: t('toast.downloadComplete.description').replace('{count}', selectedImages.size.toString()),
       });
     }, 2000);
   };
@@ -114,21 +116,21 @@ export const Gallery = ({ images }: GalleryProps) => {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: "גלריית תמונות החתונה",
-        text: "הזמנה לצפות בגלריית התמונות שלנו",
+        title: t('hero.title'),
+        text: t('hero.subtitle'),
         url: window.location.href,
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
       toast({
-        title: "הקישור הועתק",
-        description: "הקישור לגלריה הועתק ללוח",
+        title: t('toast.linkCopied.title'),
+        description: t('toast.linkCopied.description'),
       });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gallery-bg">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <GalleryHeader
         totalImages={images.length}

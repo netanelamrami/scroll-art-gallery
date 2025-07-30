@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Share2, Images, MessageCircle, QrCode } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 import QRCode from 'qrcode';
 
 interface FloatingNavbarProps {
@@ -15,6 +16,7 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
   const [qrCode, setQrCode] = useState<string>('');
   const [isQrOpen, setIsQrOpen] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const generateQRCode = async () => {
     try {
@@ -31,8 +33,8 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
       setIsQrOpen(true);
     } catch (error) {
       toast({
-        title: "שגיאה",
-        description: "לא ניתן ליצור QR קוד",
+        title: t('toast.error.title'),
+        description: t('toast.qrError.description'),
         variant: "destructive",
       });
     }
@@ -40,8 +42,8 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
 
   const handleSupport = () => {
     toast({
-      title: "תמיכה",
-      description: "פניה לתמיכה נשלחה בהצלחה",
+      title: t('toast.support.title'),
+      description: t('toast.support.description'),
     });
   };
 
@@ -56,7 +58,7 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
           className="rounded-full hover:bg-accent"
         >
           <MessageCircle className="h-4 w-4 ml-2" />
-          תמיכה
+          {t('navbar.support')}
         </Button>
 
         {/* Gallery Toggle */}
@@ -67,7 +69,7 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
           className="rounded-full min-w-[120px]"
         >
           <Images className="h-4 w-4 ml-2" />
-          {galleryType === 'all' ? 'כל התמונות' : 'התמונות שלי'}
+          {galleryType === 'all' ? t('navbar.allPhotos') : t('navbar.myPhotos')}
         </Button>
 
         {/* Share Event */}
@@ -80,12 +82,12 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
               className="rounded-full hover:bg-accent"
             >
               <Share2 className="h-4 w-4 ml-2" />
-              שתף אירוע
+              {t('navbar.shareEvent')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-center">שתף את הגלריה</DialogTitle>
+              <DialogTitle className="text-center">{t('share.title')}</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col items-center space-y-4 py-4">
               {qrCode && (
@@ -94,21 +96,21 @@ export const FloatingNavbar = ({ galleryType, onToggleGalleryType, className }: 
                 </div>
               )}
               <p className="text-sm text-muted-foreground text-center">
-                סרוק את הקוד או שתף את הקישור
+                {t('share.description')}
               </p>
               <Button
                 variant="outline"
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
                   toast({
-                    title: "הקישור הועתק",
-                    description: "הקישור לגלריה הועתק ללוח",
+                    title: t('toast.linkCopied.title'),
+                    description: t('toast.linkCopied.description'),
                   });
                 }}
                 className="w-full"
               >
                 <Share2 className="h-4 w-4 ml-2" />
-                העתק קישור
+                {t('share.copyLink')}
               </Button>
             </div>
           </DialogContent>

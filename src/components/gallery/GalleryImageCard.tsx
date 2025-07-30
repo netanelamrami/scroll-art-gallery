@@ -43,24 +43,24 @@ export const GalleryImageCard = ({
     <div
       className={cn(
         "group relative overflow-hidden rounded-lg cursor-pointer",
-        "bg-gallery-card hover:bg-gallery-hover",
-        "transform transition-gallery hover:scale-[1.02]",
-        "shadow-card hover:shadow-gallery",
+        "bg-card hover:bg-accent/50 dark:bg-card dark:hover:bg-accent/50",
+        "transform transition-all duration-300 hover:scale-[1.02]",
+        "shadow-md hover:shadow-xl border border-border",
         isSelectionMode && "ring-2 ring-transparent",
-        isSelected && "ring-2 ring-primary ring-offset-2"
+        isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-background"
       )}
       onClick={handleClick}
     >
       {!isLoaded && (
         <div 
-          className="w-full bg-gradient-to-br from-gallery-card to-gallery-hover animate-pulse rounded-lg"
+          className="w-full bg-muted animate-pulse rounded-lg"
           style={{ height: `${image.height}px` }}
         />
       )}
       
       {hasError ? (
         <div 
-          className="w-full bg-gallery-card flex items-center justify-center text-muted-foreground rounded-lg"
+          className="w-full bg-muted flex items-center justify-center text-muted-foreground rounded-lg"
           style={{ height: `${image.height}px` }}
         >
           <span>שגיאה בטעינת התמונה</span>
@@ -87,7 +87,7 @@ export const GalleryImageCard = ({
             <Checkbox
               checked={isSelected}
               onChange={onSelectionChange}
-              className="bg-white shadow-lg"
+              className="bg-background shadow-lg border-2"
             />
           </div>
         </>
@@ -96,10 +96,10 @@ export const GalleryImageCard = ({
       {/* Regular hover overlay - only show when not in selection mode */}
       {!isSelectionMode && (
         <>
-          <div className="absolute inset-0 bg-gradient-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
           <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="px-2 py-1 bg-black/50 rounded text-white text-xs">
+            <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">
               {image.size}
             </div>
           </div>

@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import { Grid, LayoutGrid, Grid3x3, MoreVertical, Download, CheckSquare, Share2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,24 +35,25 @@ export const GalleryHeader = ({
   isSelectionMode,
   selectedCount
 }: GalleryHeaderProps) => {
+  const { t } = useLanguage();
   const columnOptions = [
-    { value: 2, icon: Grid, label: "2 עמודות" },
-    { value: 3, icon: LayoutGrid, label: "3 עמודות" },
-    { value: 4, icon: Grid3x3, label: "4 עמודות" },
+    { value: 2, icon: Grid, label: t('gallery.columns') + " 2" },
+    { value: 3, icon: LayoutGrid, label: t('gallery.columns') + " 3" },
+    { value: 4, icon: Grid3x3, label: t('gallery.columns') + " 4" },
   ];
 
   return (
-    <div className="sticky top-0 z-40 bg-gallery-bg/80 backdrop-blur-md border-b border-border">
+    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              גלריית תמונות
+            <h1 className="text-3xl font-bold text-foreground">
+              {t('gallery.title')}
             </h1>
             <p className="text-muted-foreground mt-1">
               {isSelectionMode && selectedCount > 0 
-                ? `${selectedCount} תמונות נבחרו מתוך ${totalImages.toLocaleString()}`
-                : `${totalImages.toLocaleString()} תמונות`
+                ? `${selectedCount} ${t('gallery.selectedImages')} ${totalImages.toLocaleString()}`
+                : `${totalImages.toLocaleString()} ${t('gallery.totalImages')}`
               }
             </p>
           </div>
@@ -68,7 +70,7 @@ export const GalleryHeader = ({
                   className="gap-2"
                 >
                   <Download className="h-4 w-4" />
-                  הורד נבחרות ({selectedCount})
+                  {t('gallery.downloadSelected')} ({selectedCount})
                 </Button>
                 <Button
                   variant="ghost"
@@ -77,7 +79,7 @@ export const GalleryHeader = ({
                   className="gap-2"
                 >
                   <X className="h-4 w-4" />
-                  ביטול
+                  {t('gallery.cancelSelection')}
                 </Button>
               </div>
             )}
@@ -85,7 +87,7 @@ export const GalleryHeader = ({
             {/* Column selector for desktop - hide in selection mode */}
             {!isSelectionMode && (
               <div className="hidden md:flex items-center gap-2">
-                <span className="text-sm text-muted-foreground mr-3">עמודות:</span>
+                <span className="text-sm text-muted-foreground mr-3">{t('gallery.columns')}:</span>
                 {columnOptions.map(({ value, icon: Icon, label }) => (
                   <Button
                     key={value}
@@ -94,7 +96,7 @@ export const GalleryHeader = ({
                     onClick={() => onColumnsChange(value)}
                     className={cn(
                       "gap-2",
-                      columns === value && "bg-gradient-primary"
+                      columns === value && "bg-primary text-primary-foreground"
                     )}
                     title={label}
                   >
@@ -116,16 +118,16 @@ export const GalleryHeader = ({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={onDownloadAll}>
                     <Download className="h-4 w-4 mr-2" />
-                    הורדת כל התמונות
+                    {t('gallery.downloadAll')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onToggleSelection}>
                     <CheckSquare className="h-4 w-4 mr-2" />
-                    בחירת תמונות
+                    {t('gallery.selectImages')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={onShare}>
                     <Share2 className="h-4 w-4 mr-2" />
-                    שיתוף הגלריה
+                    {t('gallery.share')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

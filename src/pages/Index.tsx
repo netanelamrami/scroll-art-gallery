@@ -2,12 +2,16 @@ import { useState, useEffect } from "react";
 import { Gallery } from "@/components/gallery/Gallery";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
+import { AuthFlow } from "@/components/auth/AuthFlow";
 import { galleryImages } from "@/data/galleryData";
 
 const Index = () => {
   const [showGallery, setShowGallery] = useState(false);
   const [galleryType, setGalleryType] = useState<'all' | 'my'>('all');
   const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthFlow, setShowAuthFlow] = useState(false);
+  const [userData, setUserData] = useState<{phone: string; otp: string; selfieData: string} | null>(null);
 
   const handleViewAllPhotos = () => {
     setGalleryType('all');
@@ -21,6 +25,12 @@ const Index = () => {
   };
 
   const handleViewMyPhotos = () => {
+    // אם המשתמש לא מחובר, נציג את תהליך ההרשמה
+    if (!isAuthenticated) {
+      setShowAuthFlow(true);
+      return;
+    }
+    
     setGalleryType('my');
     setShowGallery(true);
     // Smooth scroll to gallery
@@ -32,7 +42,31 @@ const Index = () => {
   };
 
   const handleToggleGalleryType = () => {
+    // אם המשתמש מנסה לעבור ל"התמונות שלי" בלי להיות מחובר
+    if (galleryType === 'all' && !isAuthenticated) {
+      setShowAuthFlow(true);
+      return;
+    }
     setGalleryType(galleryType === 'all' ? 'my' : 'all');
+  };
+
+  const handleAuthComplete = (authData: {phone: string; otp: string; selfieData: string}) => {
+    setUserData(authData);
+    setIsAuthenticated(true);
+    setShowAuthFlow(false);
+    setGalleryType('my');
+    setShowGallery(true);
+    
+    // Smooth scroll to gallery
+    setTimeout(() => {
+      document.getElementById('gallery')?.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }, 100);
+  };
+
+  const handleAuthCancel = () => {
+    setShowAuthFlow(false);
   };
 
   // Track scroll position to hide floating navbar when near hero
@@ -62,7 +96,9 @@ const Index = () => {
   // Filter images based on gallery type
   const filteredImages = galleryType === 'all' 
     ? galleryImages 
-    : galleryImages.filter(img => img.id.includes('couple')); // Mock filter for "my photos"
+    : isAuthenticated 
+      ? galleryImages.filter(img => img.id.includes('couple')) // Mock filter for authenticated user's photos
+      : [];
 
   return (
     <div>
@@ -80,6 +116,14 @@ const Index = () => {
             />
           )}
         </div>
+      )}
+      
+      {/* Auth Flow Modal */}
+      {showAuthFlow && (
+        <AuthFlow 
+          onComplete={handleAuthComplete}
+          onCancel={handleAuthCancel}
+        />
       )}
     </div>
   );

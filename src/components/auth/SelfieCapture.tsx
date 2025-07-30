@@ -200,27 +200,35 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
 
       {/* Action buttons */}
       <div className="flex gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onBack}
-          className="flex-1"
-        >
-          חזור
-        </Button>
-
         {isCapturing && (
-          <Button
-            onClick={capturePhoto}
-            className="flex-1"
-          >
-            <Camera className="w-4 h-4 mr-2" />
-            צלם
-          </Button>
+          <>
+            <Button
+              onClick={capturePhoto}
+              className="flex-1"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              צלם
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBack}
+              className="flex-1"
+            >
+              חזור
+            </Button>
+          </>
         )}
 
         {capturedImage && (
           <>
+            <Button
+              onClick={confirmPhoto}
+              className="flex-1"
+            >
+              <Check className="w-4 h-4 mr-2" />
+              אישור
+            </Button>
             <Button
               variant="outline"
               onClick={retakePhoto}
@@ -229,14 +237,18 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               <RotateCcw className="w-4 h-4 mr-2" />
               צלם שוב
             </Button>
-            <Button
-              onClick={confirmPhoto}
-              className="flex-1"
-            >
-              <Check className="w-4 h-4 mr-2" />
-              אישור
-            </Button>
           </>
+        )}
+
+        {!isCapturing && !capturedImage && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onBack}
+            className="flex-1"
+          >
+            חזור
+          </Button>
         )}
       </div>
     </div>

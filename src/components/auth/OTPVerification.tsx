@@ -100,15 +100,6 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
 
       <div className="flex gap-3">
         <Button
-          type="button"
-          variant="outline"
-          onClick={onBack}
-          className="flex-1"
-          disabled={isLoading}
-        >
-          חזור
-        </Button>
-        <Button
           type="submit"
           className="flex-1"
           disabled={otp.length !== 4 || isLoading}
@@ -121,6 +112,15 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
           ) : (
             "המשך"
           )}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          className="flex-1"
+          disabled={isLoading}
+        >
+          חזור
         </Button>
       </div>
       </form>

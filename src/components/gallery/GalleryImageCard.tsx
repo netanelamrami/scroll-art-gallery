@@ -152,7 +152,8 @@ export const GalleryImageCard = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="end" 
-                className="bg-background border border-border z-[9999] shadow-lg min-w-[150px]"
+                className="bg-background border border-border shadow-lg min-w-[150px]"
+                style={{ zIndex: 99999 }}
                 onCloseAutoFocus={(e) => e.preventDefault()}
                 side="bottom"
                 sideOffset={5}
@@ -183,7 +184,7 @@ export const GalleryImageCard = ({
           
           <div className="absolute bottom-2 right-2">
             <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">
-              {image.size}
+              {image.id}
             </div>
           </div>
         </>

@@ -26,10 +26,9 @@ const mockAlbums: Album[] = [
 
 export const AlbumSection = ({ albums = mockAlbums, onAlbumClick }: AlbumSectionProps) => {
   return (
-    <div className="bg-background border-b border-border">
-      <div className="container mx-auto px-4 py-6">
-        <h2 className="text-lg font-semibold mb-4 text-foreground">אלבומים</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div className="w-full px-4 mb-2 sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border pb-2 z-40">
+      <h2 className="text-lg font-bold mb-2 text-center">אלבומים</h2>
+      <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-2">
           {albums.map((album) => (
             <Button
               key={album.id}
@@ -37,7 +36,7 @@ export const AlbumSection = ({ albums = mockAlbums, onAlbumClick }: AlbumSection
               className="h-auto p-2 flex flex-col items-center group hover:bg-accent"
               onClick={() => onAlbumClick(album.id)}
             >
-              <div className="relative w-full aspect-square mb-2 overflow-hidden rounded-lg">
+              <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
                 <img
                   src={album.thumbnail}
                   alt={album.name}
@@ -55,7 +54,6 @@ export const AlbumSection = ({ albums = mockAlbums, onAlbumClick }: AlbumSection
             </Button>
           ))}
         </div>
-      </div>
     </div>
   );
 };

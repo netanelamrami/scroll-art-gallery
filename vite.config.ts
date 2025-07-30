@@ -9,9 +9,6 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  define: {
-    __WS_TOKEN__: JSON.stringify(process.env.WS_TOKEN || 'dev-token'),
-  },
   build: {
     target: 'esnext',
   },

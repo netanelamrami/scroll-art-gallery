@@ -55,15 +55,15 @@ export const AuthFlow = ({ onComplete, onCancel }: AuthFlowProps) => {
         {/* Header */}
         <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">
+              {stepTitles[currentStep]}
+            </h2>
             <button 
               onClick={onCancel}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               ✕
             </button>
-            <h2 className="text-xl font-semibold text-foreground">
-              {stepTitles[currentStep]}
-            </h2>
           </div>
           
           {/* Progress indicator */}

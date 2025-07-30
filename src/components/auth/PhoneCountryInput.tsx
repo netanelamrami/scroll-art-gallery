@@ -76,9 +76,6 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
         </div>
 
         <div className="flex gap-3">
-          <Button type="submit" className="flex-1">
-            שלח קוד
-          </Button>
           <Button
             type="button"
             variant="outline"
@@ -86,6 +83,9 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
             className="flex-1"
           >
             חזור
+          </Button>
+          <Button type="submit" className="flex-1">
+            שלח קוד
           </Button>
         </div>
       </form>

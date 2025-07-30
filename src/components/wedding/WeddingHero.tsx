@@ -1,5 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/hooks/useLanguage";
+import { SettingsMenu } from "@/components/ui/settings-menu";
 import { Heart, Camera, Users } from "lucide-react";
 
 interface WeddingHeroProps {
@@ -8,8 +10,15 @@ interface WeddingHeroProps {
 }
 
 export const WeddingHero = ({ onViewAllPhotos, onViewMyPhotos }: WeddingHeroProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="relative h-screen w-full overflow-hidden">
+      {/* Settings Menu */}
+      <div className="absolute top-6 right-6 z-20">
+        <SettingsMenu />
+      </div>
+
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -40,7 +49,7 @@ export const WeddingHero = ({ onViewAllPhotos, onViewMyPhotos }: WeddingHeroProp
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-white/80 mb-12 max-w-2xl leading-relaxed">
-          ברוכים הבאים לגלריית התמונות שלנו
+          {t('hero.subtitle')}
           <br />
           כאן תוכלו למצוא את כל הזכרונות היפים מהיום המיוחד שלנו
         </p>
@@ -53,7 +62,7 @@ export const WeddingHero = ({ onViewAllPhotos, onViewMyPhotos }: WeddingHeroProp
             className="bg-white text-black hover:bg-white/90 px-8 py-6 text-lg font-medium min-w-[200px] shadow-xl"
           >
             <Camera className="w-5 h-5 mr-2" />
-            כל התמונות
+            {t('hero.allPhotos')}
           </Button>
           
           <Button
@@ -63,7 +72,7 @@ export const WeddingHero = ({ onViewAllPhotos, onViewMyPhotos }: WeddingHeroProp
             className="border-white bg-white/10 text-white hover:bg-white/20 backdrop-blur-md px-8 py-6 text-lg font-medium min-w-[200px] shadow-xl"
           >
             <Users className="w-5 h-5 mr-2" />
-            התמונות שלי
+            {t('hero.myPhotos')}
           </Button>
         </div>
 

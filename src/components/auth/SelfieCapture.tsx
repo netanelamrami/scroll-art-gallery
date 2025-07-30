@@ -86,7 +86,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
     <div className="space-y-6">
       <div className="text-center mb-6">
         <p className="text-muted-foreground">
-          {t('auth.selfie.description') || "צלם סלפי כדי לזהות את התמונות שלך בגלרייה"}
+          צלם סלפי כדי לזהות את התמונות שלך בגלרייה
         </p>
       </div>
 
@@ -96,16 +96,16 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
           <div className="text-center">
             <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground mb-4">
-              {t('auth.selfie.startCamera') || "הפעל מצלמה לצילום סלפי"}
+              הפעל מצלמה לצילום סלפי
             </p>
             <Button onClick={startCamera} disabled={isLoading}>
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  {t('auth.selfie.loading') || "טוען..."}
+                  טוען...
                 </div>
               ) : (
-                t('auth.selfie.start') || "התחל צילום"
+                "התחל צילום"
               )}
             </Button>
           </div>
@@ -151,7 +151,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
           onClick={onBack}
           className="flex-1"
         >
-          {t('common.back') || "חזור"}
+          חזור
         </Button>
 
         {isCapturing && (
@@ -160,7 +160,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
             className="flex-1"
           >
             <Camera className="w-4 h-4 mr-2" />
-            {t('auth.selfie.capture') || "צלם"}
+            צלם
           </Button>
         )}
 
@@ -172,14 +172,14 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               className="flex-1"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              {t('auth.selfie.retake') || "צלם שוב"}
+              צלם שוב
             </Button>
             <Button
               onClick={confirmPhoto}
               className="flex-1"
             >
               <Check className="w-4 h-4 mr-2" />
-              {t('common.confirm') || "אישור"}
+              אישור
             </Button>
           </>
         )}

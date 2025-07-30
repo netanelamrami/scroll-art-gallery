@@ -54,13 +54,13 @@ export const PhoneInput = ({ onSubmit, onCancel }: PhoneInputProps) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="text-center mb-6">
         <p className="text-muted-foreground">
-          {t('auth.phone.description') || "הזן את מספר הטלפון שלך כדי לקבל קוד אימות"}
+          הזן את מספר הטלפון שלך כדי לקבל קוד אימות
         </p>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="phone" className="text-foreground">
-          {t('auth.phone.label') || "מספר טלפון"}
+          מספר טלפון
         </Label>
         <Input
           id="phone"
@@ -73,7 +73,7 @@ export const PhoneInput = ({ onSubmit, onCancel }: PhoneInputProps) => {
           disabled={isLoading}
         />
         <p className="text-xs text-muted-foreground text-center">
-          {t('auth.phone.format') || "פורמט: 05XXXXXXXX"}
+          פורמט: 05XXXXXXXX
         </p>
       </div>
 
@@ -85,7 +85,7 @@ export const PhoneInput = ({ onSubmit, onCancel }: PhoneInputProps) => {
           className="flex-1"
           disabled={isLoading}
         >
-          {t('common.cancel') || "ביטול"}
+          ביטול
         </Button>
         <Button
           type="submit"
@@ -95,10 +95,10 @@ export const PhoneInput = ({ onSubmit, onCancel }: PhoneInputProps) => {
           {isLoading ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              {t('auth.phone.sending') || "שולח..."}
+              שולח...
             </div>
           ) : (
-            t('common.continue') || "המשך"
+            "המשך"
           )}
         </Button>
       </div>

@@ -43,10 +43,10 @@ export const AuthFlow = ({ onComplete, onCancel }: AuthFlowProps) => {
   };
 
   const stepTitles = {
-    phone: t('auth.phone.title') || "הזנת מספר טלפון",
-    otp: t('auth.otp.title') || "אימות קוד",
-    selfie: t('auth.selfie.title') || "צילום סלפי",
-    complete: t('auth.complete.title') || "הרשמה הושלמה"
+    phone: "הזנת מספר טלפון",
+    otp: "אימות קוד",
+    selfie: "צילום סלפי",
+    complete: "הרשמה הושלמה"
   };
 
   return (

@@ -56,7 +56,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="text-center mb-6">
         <p className="text-muted-foreground mb-2">
-          {t('auth.otp.description') || "הזן את הקוד בן 4 הספרות שנשלח אליך"}
+          הזן את הקוד בן 4 הספרות שנשלח אליך
         </p>
         <p className="text-sm text-foreground font-medium">
           {maskedPhone}
@@ -83,7 +83,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
       <div className="text-center">
         {!canResend ? (
           <p className="text-sm text-muted-foreground">
-            {t('auth.otp.resendIn') || "שלח שוב בעוד"} {timeLeft} {t('auth.otp.seconds') || "שניות"}
+            שלח שוב בעוד {timeLeft} שניות
           </p>
         ) : (
           <Button
@@ -92,7 +92,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
             onClick={handleResend}
             className="text-sm p-0 h-auto"
           >
-            {t('auth.otp.resend') || "שלח קוד שוב"}
+            שלח קוד שוב
           </Button>
         )}
       </div>
@@ -105,7 +105,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
           className="flex-1"
           disabled={isLoading}
         >
-          {t('common.back') || "חזור"}
+          חזור
         </Button>
         <Button
           type="submit"
@@ -115,10 +115,10 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
           {isLoading ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              {t('auth.otp.verifying') || "מאמת..."}
+              מאמת...
             </div>
           ) : (
-            t('common.continue') || "המשך"
+            "המשך"
           )}
         </Button>
       </div>

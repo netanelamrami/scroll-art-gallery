@@ -53,7 +53,8 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
   const maskedPhone = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1***$3");
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <div dir="rtl">
+      <form onSubmit={handleSubmit} className="space-y-6">
       <div className="text-center mb-6">
         <p className="text-muted-foreground mb-2">
           הזן את הקוד בן 4 הספרות שנשלח אליך
@@ -122,6 +123,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
           )}
         </Button>
       </div>
-    </form>
+      </form>
+    </div>
   );
 };

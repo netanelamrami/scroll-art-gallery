@@ -34,7 +34,7 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold mb-2">הזן מספר טלפון</h2>
         <p className="text-muted-foreground">

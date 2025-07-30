@@ -142,17 +142,38 @@ export const GalleryImageCard = ({
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 bg-black/70 backdrop-blur-sm text-white hover:bg-black/90"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }}
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background border border-border">
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDownload(); }}>
+              <DropdownMenuContent 
+                align="end" 
+                className="bg-background border border-border z-[9999] shadow-lg min-w-[150px]"
+                onCloseAutoFocus={(e) => e.preventDefault()}
+                side="bottom"
+                sideOffset={5}
+              >
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-accent focus:bg-accent"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleDownload();
+                  }}
+                >
                   <Download className="mr-2 h-4 w-4" />
                   הורד תמונה
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCopyLink(); }}>
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-accent focus:bg-accent"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleCopyLink();
+                  }}
+                >
                   <Copy className="mr-2 h-4 w-4" />
                   העתק קישור
                 </DropdownMenuItem>

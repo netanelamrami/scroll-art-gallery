@@ -103,7 +103,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir="rtl">
       <div className="text-center mb-6">
         <p className="text-muted-foreground">
           צלם סלפי כדי לזהות את התמונות שלך בגלרייה

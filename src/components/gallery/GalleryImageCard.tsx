@@ -153,10 +153,12 @@ export const GalleryImageCard = ({
               <DropdownMenuContent 
                 align="end" 
                 className="bg-background border border-border shadow-lg min-w-[150px]"
-                style={{ zIndex: 99999 }}
+                style={{ zIndex: 999999 }}
                 onCloseAutoFocus={(e) => e.preventDefault()}
                 side="bottom"
                 sideOffset={5}
+                avoidCollisions={true}
+                collisionPadding={20}
               >
                 <DropdownMenuItem 
                   className="cursor-pointer hover:bg-accent focus:bg-accent"

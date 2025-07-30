@@ -61,7 +61,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				gallery: {
+					bg: 'hsl(var(--gallery-bg))',
+					card: 'hsl(var(--gallery-card))',
+					hover: 'hsl(var(--gallery-hover))',
+					primary: 'hsl(var(--gallery-primary))',
+					secondary: 'hsl(var(--gallery-secondary))'
 				}
+			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-overlay': 'var(--gradient-overlay)'
+			},
+			boxShadow: {
+				'gallery': 'var(--shadow-gallery)',
+				'card': 'var(--shadow-card)'
+			},
+			transitionProperty: {
+				'gallery': 'var(--transition-gallery)',
+				'smooth': 'var(--transition-smooth)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

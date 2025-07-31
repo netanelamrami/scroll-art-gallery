@@ -12,7 +12,7 @@ import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
-  const { eventId } = useParams();
+  const { eventLink } = useParams();
   const [showGallery, setShowGallery] = useState(false);
   const [galleryType, setGalleryType] = useState<'all' | 'my' | 'favorites'>('all');
   const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
@@ -29,12 +29,12 @@ const Index = () => {
   const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
-    // אם אין eventId ב-URL, נשתמש ב-default
-    const currentEventId = eventId || '614';
+    // אם אין eventLink ב-URL, נשתמש ב-default
+    const currentEventLink = eventLink || '2d115c1c-guy-sigal';
     
     Promise.all([
-      apiService.getEvent(currentEventId),
-      apiService.getEventImagesFullData(currentEventId)
+      apiService.getEvent(currentEventLink),
+      apiService.getEventImagesFullData(currentEventLink)
     ]).then(([eventData, imagesData]) => {
       setEvent(eventData);
       setGalleryImages(imagesData);
@@ -43,7 +43,7 @@ const Index = () => {
       console.error('Error loading data:', error);
       setIsLoading(false);
     });
-  }, [eventId]);
+  }, [eventLink]);
 
   // Lead generation modal timer - show after 15 seconds if not shown before
   useEffect(() => {

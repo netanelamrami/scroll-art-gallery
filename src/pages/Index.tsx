@@ -25,6 +25,7 @@ const Index = () => {
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [favoriteImages, setFavoriteImages] = useState<Set<string>>(new Set());
   const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
+  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -83,14 +84,20 @@ const Index = () => {
   }, []);
 
   const handleViewAllPhotos = () => {
+    setIsLoadingGallery(true);
     setGalleryType('all');
-    setShowGallery(true);
-    // Smooth scroll to gallery
+    
+    // Simulate loading delay for server response
     setTimeout(() => {
-      document.getElementById('gallery')?.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }, 100);
+      setShowGallery(true);
+      setIsLoadingGallery(false);
+      // Smooth scroll to gallery
+      setTimeout(() => {
+        document.getElementById('gallery')?.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }, 100);
+    }, 1000);
   };
 
   const handleViewMyPhotos = () => {
@@ -168,15 +175,21 @@ const Index = () => {
     setUserData(authData);
     setIsAuthenticated(true);
     setShowAuthFlow(false);
-    setGalleryType('my');
-    setShowGallery(true);
+    setIsLoadingGallery(true);
     
-    // Smooth scroll to gallery
+    // Simulate loading delay for server response
     setTimeout(() => {
-      document.getElementById('gallery')?.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }, 100);
+      setGalleryType('my');
+      setShowGallery(true);
+      setIsLoadingGallery(false);
+      
+      // Smooth scroll to gallery
+      setTimeout(() => {
+        document.getElementById('gallery')?.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }, 100);
+    }, 1500);
   };
 
   const handleAuthCancel = () => {
@@ -250,6 +263,7 @@ const Index = () => {
           event={event}
           onViewAllPhotos={handleViewAllPhotos}
           onViewMyPhotos={handleViewMyPhotos}
+          isLoadingGallery={isLoadingGallery}
         />
       {showGallery && (
         <div id="gallery">

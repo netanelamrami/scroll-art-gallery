@@ -16,7 +16,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Check if device is mobile
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -39,7 +39,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       }
     } catch (error) {
       console.error("Error accessing camera:", error);
-      alert("שגיאה בגישה למצלמה. אנא וודא שהמצלמה מחוברת ונתת הרשאה.");
+      alert(t('auth.cameraError'));
     } finally {
       setIsLoading(false);
     }
@@ -103,10 +103,10 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
   };
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
       <div className="text-center mb-6">
         <p className="text-muted-foreground">
-          צלם סלפי כדי לזהות את התמונות שלך בגלרייה
+          {t('auth.selfieInstruction')}
         </p>
       </div>
 
@@ -116,7 +116,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
           <div className="text-center">
             <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground mb-4">
-              {isMobile ? "צלם סלפי" : "בחר תמונה או צלם"}
+              {isMobile ? t('auth.takeSelfie') : t('auth.selectImageOrCamera')}
             </p>
             <div className="flex gap-2 justify-center">
               {isMobile ? (
@@ -124,12 +124,12 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
                   {isLoading ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      טוען...
+                      {t('auth.loading')}
                     </div>
                   ) : (
                     <>
                       <Camera className="w-4 h-4 mr-2" />
-                      צלם סלפי
+                      {t('auth.takeSelfie')}
                     </>
                   )}
                 </Button>
@@ -137,18 +137,18 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
                 <>
                   <Button onClick={handleFileUpload} variant="outline">
                     <Upload className="w-4 h-4 mr-2" />
-                    בחר קובץ
+                    {t('auth.selectFile')}
                   </Button>
                   <Button onClick={startCamera} disabled={isLoading}>
                     {isLoading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        טוען...
+                        {t('auth.loading')}
                       </div>
                     ) : (
                       <>
                         <Camera className="w-4 h-4 mr-2" />
-                        מצלמה
+                        {t('auth.camera')}
                       </>
                     )}
                   </Button>
@@ -207,7 +207,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               className="flex-1"
             >
               <Camera className="w-4 h-4 mr-2" />
-              צלם
+              {t('auth.takePhoto')}
             </Button>
             <Button
               type="button"
@@ -215,7 +215,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               onClick={onBack}
               className="flex-1"
             >
-              חזור
+              {t('common.back')}
             </Button>
           </>
         )}
@@ -227,7 +227,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               className="flex-1"
             >
               <Check className="w-4 h-4 mr-2" />
-              אישור
+              {t('auth.confirm')}
             </Button>
             <Button
               variant="outline"
@@ -235,7 +235,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               className="flex-1"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
-              צלם שוב
+              {t('auth.retake')}
             </Button>
           </>
         )}
@@ -247,7 +247,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
             onClick={onBack}
             className="flex-1"
           >
-            חזור
+            {t('common.back')}
           </Button>
         )}
       </div>

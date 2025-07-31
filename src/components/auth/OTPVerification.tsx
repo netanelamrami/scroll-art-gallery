@@ -83,7 +83,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
       <div className="text-center">
         {!canResend ? (
           <p className="text-sm text-muted-foreground">
-            שלח שוב בעוד {timeLeft} שניות
+            {t('auth.resendIn').replace('{seconds}', timeLeft.toString())}
           </p>
         ) : (
           <Button
@@ -92,7 +92,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
             onClick={handleResend}
             className="text-sm p-0 h-auto"
           >
-            שלח קוד שוב
+            {t('auth.resendCode')}
           </Button>
         )}
       </div>
@@ -106,10 +106,10 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
           {isLoading ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              מאמת...
+              {t('auth.verifying')}
             </div>
           ) : (
-            "המשך"
+            t('auth.continue')
           )}
         </Button>
         <Button
@@ -119,7 +119,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
           className="flex-1"
           disabled={isLoading}
         >
-          חזור
+          {t('common.back')}
         </Button>
       </div>
       </form>

@@ -94,6 +94,26 @@ const translations = {
     'auth.otpVerification': 'אימות קוד',
     'auth.selfieCapture': 'צילום סלפי',
     'auth.registrationComplete': 'הרשמה הושלמה',
+    'auth.phoneInstruction': 'נשלח לך קוד אימות בהודעת SMS',
+    'auth.phoneExample': 'המספר יוזן ללא הקידומת 0. לדוגמה: 50-123-4567',
+    'auth.enterPhone': 'הזן מספר טלפון',
+    'auth.sendCode': 'שלח קוד',
+    'auth.resendIn': 'שלח שוב בעוד {seconds} שניות',
+    'auth.resendCode': 'שלח קוד שוב',
+    'auth.verifying': 'מאמת...',
+    'auth.continue': 'המשך',
+    'auth.selfieInstruction': 'צלם סלפי כדי לזהות את התמונות שלך בגלרייה',
+    'auth.takeSelfie': 'צלם סלפי',
+    'auth.selectFile': 'בחר קובץ',
+    'auth.camera': 'מצלמה',
+    'auth.loading': 'טוען...',
+    'auth.takePhoto': 'צלם',
+    'auth.confirm': 'אישור',
+    'auth.retake': 'צלם שוב',
+    'auth.cameraError': 'שגיאה בגישה למצלמה. אנא וודא שהמצלמה מחוברת ונתת הרשאה.',
+    'auth.invalidPhone': 'מספר הטלפון לא תקין עבור המדינה שנבחרה',
+    'auth.phoneRequired': 'אנא הזן מספר טלפון',
+    'auth.selectImageOrCamera': 'בחר תמונה או צלם',
     
     // Leads
     'leads.thanksFeedback': 'תודה על המשוב!',
@@ -137,8 +157,6 @@ const translations = {
     // Common
     'common.back': 'חזור',
 
-
-  'en': 'he',
 
   },
   en: {
@@ -224,6 +242,26 @@ const translations = {
     'auth.otpVerification': 'Code Verification',
     'auth.selfieCapture': 'Selfie Capture',
     'auth.registrationComplete': 'Registration Complete',
+    'auth.phoneInstruction': 'We will send you a verification code via SMS',
+    'auth.phoneExample': 'Enter number without leading 0. Example: 50-123-4567',
+    'auth.enterPhone': 'Enter phone number',
+    'auth.sendCode': 'Send Code',
+    'auth.resendIn': 'Resend in {seconds} seconds',
+    'auth.resendCode': 'Send Code Again',
+    'auth.verifying': 'Verifying...',
+    'auth.continue': 'Continue',
+    'auth.selfieInstruction': 'Take a selfie to identify your photos in the gallery',
+    'auth.takeSelfie': 'Take Selfie',
+    'auth.selectFile': 'Select File',
+    'auth.camera': 'Camera',
+    'auth.loading': 'Loading...',
+    'auth.takePhoto': 'Take Photo',
+    'auth.confirm': 'Confirm',
+    'auth.retake': 'Retake',
+    'auth.cameraError': 'Error accessing camera. Please ensure camera is connected and permission is granted.',
+    'auth.invalidPhone': 'Phone number is invalid for the selected country',
+    'auth.phoneRequired': 'Please enter a phone number',
+    'auth.selectImageOrCamera': 'Select image or take photo',
     
     // Leads
     'leads.thanksFeedback': 'Thanks for the feedback!',
@@ -266,7 +304,7 @@ const translations = {
 
     'auth.otpInstruction': 'Enter the 4-digit code sent to you',
 
-    'en': 'en',
+    
   }
 };
 

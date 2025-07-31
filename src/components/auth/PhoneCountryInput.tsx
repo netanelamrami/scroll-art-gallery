@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useToast } from "@/hooks/use-toast";
 
 interface PhoneCountryInputProps {
   onSubmit: (phone: string) => void;
@@ -9,36 +11,117 @@ interface PhoneCountryInputProps {
 }
 
 const countries = [
-  { code: "+972", name: "ישראל", flag: "🇮🇱" },
-  { code: "+1", name: "ארה״ב", flag: "🇺🇸" },
-  { code: "+44", name: "בריטניה", flag: "🇬🇧" },
-  { code: "+33", name: "צרפת", flag: "🇫🇷" },
-  { code: "+49", name: "גרמניה", flag: "🇩🇪" },
-  { code: "+39", name: "איטליה", flag: "🇮🇹" },
-  { code: "+34", name: "ספרד", flag: "🇪🇸" },
-  { code: "+31", name: "הולנד", flag: "🇳🇱" },
-  { code: "+41", name: "שוויץ", flag: "🇨🇭" },
-  { code: "+43", name: "אוסטריה", flag: "🇦🇹" },
+  { 
+    code: "+972", 
+    name: { he: "ישראל", en: "Israel" }, 
+    flag: "🇮🇱",
+    pattern: /^5[0-9]{8}$/ // Israeli mobile format: 5XXXXXXXX
+  },
+  { 
+    code: "+1", 
+    name: { he: "ארה״ב", en: "United States" }, 
+    flag: "🇺🇸",
+    pattern: /^[2-9][0-9]{9}$/ // US format: [2-9]XXXXXXXXX
+  },
+  { 
+    code: "+44", 
+    name: { he: "בריטניה", en: "United Kingdom" }, 
+    flag: "🇬🇧",
+    pattern: /^7[0-9]{9}$/ // UK mobile format: 7XXXXXXXXX
+  },
+  { 
+    code: "+33", 
+    name: { he: "צרפת", en: "France" }, 
+    flag: "🇫🇷",
+    pattern: /^[67][0-9]{8}$/ // France mobile format: [67]XXXXXXXX
+  },
+  { 
+    code: "+49", 
+    name: { he: "גרמניה", en: "Germany" }, 
+    flag: "🇩🇪",
+    pattern: /^1[5-7][0-9]{8,9}$/ // Germany mobile format: 1[5-7]XXXXXXXX
+  },
+  { 
+    code: "+39", 
+    name: { he: "איטליה", en: "Italy" }, 
+    flag: "🇮🇹",
+    pattern: /^3[0-9]{8,9}$/ // Italy mobile format: 3XXXXXXXX
+  },
+  { 
+    code: "+34", 
+    name: { he: "ספרד", en: "Spain" }, 
+    flag: "🇪🇸",
+    pattern: /^[67][0-9]{8}$/ // Spain mobile format: [67]XXXXXXXX
+  },
+  { 
+    code: "+31", 
+    name: { he: "הולנד", en: "Netherlands" }, 
+    flag: "🇳🇱",
+    pattern: /^6[0-9]{8}$/ // Netherlands mobile format: 6XXXXXXXX
+  },
+  { 
+    code: "+41", 
+    name: { he: "שוויץ", en: "Switzerland" }, 
+    flag: "🇨🇭",
+    pattern: /^7[0-9]{8}$/ // Switzerland mobile format: 7XXXXXXXX
+  },
+  { 
+    code: "+43", 
+    name: { he: "אוסטריה", en: "Austria" }, 
+    flag: "🇦🇹",
+    pattern: /^6[0-9]{8,10}$/ // Austria mobile format: 6XXXXXXXX
+  },
 ];
 
 export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) => {
   const [countryCode, setCountryCode] = useState("+972");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const { t, language } = useLanguage();
+  const { toast } = useToast();
+
+  const validatePhoneNumber = (number: string, countryCode: string): boolean => {
+    const selectedCountry = countries.find(country => country.code === countryCode);
+    if (!selectedCountry) return false;
+    
+    // Remove leading zero and any spaces/dashes
+    const cleanNumber = number.replace(/^0/, '').replace(/[\s-]/g, '');
+    
+    return selectedCountry.pattern.test(cleanNumber);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (phoneNumber.trim()) {
-      const fullPhone = countryCode + phoneNumber.replace(/^0/, '');
-      onSubmit(fullPhone);
+    
+    if (!phoneNumber.trim()) {
+      toast({
+        title: t('toast.error.title'),
+        description: t('auth.phoneRequired'),
+        variant: "destructive",
+      });
+      return;
     }
+
+    const cleanPhoneNumber = phoneNumber.replace(/^0/, '').replace(/[\s-]/g, '');
+    
+    if (!validatePhoneNumber(phoneNumber, countryCode)) {
+      toast({
+        title: t('toast.error.title'),
+        description: t('auth.invalidPhone'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const fullPhone = countryCode + cleanPhoneNumber;
+    onSubmit(fullPhone);
   };
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2">הזן מספר טלפון</h2>
+        <h2 className="text-2xl font-bold mb-2">{t('auth.enterPhone')}</h2>
         <p className="text-muted-foreground">
-          נשלח לך קוד אימות בהודעת SMS
+          {t('auth.phoneInstruction')}
         </p>
       </div>
 
@@ -54,6 +137,9 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
                   <div className="flex items-center gap-2">
                     <span>{country.flag}</span>
                     <span>{country.code}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {country.name[language as keyof typeof country.name]}
+                    </span>
                   </div>
                 </SelectItem>
               ))}
@@ -62,7 +148,7 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
           
           <Input
             type="tel"
-            placeholder="הזן מספר טלפון"
+            placeholder={t('auth.enterPhone')}
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="flex-1"
@@ -71,8 +157,8 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
           />
         </div>
         
-        <div className="text-xs text-muted-foreground text-center" dir="rtl">
-          המספר יוזן ללא הקידומת 0. לדוגמה: 50-123-4567
+        <div className="text-xs text-muted-foreground text-center" dir={language === 'he' ? 'rtl' : 'ltr'}>
+          {t('auth.phoneExample')}
         </div>
 
         <div className="flex gap-3">
@@ -82,10 +168,10 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
             onClick={onBack}
             className="flex-1"
           >
-            חזור
+            {t('common.back')}
           </Button>
           <Button type="submit" className="flex-1">
-            שלח קוד
+            {t('auth.sendCode')}
           </Button>
         </div>
       </form>

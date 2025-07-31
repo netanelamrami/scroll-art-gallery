@@ -39,7 +39,7 @@ export const GalleryHeader = ({
   isSelectionMode,
   selectedCount
 }: GalleryHeaderProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   // Check if mobile for different column options
   const isMobile = window.innerWidth < 768;
   const columnOptions = isMobile 
@@ -55,8 +55,8 @@ export const GalleryHeader = ({
       ];
 
   return (
-    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
-      <div className="container mx-auto px-4 py-4">
+    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full">
+      <div className="w-full px-4 py-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-foreground">
@@ -104,7 +104,7 @@ export const GalleryHeader = ({
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align={language === 'he' ? 'start' : 'end'} className="w-48 bg-background z-50">
                   {/* Column options in dropdown */}
                   <div className="px-2 py-1.5">
                     <span className="text-sm font-medium text-muted-foreground">{t('gallery.columns')}</span>

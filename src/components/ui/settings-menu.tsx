@@ -1,6 +1,7 @@
 import React from "react"
 import { Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/hooks/useLanguage"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,8 @@ import { ThemeToggle } from "./theme-toggle"
 import { LanguageToggle } from "./language-toggle"
 
 export function SettingsMenu() {
+  const { language } = useLanguage();
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,7 +23,7 @@ export function SettingsMenu() {
           <span className="sr-only">Settings</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align={language === 'he' ? 'start' : 'end'} className="w-48 bg-background z-50">
         <DropdownMenuItem asChild className="flex justify-between">
           <div className="flex items-center justify-between w-full">
             <span>Theme</span>

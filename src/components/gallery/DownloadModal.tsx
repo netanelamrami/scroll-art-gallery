@@ -179,16 +179,21 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[400px] border-none bg-background/95 backdrop-blur-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
-        <DialogHeader className="text-center space-y-4">
+        <DialogHeader>
           {step === 'contact' && (
             <>
-              <div className="flex justify-center">
-                <Download className="h-8 w-8 text-primary" />
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl">
+                  {albumName ? `${t('downloadModal.albumDownload')} ${albumName}` : t('downloadModal.allPhotosDownload')}
+                </DialogTitle>
+                <button 
+                  onClick={handleClose}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  ✕
+                </button>
               </div>
-              <DialogTitle className="text-xl">
-                {albumName ? `${t('downloadModal.albumDownload')} ${albumName}` : t('downloadModal.allPhotosDownload')}
-              </DialogTitle>
-              <DialogDescription className="text-base">
+              <DialogDescription className="text-base text-center mt-4">
                 {imageCount} {t('downloadModal.photosWaiting')}
                 <br />
                 {imageCount <= 20 
@@ -264,11 +269,16 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
 
           {step === 'quality' && (
             <>
-              <div className="flex justify-center">
-                <Download className="h-8 w-8 text-primary" />
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl">{t('downloadModal.qualityTitle')}</DialogTitle>
+                <button 
+                  onClick={handleClose}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  ✕
+                </button>
               </div>
-              <DialogTitle className="text-xl">{t('downloadModal.qualityTitle')}</DialogTitle>
-              <DialogDescription className="text-base">
+              <DialogDescription className="text-base text-center mt-4">
                 {t('downloadModal.qualityQuestion')}
               </DialogDescription>
               
@@ -317,13 +327,18 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
 
           {step === 'success' && (
             <>
-              <div className="flex justify-center">
-                <CheckCircle className="h-12 w-12 text-green-500" />
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-xl">
+                  {imageCount <= 20 ? t('downloadModal.downloadStarted') : t('downloadModal.requestSent')}
+                </DialogTitle>
+                <button 
+                  onClick={handleClose}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  ✕
+                </button>
               </div>
-              <DialogTitle className="text-xl">
-                {imageCount <= 20 ? t('downloadModal.downloadStarted') : t('downloadModal.requestSent')}
-              </DialogTitle>
-              <DialogDescription className="text-base">
+              <DialogDescription className="text-base text-center mt-4">
                 {imageCount <= 20 ? (
                   <>
                     {t('downloadModal.downloadingToDevice')}

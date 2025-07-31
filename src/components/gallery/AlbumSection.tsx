@@ -81,26 +81,14 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
         {/* Other albums on the right - collapsed view with expand button */}
         <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0">
           {otherAlbums.slice(0, 2).map((album) => (
-            <div key={album.id} className="flex items-center gap-1 flex-shrink-0">
-              <Button
-                variant={selectedAlbum === album.id ? "default" : "ghost"}
-                className="h-8 px-2 text-xs whitespace-nowrap"
-                onClick={() => onAlbumClick(album.id)}
-              >
-                {album.name}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 hover:bg-primary/10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAlbumDownload(album.id, album.imageCount);
-                }}
-              >
-                <Download className="h-3 w-3" />
-              </Button>
-            </div>
+            <Button
+              key={album.id}
+              variant={selectedAlbum === album.id ? "default" : "ghost"}
+              className="h-8 px-2 text-xs whitespace-nowrap"
+              onClick={() => onAlbumClick(album.id)}
+            >
+              {album.name}
+            </Button>
           ))}
           {otherAlbums.length > 2 && (
             <Button

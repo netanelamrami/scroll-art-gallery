@@ -14,8 +14,7 @@ interface WeddingHeroProps {
 export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos }: WeddingHeroProps) => {
   const { t } = useLanguage();
 
-
-
+  console.log(event)
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Settings Menu */}
@@ -61,35 +60,44 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos }: WeddingH
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
           <Button
-            onClick={onViewAllPhotos}
-            size="lg"
-            className="bg-white text-black hover:bg-white/90 px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px]"
-          >
-            <Camera className="w-5 h-5 mr-2" />
-            {t('hero.allPhotos')}
-          </Button>
-          
-          <Button
             onClick={onViewMyPhotos}
             variant="outline"
             size="lg"
             className="border-white bg-white/10 text-white hover:bg-white/20 backdrop-blur-md px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px]"
           >
+          {t('en') === 'en'
+            ? event.btFaceRecognitionTextEN
+            : event.btFaceRecognitionText}
             <Users className="w-5 h-5 mr-2" />
-            {t('hero.myPhotos')}
+        </Button>
+
+          <Button
+            onClick={onViewAllPhotos}
+            size="lg"
+            className="bg-white text-black hover:bg-white/90 px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px]"
+          >
+            {t('hero.allPhotos')}
+            <Camera className="w-5 h-5 mr-2" />
           </Button>
+          
         </div>
 
         {/* Privacy Agreement */}
         <div className="mt-6 text-center">
           <p className="text-xs text-white/70 max-w-sm mx-auto leading-relaxed">
-            על ידי שימוש באתר אני מאשר/ת את{' '}
-            <button className="underline hover:text-white/90 transition-colors">
-              תנאי השימוש
+            {t('privacy.agreement.prefix')}{' '}
+            <button
+              className="underline hover:text-white/90 transition-colors"
+              onClick={() => window.open("https://www.pixshare.live/takanon", "_blank")}
+            >
+              {t('privacy.terms')}
             </button>
-            {' '}ו
-            <button className="underline hover:text-white/90 transition-colors">
-              מדיניות הפרטיות
+            {' '}{t('privacy.agreement.and')}{' '}
+            <button
+              className="underline hover:text-white/90 transition-colors"
+              onClick={() => window.open("https://www.pixshare.live/privacy", "_blank")}
+            >
+              {t('privacy.policy')}
             </button>
           </p>
         </div>

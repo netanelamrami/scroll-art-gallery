@@ -15,8 +15,8 @@ export function SettingsMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Settings className="h-5 w-5" />
+        <Button variant="ghost" size="icon" className="rounded-full  hover:bg-gray-700">
+          <Settings className="h-5 w-5 text-white" />
           <span className="sr-only">Settings</span>
         </Button>
       </DropdownMenuTrigger>

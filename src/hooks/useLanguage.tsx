@@ -126,8 +126,20 @@ const translations = {
     'support.terms': 'תקנון',
     'support.privacy': 'פרטיות',
     
+    'privacy.agreement.prefix': 'על ידי שימוש באתר אני מאשר/ת את',
+    'privacy.agreement.and': 'ו',
+    'privacy.terms': 'תנאי השימוש',
+    'privacy.policy': 'מדיניות הפרטיות',
+
+    
+    'auth.otpInstruction': 'הזן את הקוד בן 4 הספרות שנשלח אליך',
+
     // Common
     'common.back': 'חזור',
+
+
+  'en': 'he',
+
   },
   en: {
     // Hero Section
@@ -246,6 +258,15 @@ const translations = {
     
     // Common
     'common.back': 'Back',
+    
+    'privacy.agreement.prefix': 'By using this site, I agree to the',
+    'privacy.agreement.and': 'and',
+    'privacy.terms': 'Terms of Use',
+    'privacy.policy': 'Privacy Policy',
+
+    'auth.otpInstruction': 'Enter the 4-digit code sent to you',
+
+    'en': 'en',
   }
 };
 

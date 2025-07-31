@@ -46,18 +46,17 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
     setTimeLeft(60);
     setOtp("");
     
-    // דמיית שליחה חוזרת
     console.log("Resending SMS to:", phoneNumber);
   };
 
   const maskedPhone = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1***$3");
 
   return (
-    <div dir="rtl">
+    <div dir="ltr">
       <form onSubmit={handleSubmit} className="space-y-6">
       <div className="text-center mb-6">
         <p className="text-muted-foreground mb-2">
-          הזן את הקוד בן 4 הספרות שנשלח אליך
+          {t('auth.otpInstruction')}
         </p>
         <p className="text-sm text-foreground font-medium">
           {maskedPhone}

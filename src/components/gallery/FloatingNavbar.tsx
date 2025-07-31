@@ -106,19 +106,6 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
           {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : 'נבחרות'}
         </Button>
 
-        {/* Back to Top Button - Only show when scrolled down */}
-        {showBackToTop && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={scrollToGallery}
-            className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-3 sm:py-2 transition-all duration-300"
-            title="חזרה למעלה"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </Button>
-        )}
-
         {/* Share Event */}
         <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
           <DialogTrigger asChild>
@@ -162,6 +149,19 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Back to Top Button - Only show when scrolled down - positioned on the right */}
+        {showBackToTop && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={scrollToGallery}
+            className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-3 sm:py-2 transition-all duration-300"
+            title="חזרה למעלה"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+        )}
       </div>
     </div>
   );

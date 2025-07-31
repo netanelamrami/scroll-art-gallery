@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,21 +6,39 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Download, Mail, Phone, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { getDownloadFormData, saveDownloadFormData, downloadMultipleImages } from "@/utils/downloadUtils";
+import { GalleryImage } from "@/types/gallery";
 
 interface DownloadModalProps {
   isOpen: boolean;
   onClose: () => void;
   imageCount: number;
+  images?: GalleryImage[];
+  autoDownload?: boolean; // For immediate download if <= 20 images
 }
 
-export const DownloadModal = ({ isOpen, onClose, imageCount }: DownloadModalProps) => {
+export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false }: DownloadModalProps) => {
   const [step, setStep] = useState<'contact' | 'quality' | 'success'>('contact');
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
     quality: "high" // "high" or "web"
   });
-
+  
+  // Load saved data on mount
+  useEffect(() => {
+    const savedData = getDownloadFormData();
+    if (savedData) {
+      setFormData(prev => ({ ...prev, ...savedData }));
+      if (autoDownload && imageCount <= 20) {
+        // Skip to quality selection if we have saved data and it's auto download
+        setStep('quality');
+      }
+    } else if (autoDownload && imageCount <= 20) {
+      // If no saved data but auto download, start from contact
+      setStep('contact');
+    }
+  }, [isOpen, autoDownload, imageCount]);
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email && !formData.phone) {
@@ -31,26 +49,53 @@ export const DownloadModal = ({ isOpen, onClose, imageCount }: DownloadModalProp
       });
       return;
     }
+    
+    // Save form data for future use
+    saveDownloadFormData({
+      email: formData.email,
+      phone: formData.phone
+    });
+    
     setStep('quality');
   };
 
   const handleQualitySubmit = async () => {
     try {
-      // TODO: שליחה ל-API
-      // await apiService.submitDownloadRequest(formData);
-      
-      setStep('success');
+      if (imageCount <= 20 && images.length > 0) {
+        // Direct download for small albums
+        setStep('success');
+        
+        const success = await downloadMultipleImages(
+          images.map(img => ({ src: img.src, id: img.id }))
+        );
+        
+        if (success) {
+          toast({
+            title: "הורדה הושלמה!",
+            description: `${imageCount} תמונות הורדו בהצלחה`,
+          });
+        } else {
+          toast({
+            title: "שגיאה חלקית",
+            description: "חלק מהתמונות לא הורדו, נסו שוב",
+            variant: "destructive"
+          });
+        }
+      } else {
+        // For large albums - API request
+        // TODO: שליחה ל-API
+        // await apiService.submitDownloadRequest(formData);
+        setStep('success');
+      }
       
       // Close modal after 3 seconds
       setTimeout(() => {
-        onClose();
-        setStep('contact');
-        setFormData({ email: "", phone: "", quality: "high" });
+        handleClose();
       }, 3000);
     } catch (error) {
       toast({
         title: "שגיאה",
-        description: "אירעה שגיאה בשליחת הבקשה, נסו שוב",
+        description: "אירעה שגיאה בהורדת התמונות, נסו שוב",
         variant: "destructive"
       });
     }
@@ -75,7 +120,10 @@ export const DownloadModal = ({ isOpen, onClose, imageCount }: DownloadModalProp
               <DialogDescription className="text-base">
                 {imageCount} תמונות ממתינות לכם!
                 <br />
-                השאירו פרטים ונשלח לכם קישור להורדה כשהתמונות מוכנות
+                {imageCount <= 20 
+                  ? "התמונות יורדו ישירות למכשיר שלכם"
+                  : "השאירו פרטים ונשלח לכם קישור להורדה כשהתמונות מוכנות"
+                }
               </DialogDescription>
               
               <form onSubmit={handleContactSubmit} className="space-y-4 pt-4">
@@ -114,7 +162,7 @@ export const DownloadModal = ({ isOpen, onClose, imageCount }: DownloadModalProp
                 </p>
                 
                 <Button type="submit" className="w-full">
-                  המשך לבחירת איכות
+                  {imageCount <= 20 ? "המשך להורדה" : "המשך לבחירת איכות"}
                 </Button>
               </form>
             </>
@@ -158,9 +206,9 @@ export const DownloadModal = ({ isOpen, onClose, imageCount }: DownloadModalProp
                 </RadioGroup>
                 
                 <div className="flex gap-3 pt-2">
-                  <Button onClick={handleQualitySubmit} className="flex-1">
-                    שלח בקשה
-                  </Button>
+                <Button onClick={handleQualitySubmit} className="flex-1">
+                  {imageCount <= 20 ? "הורד עכשיו" : "שלח בקשה"}
+                </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => setStep('contact')}
@@ -178,15 +226,29 @@ export const DownloadModal = ({ isOpen, onClose, imageCount }: DownloadModalProp
               <div className="flex justify-center">
                 <CheckCircle className="h-12 w-12 text-green-500" />
               </div>
-              <DialogTitle className="text-xl">הבקשה נשלחה בהצלחה!</DialogTitle>
+              <DialogTitle className="text-xl">
+                {imageCount <= 20 ? "ההורדה החלה!" : "הבקשה נשלחה בהצלחה!"}
+              </DialogTitle>
               <DialogDescription className="text-base">
-                תהליך הכנת התמונות החל.
-                <br />
-                נשלח לכם קישור להורדה תוך מספר דקות.
-                <br />
-                <span className="text-sm text-muted-foreground">
-                  (חלון זה ייסגר אוטומטית)
-                </span>
+                {imageCount <= 20 ? (
+                  <>
+                    התמונות מורדות למכשיר שלכם.
+                    <br />
+                    <span className="text-sm text-muted-foreground">
+                      (חלון זה ייסגר אוטומטית)
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    תהליך הכנת התמונות החל.
+                    <br />
+                    נשלח לכם קישור להורדה תוך מספר דקות.
+                    <br />
+                    <span className="text-sm text-muted-foreground">
+                      (חלון זה ייסגר אוטומטית)
+                    </span>
+                  </>
+                )}
               </DialogDescription>
             </>
           )}

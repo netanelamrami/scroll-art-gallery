@@ -9,6 +9,7 @@ import { DownloadModal } from "./DownloadModal";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
+import { downloadMultipleImages } from "@/utils/downloadUtils";
 
 interface GalleryProps {
   event: event; 
@@ -90,7 +91,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
     setShowDownloadModal(true);
   };
 
-  const handleDownloadSelected = () => {
+  const handleDownloadSelected = async () => {
     if (selectedImages.size === 0) {
       toast({
         title: t('toast.noSelection.title'),
@@ -100,19 +101,29 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
       return;
     }
 
+    const selectedImagesArray = images.filter(img => selectedImages.has(img.id));
+    
     toast({
-      title: t('toast.downloadSelected.title'),
-      description: t('toast.downloadSelected.description').replace('{count}', selectedImages.size.toString()),
+      title: "מתחיל הורדה...",
+      description: `מוריד ${selectedImages.size} תמונות`,
     });
 
-    // Here you would implement the actual download logic
-    // For now, we'll just show a success message
-    setTimeout(() => {
+    const success = await downloadMultipleImages(
+      selectedImagesArray.map(img => ({ src: img.src, id: img.id }))
+    );
+
+    if (success) {
       toast({
-        title: t('toast.downloadComplete.title'),
-        description: t('toast.downloadComplete.description').replace('{count}', selectedImages.size.toString()),
+        title: "הורדה הושלמה!",
+        description: `${selectedImages.size} תמונות הורדו בהצלחה`,
       });
-    }, 2000);
+    } else {
+      toast({
+        title: "שגיאה חלקית",
+        description: "חלק מהתמונות לא הורדו, נסו שוב",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleToggleSelection = () => {
@@ -182,6 +193,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
         ]}
         onAlbumClick={handleAlbumClick}
         selectedAlbum={selectedAlbum}
+        allImages={images}
       />
 
       {/* Gallery Grid */}
@@ -215,6 +227,8 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
         isOpen={showDownloadModal}
         onClose={() => setShowDownloadModal(false)}
         imageCount={images.length}
+        images={images}
+        autoDownload={false}
       />
     </div>
   );

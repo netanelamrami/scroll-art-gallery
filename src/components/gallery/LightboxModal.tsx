@@ -3,6 +3,8 @@ import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
 import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { downloadImage } from "@/utils/downloadUtils";
+import { toast } from "@/hooks/use-toast";
 
 interface LightboxModalProps {
   isOpen: boolean;
@@ -68,13 +70,23 @@ export const LightboxModal = ({
 
   if (!isOpen || !currentImage) return null;
 
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = currentImage.src;
-    link.download = `gallery-image-${currentIndex + 1}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async () => {
+    if (!currentImage) return;
+    
+    const success = await downloadImage(currentImage.src, `image-${currentImage.id}.jpg`);
+    
+    if (success) {
+      toast({
+        title: "הורדה הושלמה!",
+        description: "התמונה הורדה בהצלחה למכשיר שלכם",
+      });
+    } else {
+      toast({
+        title: "שגיאה",
+        description: "אירעה שגיאה בהורדת התמונה, נסו שוב",
+        variant: "destructive"
+      });
+    }
   };
 
   return (

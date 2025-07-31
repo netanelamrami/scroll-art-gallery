@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Folder, Image, ChevronDown, ChevronUp } from "lucide-react";
+import { Folder, Image, ChevronDown, ChevronUp, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DownloadModal } from "./DownloadModal";
+import { GalleryImage } from "@/types/gallery";
 
 interface Album {
   id: string;
@@ -14,6 +16,7 @@ interface AlbumSectionProps {
   albums: Album[];
   onAlbumClick: (albumId: string) => void;
   selectedAlbum?: string;
+  allImages?: GalleryImage[];
 }
 
 const mockAlbums: Album[] = [
@@ -24,8 +27,10 @@ const mockAlbums: Album[] = [
   { id: "family", name: "משפחה", imageCount: 34, thumbnail: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=300&h=300&fit=crop" },
 ];
 
-export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: AlbumSectionProps) => {
+export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImages = [] }: AlbumSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [downloadAlbumImages, setDownloadAlbumImages] = useState<GalleryImage[]>([]);
 
   // Separate favorites album from others
   const favoritesAlbum = albums.find(album => album.id === 'favorites');
@@ -33,6 +38,14 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleAlbumDownload = (albumId: string, imageCount: number) => {
+    // For now, use all images as album images
+    // You can customize this to filter by album later
+    const albumImages = allImages; 
+    setDownloadAlbumImages(albumImages);
+    setShowDownloadModal(true);
   };
 
   return (
@@ -69,14 +82,26 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
         {/* Other albums on the right - collapsed view */}
         <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0">
           {otherAlbums.slice(0, 2).map((album) => (
-            <Button
-              key={album.id}
-              variant={selectedAlbum === album.id ? "default" : "ghost"}
-              className="h-8 px-2 text-xs whitespace-nowrap flex-shrink-0"
-              onClick={() => onAlbumClick(album.id)}
-            >
-              {album.name}
-            </Button>
+            <div key={album.id} className="flex items-center gap-1 flex-shrink-0">
+              <Button
+                variant={selectedAlbum === album.id ? "default" : "ghost"}
+                className="h-8 px-2 text-xs whitespace-nowrap"
+                onClick={() => onAlbumClick(album.id)}
+              >
+                {album.name}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-primary/10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAlbumDownload(album.id, album.imageCount);
+                }}
+              >
+                <Download className="h-3 w-3" />
+              </Button>
+            </div>
           ))}
           {otherAlbums.length > 2 && (
             <Button
@@ -95,52 +120,90 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 mt-4">
           {/* Favorites album first */}
           {favoritesAlbum && (
-            <Button
-              variant={selectedAlbum === 'favorites' ? "default" : "ghost"}
-              className="h-auto p-2 flex flex-col items-center group hover:bg-accent"
-              onClick={() => onAlbumClick('favorites')}
-            >
-              <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
-                <div className="w-full h-full bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900 dark:to-pink-900 flex items-center justify-center">
-                  <span className="text-lg sm:text-2xl">❤️</span>
+            <div className="relative">
+              <Button
+                variant={selectedAlbum === 'favorites' ? "default" : "ghost"}
+                className="h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full"
+                onClick={() => onAlbumClick('favorites')}
+              >
+                <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
+                  <div className="w-full h-full bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900 dark:to-pink-900 flex items-center justify-center">
+                    <span className="text-lg sm:text-2xl">❤️</span>
+                  </div>
+                  <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
+                    {favoritesAlbum.imageCount}
+                  </div>
                 </div>
-                <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
-                  {favoritesAlbum.imageCount}
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-medium text-center">{favoritesAlbum.name.replace('❤️ נבחרות', 'נבחרות')}</span>
                 </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-center">{favoritesAlbum.name.replace('❤️ התמונות הנבחרות שלכם', 'נבחרות')}</span>
-              </div>
-            </Button>
+              </Button>
+              
+              {/* Download button for favorites */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute top-1 right-1 h-6 w-6 p-0 bg-black/20 hover:bg-black/40 backdrop-blur-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAlbumDownload('favorites', favoritesAlbum.imageCount);
+                }}
+              >
+                <Download className="h-3 w-3 text-white" />
+              </Button>
+            </div>
           )}
 
           {/* Other albums */}
           {otherAlbums.map((album) => (
-            <Button
-              key={album.id}
-              variant={selectedAlbum === album.id ? "default" : "ghost"}
-              className="h-auto p-2 flex flex-col items-center group hover:bg-accent"
-              onClick={() => onAlbumClick(album.id)}
-            >
-              <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
-                <img
-                  src={album.thumbnail}
-                  alt={album.name}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
-                  {album.imageCount}
+            <div key={album.id} className="relative">
+              <Button
+                variant={selectedAlbum === album.id ? "default" : "ghost"}
+                className="h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full"
+                onClick={() => onAlbumClick(album.id)}
+              >
+                <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
+                  <img
+                    src={album.thumbnail}
+                    alt={album.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                  <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
+                    {album.imageCount}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <Folder className="w-3 h-3 text-muted-foreground hidden sm:block" />
-                <span className="text-xs font-medium text-center">{album.name}</span>
-              </div>
-            </Button>
+                <div className="flex items-center gap-1">
+                  <Folder className="w-3 h-3 text-muted-foreground hidden sm:block" />
+                  <span className="text-xs font-medium text-center">{album.name}</span>
+                </div>
+              </Button>
+              
+              {/* Download button for each album */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute top-1 right-1 h-6 w-6 p-0 bg-black/20 hover:bg-black/40 backdrop-blur-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAlbumDownload(album.id, album.imageCount);
+                }}
+              >
+                <Download className="h-3 w-3 text-white" />
+              </Button>
+            </div>
           ))}
         </div>
       )}
+      
+      {/* Download Modal */}
+      <DownloadModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
+        imageCount={downloadAlbumImages.length}
+        images={downloadAlbumImages}
+        autoDownload={downloadAlbumImages.length <= 20}
+      />
     </div>
   );
 };

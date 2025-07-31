@@ -117,19 +117,21 @@ export const GalleryImageCard = ({
         />
       )}
       
-        {/* Favorite Button */}
-        <button
-          onClick={handleFavoriteClick}
-          className={`absolute top-2 left-2 p-2 rounded-full backdrop-blur-sm transition-all duration-200 z-20 ${
-            isFavorite 
-              ? 'bg-red-500/80 text-white' 
-              : 'bg-black/50 text-white hover:bg-black/70'
-          }`}
-        >
-          <span className={`text-lg ${isFavorite ? '' : 'opacity-70'}`}>
-            {isFavorite ? '❤️' : '🤍'}
-          </span>
-        </button>
+        {/* Favorite Button - only show when NOT in selection mode */}
+        {!isSelectionMode && (
+          <button
+            onClick={handleFavoriteClick}
+            className={`absolute top-2 left-2 p-1.5 rounded-full backdrop-blur-sm transition-all duration-200 z-20 ${
+              isFavorite 
+                ? 'bg-red-500/20 border border-red-500/40' 
+                : 'bg-black/20 border border-white/20 hover:bg-black/40'
+            }`}
+          >
+            <span className={`text-sm ${isFavorite ? 'text-red-400' : 'text-white/70'}`}>
+              {isFavorite ? '❤️' : '🤍'}
+            </span>
+          </button>
+        )}
 
         {/* Selection mode overlay */}
       {isSelectionMode && (

@@ -36,40 +36,40 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
   };
 
   return (
-    <div className="w-full px-4 mb-2 sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border pb-2 z-40">
+    <div className="w-full px-2 mb-2 sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border pb-2 z-40">
       {/* Collapsed view - horizontal bar */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between gap-2 mb-2 overflow-hidden">
         {/* Favorites album on the left */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-shrink-0">
           {favoritesAlbum && (
             <Button
               variant={selectedAlbum === 'favorites' ? "default" : "ghost"}
-              className="h-8 px-3 text-sm flex items-center gap-2"
+              className="h-8 px-2 text-xs sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap"
               onClick={() => onAlbumClick('favorites')}
             >
-              <span className="text-red-500">❤️</span>
-              <span>{favoritesAlbum.name}</span>
+              <span className="text-red-500 text-sm sm:text-base">❤️</span>
+              <span className="hidden sm:inline">נבחרות</span>
               <span className="text-xs text-muted-foreground">({favoritesAlbum.imageCount})</span>
             </Button>
           )}
         </div>
 
         {/* Center section with album title and expand button */}
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold">אלבומים</h2>
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          <h2 className="text-sm sm:text-lg font-bold">אלבומים</h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleToggleExpand}
-            className="h-6 w-6 p-0"
+            className="h-5 w-5 sm:h-6 sm:w-6 p-0"
           >
-            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            {isExpanded ? <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" /> : <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />}
           </Button>
         </div>
 
         {/* Other albums on the right - collapsed view */}
-        <div className="flex items-center gap-1 overflow-x-auto max-w-[50%]">
-          {otherAlbums.slice(0, 3).map((album) => (
+        <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0">
+          {otherAlbums.slice(0, 2).map((album) => (
             <Button
               key={album.id}
               variant={selectedAlbum === album.id ? "default" : "ghost"}
@@ -79,13 +79,13 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
               {album.name}
             </Button>
           ))}
-          {otherAlbums.length > 3 && (
+          {otherAlbums.length > 2 && (
             <Button
               variant="ghost"
-              className="h-8 px-2 text-xs"
+              className="h-8 px-2 text-xs flex-shrink-0"
               onClick={handleToggleExpand}
             >
-              +{otherAlbums.length - 3}
+              +{otherAlbums.length - 2}
             </Button>
           )}
         </div>
@@ -93,7 +93,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
 
       {/* Expanded view - full album grid */}
       {isExpanded && (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 mt-4">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 mt-4">
           {/* Favorites album first */}
           {favoritesAlbum && (
             <Button
@@ -103,14 +103,14 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
             >
               <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
                 <div className="w-full h-full bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900 dark:to-pink-900 flex items-center justify-center">
-                  <span className="text-2xl">❤️</span>
+                  <span className="text-lg sm:text-2xl">❤️</span>
                 </div>
-                <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
                   {favoritesAlbum.imageCount}
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-xs font-medium text-center">{favoritesAlbum.name}</span>
+                <span className="text-xs font-medium text-center">{favoritesAlbum.name.replace('❤️ התמונות הנבחרות שלכם', 'נבחרות')}</span>
               </div>
             </Button>
           )}
@@ -130,12 +130,12 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
                   {album.imageCount}
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <Folder className="w-3 h-3 text-muted-foreground" />
+                <Folder className="w-3 h-3 text-muted-foreground hidden sm:block" />
                 <span className="text-xs font-medium text-center">{album.name}</span>
               </div>
             </Button>

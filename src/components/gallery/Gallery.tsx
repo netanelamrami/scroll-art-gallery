@@ -176,7 +176,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
         albums={[
           { 
             id: 'favorites', 
-            name: '❤️ התמונות הנבחרות שלכם', 
+            name: '❤️ נבחרות', 
             imageCount: favoriteImages.size,
             thumbnail: Array.from(favoriteImages)[0] ? images.find(img => img.id === Array.from(favoriteImages)[0])?.src : 'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=300&h=300&fit=crop'
           }

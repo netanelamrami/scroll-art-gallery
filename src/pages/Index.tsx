@@ -3,9 +3,11 @@ import { Gallery } from "@/components/gallery/Gallery";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { AuthFlow } from "@/components/auth/AuthFlow";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { generateGalleryImages } from "@/data/galleryData";
 import { log } from "console";
 import { apiService } from "../data/services/apiService";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
   const [showGallery, setShowGallery] = useState(false);
@@ -16,15 +18,32 @@ const Index = () => {
   const [userData, setUserData] = useState<{phone: string; otp: string; selfieData: string} | null>(null);
   const [event, setEvent] = useState(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
-  useEffect(() => {
-    apiService.getEvent().then(setEvent);
-  }, []);
   const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
-    generateGalleryImages().then(setGalleryImages);
+    Promise.all([
+      apiService.getEvent(),
+      generateGalleryImages()
+    ]).then(([eventData, imagesData]) => {
+      setEvent(eventData);
+      setGalleryImages(imagesData);
+      setIsLoading(false);
+    });
   }, []);
+
+  // Feedback modal timer - show after 10 seconds of viewing gallery with images
+  useEffect(() => {
+    if (!showGallery || galleryImages.length === 0 || showFeedbackModal) return;
+
+    const timer = setTimeout(() => {
+      setShowFeedbackModal(true);
+    }, 10000); // 10 seconds
+
+    return () => clearTimeout(timer);
+  }, [showGallery, galleryImages.length, showFeedbackModal]);
 
   const handleViewAllPhotos = () => {
     setGalleryType('all');
@@ -112,6 +131,25 @@ const Index = () => {
     : isAuthenticated 
       ? galleryImages.filter(img => img.id.includes('couple')) // Mock filter for authenticated user's photos
       : [];
+
+  // Show loading skeleton while data is loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="space-y-8">
+            <Skeleton className="h-96 w-full rounded-lg" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-48 w-full rounded-lg" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <WeddingHero 
@@ -141,6 +179,12 @@ const Index = () => {
           onCancel={handleAuthCancel}
         />
       )}
+
+      {/* Feedback Modal */}
+      <FeedbackModal 
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+      />
     </div>
   );
 };

@@ -23,64 +23,88 @@ export const MasonryGrid = ({
   favoriteImages = new Set(),
   onToggleFavorite
 }: MasonryGridProps) => {
-  // אלגוריתם מאוזן מתקדם לחלוקת תמונות בין עמודות
+  // אלגוריתם מאוזן מוחלט - מבטיח איזון מקסימלי של גבהי עמודות
   const distributeImagesBalanced = (images: GalleryImage[], numColumns: number) => {
-    const columnArrays = Array.from({ length: numColumns }, () => [] as GalleryImage[]);
-    const columnHeights = Array.from({ length: numColumns }, () => 0);
-    const baseWidth = 300; // רוחב בסיס לחישוב
-
-    // שלב 1: חלוקה ראשונית לפי גובה מחושב
-    images.forEach((image) => {
-      // חישוב גובה אמיתי של התמונה ביחס לרוחב הקולונה
-      let actualHeight = 300; // גובה ברירת מחדל
+    // שלב 1: קביעת גובה אמיתי לכל תמונה
+    const imagesWithCalculatedHeight = images.map(image => {
+      const baseWidth = 300;
+      let calculatedHeight = 300;
       
       if (image.width && image.height) {
         const aspectRatio = image.height / image.width;
-        actualHeight = baseWidth * aspectRatio;
+        calculatedHeight = Math.round(baseWidth * aspectRatio);
       } else if (image.height) {
-        actualHeight = image.height;
+        calculatedHeight = image.height;
       }
       
-      // מציאת העמודה עם הגובה הנמוך ביותר
-      const minHeightIndex = columnHeights.indexOf(Math.min(...columnHeights));
-      
-      // הוספת התמונה לעמודה
-      columnArrays[minHeightIndex].push(image);
-      columnHeights[minHeightIndex] += actualHeight + 8; // +8 עבור gap
+      return {
+        ...image,
+        calculatedHeight: calculatedHeight + 8 // כולל gap
+      };
     });
 
-    // שלב 2: איזון נוסף - העברת תמונות אחרונות אם יש פער גדול
-    const maxHeight = Math.max(...columnHeights);
-    const avgHeight = columnHeights.reduce((sum, h) => sum + h, 0) / numColumns;
-    
-    columnHeights.forEach((height, columnIndex) => {
-      const heightDifference = maxHeight - height;
+    // שלב 2: מיון תמונות מהגבוהה לנמוכה
+    const sortedImages = [...imagesWithCalculatedHeight].sort((a, b) => 
+      b.calculatedHeight - a.calculatedHeight
+    );
+
+    // שלב 3: אלגוריתם Bin Packing - תמיד נוסף לעמודה הנמוכה ביותר
+    const columnArrays = Array.from({ length: numColumns }, () => [] as typeof sortedImages);
+    const columnHeights = Array.from({ length: numColumns }, () => 0);
+
+    sortedImages.forEach(image => {
+      // מצא את העמודה עם הגובה הנמוך ביותר
+      const minHeightIndex = columnHeights.indexOf(Math.min(...columnHeights));
       
-      // אם הפער גדול מ-20% מהגובה הממוצע, ננסה לאזן
-      if (heightDifference > avgHeight * 0.2) {
-        // מצא עמודה גבוהה עם תמונות שאפשר להעביר
-        const tallestColumnIndex = columnHeights.indexOf(maxHeight);
+      // הוסף תמונה לעמודה הנמוכה ביותר
+      columnArrays[minHeightIndex].push(image);
+      columnHeights[minHeightIndex] += image.calculatedHeight;
+    });
+
+    // שלב 4: איזון נוסף אגרסיבי - העברות מרובות
+    let balanced = false;
+    let iterations = 0;
+    const maxIterations = 10;
+
+    while (!balanced && iterations < maxIterations) {
+      balanced = true;
+      iterations++;
+      
+      const currentHeights = columnArrays.map(column => 
+        column.reduce((sum, img) => sum + img.calculatedHeight, 0)
+      );
+      
+      const maxHeight = Math.max(...currentHeights);
+      const minHeight = Math.min(...currentHeights);
+      const heightDifference = maxHeight - minHeight;
+      const avgHeight = currentHeights.reduce((sum, h) => sum + h, 0) / numColumns;
+      
+      // אם הפער גדול מ-10% מהממוצע, נמשיך לאזן
+      if (heightDifference > avgHeight * 0.1) {
+        balanced = false;
+        
+        const tallestColumnIndex = currentHeights.indexOf(maxHeight);
+        const shortestColumnIndex = currentHeights.indexOf(minHeight);
+        
         const tallestColumn = columnArrays[tallestColumnIndex];
         
-        // העבר תמונה אחרונה אם יש יותר מתמונה אחת
-        if (tallestColumn.length > 1) {
-          const imageToMove = tallestColumn.pop();
-          if (imageToMove) {
-            columnArrays[columnIndex].push(imageToMove);
-            
-            // עדכן גבהים
-            let movedImageHeight = 300;
-            if (imageToMove.width && imageToMove.height) {
-              const aspectRatio = imageToMove.height / imageToMove.width;
-              movedImageHeight = baseWidth * aspectRatio;
-            }
-            
-            columnHeights[tallestColumnIndex] -= (movedImageHeight + 8);
-            columnHeights[columnIndex] += (movedImageHeight + 8);
+        // נמצא תמונה מתאימה להעברה (קטנה יחסית)
+        for (let i = tallestColumn.length - 1; i >= 0; i--) {
+          const imageToMove = tallestColumn[i];
+          
+          // בדוק אם העברת התמונה תשפר את האיזון
+          const newTallestHeight = currentHeights[tallestColumnIndex] - imageToMove.calculatedHeight;
+          const newShortestHeight = currentHeights[shortestColumnIndex] + imageToMove.calculatedHeight;
+          
+          if (newShortestHeight <= newTallestHeight + avgHeight * 0.05) {
+            // העבר את התמונה
+            tallestColumn.splice(i, 1);
+            columnArrays[shortestColumnIndex].push(imageToMove);
+            break;
           }
         }
       }
-    });
+    }
 
     return columnArrays;
   };

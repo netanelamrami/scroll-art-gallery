@@ -12,9 +12,11 @@ import { event } from "@/types/event";
 interface GalleryProps {
   event: event; 
   images: GalleryImage[];
+  favoriteImages: Set<string>;
+  onToggleFavorite: (imageId: string) => void;
 }
 
-export const Gallery = ({ event, images }: GalleryProps) => {
+export const Gallery = ({ event, images, favoriteImages, onToggleFavorite }: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [columns, setColumns] = useState(4);
@@ -171,6 +173,8 @@ export const Gallery = ({ event, images }: GalleryProps) => {
           isSelectionMode={isSelectionMode}
           selectedImages={selectedImages}
           onImageSelection={handleImageSelection}
+          favoriteImages={favoriteImages}
+          onToggleFavorite={onToggleFavorite}
         />
       </div>
 

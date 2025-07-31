@@ -14,6 +14,8 @@ interface GalleryImageCardProps {
   isSelectionMode?: boolean;
   isSelected?: boolean;
   onSelectionChange?: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 export const GalleryImageCard = ({ 
@@ -21,12 +23,19 @@ export const GalleryImageCard = ({
   onClick, 
   isSelectionMode = false,
   isSelected = false,
-  onSelectionChange
+  onSelectionChange,
+  isFavorite = false,
+  onToggleFavorite
 }: GalleryImageCardProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const { toast } = useToast();
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleFavorite?.();
+  };
 
   const handleImageLoad = () => {
     setIsLoaded(true);
@@ -108,7 +117,21 @@ export const GalleryImageCard = ({
         />
       )}
       
-      {/* Selection mode overlay */}
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavoriteClick}
+          className={`absolute top-2 left-2 p-2 rounded-full backdrop-blur-sm transition-all duration-200 z-20 ${
+            isFavorite 
+              ? 'bg-red-500/80 text-white' 
+              : 'bg-black/50 text-white hover:bg-black/70'
+          }`}
+        >
+          <span className={`text-lg ${isFavorite ? '' : 'opacity-70'}`}>
+            {isFavorite ? '❤️' : '🤍'}
+          </span>
+        </button>
+
+        {/* Selection mode overlay */}
       {isSelectionMode && (
         <>
           <div className="absolute inset-0 bg-black/20 transition-opacity duration-200" />
@@ -127,12 +150,14 @@ export const GalleryImageCard = ({
         <>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-300" />
           
-          {/* Image ID */}
-          <div className="absolute top-2 left-2">
-            <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">
-              ID: {image.id}
-            </div>
-          </div>
+           {/* Image ID - only show in hover when not favorite button visible */}
+           {!isFavorite && (
+             <div className="absolute top-2 left-2">
+               <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">
+                 ID: {image.id}
+               </div>
+             </div>
+           )}
 
           {/* Actions menu */}
           <div className="absolute top-2 right-2">

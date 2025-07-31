@@ -10,10 +10,10 @@ import QRCode from 'qrcode';
 import { event } from "@/types/event";
 
 interface FloatingNavbarProps {
-  galleryType: 'all' | 'my';
+  event: event;
+  galleryType: 'all' | 'my' | 'favorites';
   onToggleGalleryType: () => void;
   className?: string;
-  event: event;
 }
 
 export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, className }: FloatingNavbarProps) => {
@@ -76,7 +76,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
           className="rounded-full min-w-[60px] px-1 py-1 text-sm sm:px-4 sm:py-2"
         >
           <Images className="h-4 w-4 ml-2" />
-          {galleryType === 'all' ? t('navbar.allPhotos') : t('navbar.myPhotos')}
+          {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : 'נבחרות'}
         </Button>
 
         {/* Share Event */}

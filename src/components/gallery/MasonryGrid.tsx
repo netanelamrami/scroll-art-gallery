@@ -9,6 +9,8 @@ interface MasonryGridProps {
   isSelectionMode?: boolean;
   selectedImages?: Set<string>;
   onImageSelection?: (imageId: string) => void;
+  favoriteImages?: Set<string>;
+  onToggleFavorite?: (imageId: string) => void;
 }
 
 export const MasonryGrid = ({
@@ -17,7 +19,9 @@ export const MasonryGrid = ({
   columns,
   isSelectionMode = false,
   selectedImages = new Set(),
-  onImageSelection
+  onImageSelection,
+  favoriteImages = new Set(),
+  onToggleFavorite
 }: MasonryGridProps) => {
   // יצירת מערך עמודות ומערך גבהים
   const columnArrays = Array.from({ length: columns }, () => [] as GalleryImage[]);
@@ -46,6 +50,8 @@ export const MasonryGrid = ({
           isSelectionMode={isSelectionMode}
           selectedImages={selectedImages}
           onImageSelection={onImageSelection}
+          favoriteImages={favoriteImages}
+          onToggleFavorite={onToggleFavorite}
         />
       ))}
     </div>

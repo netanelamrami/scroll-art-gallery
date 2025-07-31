@@ -10,15 +10,19 @@ interface MasonryColumnProps {
   isSelectionMode?: boolean;
   selectedImages?: Set<string>;
   onImageSelection?: (imageId: string) => void;
+  favoriteImages?: Set<string>;
+  onToggleFavorite?: (imageId: string) => void;
 }
 
-export const MasonryColumn = ({ 
-  images, 
-  onImageClick, 
+export const MasonryColumn = ({
+  images,
+  onImageClick,
   allImages,
   isSelectionMode = false,
   selectedImages = new Set(),
-  onImageSelection
+  onImageSelection,
+  favoriteImages = new Set(),
+  onToggleFavorite
 }: MasonryColumnProps) => {
   return (
     <div className="flex flex-col gap-1">
@@ -32,6 +36,8 @@ export const MasonryColumn = ({
             isSelectionMode={isSelectionMode}
             isSelected={selectedImages.has(image.id)}
             onSelectionChange={() => onImageSelection?.(image.id)}
+            isFavorite={favoriteImages.has(image.id)}
+            onToggleFavorite={() => onToggleFavorite?.(image.id)}
           />
         );
       })}

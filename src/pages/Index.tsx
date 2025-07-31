@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
   const [showGallery, setShowGallery] = useState(false);
-  const [galleryType, setGalleryType] = useState<'all' | 'my'>('all');
+  const [galleryType, setGalleryType] = useState<'all' | 'my' | 'favorites'>('all');
   const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthFlow, setShowAuthFlow] = useState(false);
@@ -20,6 +20,7 @@ const Index = () => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showLeadModal, setShowLeadModal] = useState(false);
+  const [favoriteImages, setFavoriteImages] = useState<Set<string>>(new Set());
 
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -34,9 +35,13 @@ const Index = () => {
     });
   }, []);
 
-  // Lead generation modal timer - show after 15 seconds of viewing gallery with images
+  // Lead generation modal timer - show after 15 seconds if not shown before
   useEffect(() => {
     if (!showGallery || galleryImages.length === 0 || showLeadModal) return;
+    
+    // Check if modal was already shown in this browser
+    const hasSeenLeadModal = localStorage.getItem('hasSeenLeadModal');
+    if (hasSeenLeadModal) return;
 
     const timer = setTimeout(() => {
       setShowLeadModal(true);
@@ -44,6 +49,14 @@ const Index = () => {
 
     return () => clearTimeout(timer);
   }, [showGallery, galleryImages.length, showLeadModal]);
+
+  // Load favorite images from localStorage on mount
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem('favoriteImages');
+    if (savedFavorites) {
+      setFavoriteImages(new Set(JSON.parse(savedFavorites)));
+    }
+  }, []);
 
   const handleViewAllPhotos = () => {
     setGalleryType('all');
@@ -73,13 +86,42 @@ const Index = () => {
     }, 100);
   };
 
+  const handleViewFavorites = () => {
+    setGalleryType('favorites');
+    setShowGallery(true);
+    // Smooth scroll to gallery
+    setTimeout(() => {
+      document.getElementById('gallery')?.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }, 100);
+  };
+
   const handleToggleGalleryType = () => {
     // אם המשתמש מנסה לעבור ל"התמונות שלי" בלי להיות מחובר
     if (galleryType === 'all' && !isAuthenticated) {
       setShowAuthFlow(true);
       return;
     }
-    setGalleryType(galleryType === 'all' ? 'my' : 'all');
+    
+    if (galleryType === 'all') {
+      setGalleryType('my');
+    } else if (galleryType === 'my') {
+      setGalleryType('favorites');
+    } else {
+      setGalleryType('all');
+    }
+  };
+
+  const handleToggleFavorite = (imageId: string) => {
+    const newFavorites = new Set(favoriteImages);
+    if (newFavorites.has(imageId)) {
+      newFavorites.delete(imageId);
+    } else {
+      newFavorites.add(imageId);
+    }
+    setFavoriteImages(newFavorites);
+    localStorage.setItem('favoriteImages', JSON.stringify(Array.from(newFavorites)));
   };
 
   const handleAuthComplete = (authData: {phone: string; otp: string; selfieData: string}) => {
@@ -99,6 +141,11 @@ const Index = () => {
 
   const handleAuthCancel = () => {
     setShowAuthFlow(false);
+  };
+
+  const handleLeadModalClose = () => {
+    localStorage.setItem('hasSeenLeadModal', 'true');
+    setShowLeadModal(false);
   };
 
   // Track scroll position to hide floating navbar when near hero
@@ -128,9 +175,11 @@ const Index = () => {
   // Filter images based on gallery type
   const filteredImages = galleryType === 'all' 
     ? galleryImages 
-    : isAuthenticated 
-      ? galleryImages.filter(img => img.id.includes('couple')) // Mock filter for authenticated user's photos
-      : [];
+    : galleryType === 'favorites'
+      ? galleryImages.filter(img => favoriteImages.has(img.id))
+      : isAuthenticated 
+        ? galleryImages.filter(img => img.id.includes('couple')) // Mock filter for authenticated user's photos
+        : [];
 
   // Show loading skeleton while data is loading
   if (isLoading) {
@@ -152,15 +201,20 @@ const Index = () => {
 
   return (
     <div>
-      <WeddingHero 
-        event={event}
-        onViewAllPhotos={handleViewAllPhotos}
-        onViewMyPhotos={handleViewMyPhotos}
-      />
+        <WeddingHero 
+          event={event}
+          onViewAllPhotos={handleViewAllPhotos}
+          onViewMyPhotos={handleViewMyPhotos}
+          onViewFavorites={handleViewFavorites}
+        />
       {showGallery && (
         <div id="gallery">
           <Gallery 
-            event={event} images={filteredImages} />
+            event={event} 
+            images={filteredImages}
+            favoriteImages={favoriteImages}
+            onToggleFavorite={handleToggleFavorite}
+          />
 
           {showFloatingNavbar && !isLightboxOpen && (
             <FloatingNavbar 
@@ -183,7 +237,7 @@ const Index = () => {
       {/* Lead Generation Modal */}
       <LeadGenerationModal 
         isOpen={showLeadModal}
-        onClose={() => setShowLeadModal(false)}
+        onClose={handleLeadModalClose}
       />
     </div>
   );

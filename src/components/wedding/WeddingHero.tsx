@@ -6,12 +6,13 @@ import { Heart, Camera, Users } from "lucide-react";
 import { event } from "@/types/event";
 
 interface WeddingHeroProps {
-  event: event; 
+  event: event;
   onViewAllPhotos: () => void;
   onViewMyPhotos: () => void;
+  onViewFavorites: () => void;
 }
 
-export const WeddingHero = ( { event,  onViewAllPhotos, onViewMyPhotos }: WeddingHeroProps) => {
+export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, onViewFavorites }: WeddingHeroProps) => {
   const { t } = useLanguage();
 
 
@@ -59,7 +60,7 @@ export const WeddingHero = ( { event,  onViewAllPhotos, onViewMyPhotos }: Weddin
         </p> */}
 
         {/* Buttons */}
-        <div className="flex  sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
           <Button
             onClick={onViewAllPhotos}
             size="lg"
@@ -77,6 +78,16 @@ export const WeddingHero = ( { event,  onViewAllPhotos, onViewMyPhotos }: Weddin
           >
             <Users className="w-5 h-5 mr-2" />
             {t('hero.myPhotos')}
+          </Button>
+
+          <Button
+            onClick={onViewFavorites}
+            variant="outline"
+            size="lg"
+            className="border-pink-300/40 bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-white hover:from-pink-500/30 hover:to-purple-500/30 backdrop-blur-md px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px]"
+          >
+            <Heart className="w-5 h-5 mr-2 fill-current" />
+            נבחרות
           </Button>
         </div>
 

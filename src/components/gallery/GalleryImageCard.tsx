@@ -4,7 +4,7 @@ import { GalleryImage } from "@/types/gallery";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Download, Link, Copy } from "lucide-react";
+import { MoreVertical, Download, Link, Copy, Star } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 
@@ -117,20 +117,28 @@ export const GalleryImageCard = ({
         />
       )}
       
-        {/* Favorite Button - only show when NOT in selection mode */}
+        {/* Favorite Star Button - only show when NOT in selection mode */}
         {!isSelectionMode && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleFavoriteClick}
-            className={`absolute top-2 left-2 p-1.5 rounded-full backdrop-blur-sm transition-all duration-200 z-20 ${
+            className={cn(
+              "absolute top-1 right-1 h-5 w-5 p-0 backdrop-blur-sm transition-all duration-200",
+              "md:opacity-0 md:group-hover:opacity-100", // Desktop: only on hover
+              "opacity-100", // Mobile: always visible
               isFavorite 
-                ? 'bg-red-500/20 border border-red-500/40' 
-                : 'bg-black/20 border border-white/20 hover:bg-black/40'
-            }`}
+                ? "bg-yellow-500/90 hover:bg-yellow-500 text-white" 
+                : "bg-black/20 hover:bg-black/40 text-white border border-white/20"
+            )}
           >
-            <span className={`text-sm ${isFavorite ? 'text-red-400' : 'text-white/70'}`}>
-              {isFavorite ? '❤️' : '🤍'}
-            </span>
-          </button>
+            <Star 
+              className={cn(
+                "h-2.5 w-2.5 transition-all",
+                isFavorite ? "fill-current" : "fill-none"
+              )} 
+            />
+          </Button>
         )}
 
         {/* Selection mode overlay */}

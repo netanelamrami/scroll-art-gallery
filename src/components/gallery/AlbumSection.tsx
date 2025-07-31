@@ -31,6 +31,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadAlbumImages, setDownloadAlbumImages] = useState<GalleryImage[]>([]);
+  const [downloadAlbumName, setDownloadAlbumName] = useState<string>("");
 
   // Separate favorites album from others
   const favoritesAlbum = albums.find(album => album.id === 'favorites');
@@ -41,10 +42,20 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   };
 
   const handleAlbumDownload = (albumId: string, imageCount: number) => {
+    // Get album name for display
+    let albumName = "";
+    if (albumId === 'favorites') {
+      albumName = "נבחרות";
+    } else {
+      const album = otherAlbums.find(a => a.id === albumId);
+      albumName = album?.name || "אלבום";
+    }
+    
     // For now, use all images as album images
     // You can customize this to filter by album later
     const albumImages = allImages; 
     setDownloadAlbumImages(albumImages);
+    setDownloadAlbumName(albumName);
     setShowDownloadModal(true);
   };
 
@@ -67,19 +78,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
           )}
         </div>
 
-        {/* Center section with expand button */}
-        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleToggleExpand}
-            className="h-6 w-6 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-accent"
-          >
-            {isExpanded ? <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5" /> : <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" />}
-          </Button>
-        </div>
-
-        {/* Other albums on the right - collapsed view */}
+        {/* Other albums on the right - collapsed view with expand button */}
         <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0">
           {otherAlbums.slice(0, 2).map((album) => (
             <div key={album.id} className="flex items-center gap-1 flex-shrink-0">
@@ -112,6 +111,15 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
               +{otherAlbums.length - 2}
             </Button>
           )}
+          {/* Expand button moved here to be close to albums */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToggleExpand}
+            className="h-6 w-6 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-accent ml-1"
+          >
+            {isExpanded ? <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5" /> : <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" />}
+          </Button>
         </div>
       </div>
 
@@ -203,6 +211,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
         imageCount={downloadAlbumImages.length}
         images={downloadAlbumImages}
         autoDownload={downloadAlbumImages.length <= 20}
+        albumName={downloadAlbumName}
       />
     </div>
   );

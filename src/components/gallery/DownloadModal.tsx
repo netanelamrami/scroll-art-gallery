@@ -15,9 +15,10 @@ interface DownloadModalProps {
   imageCount: number;
   images?: GalleryImage[];
   autoDownload?: boolean; // For immediate download if <= 20 images
+  albumName?: string; // Name of the album being downloaded
 }
 
-export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false }: DownloadModalProps) => {
+export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false, albumName }: DownloadModalProps) => {
   const [step, setStep] = useState<'contact' | 'quality' | 'success'>('contact');
   const [formData, setFormData] = useState({
     email: "",
@@ -116,7 +117,9 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
               <div className="flex justify-center">
                 <Download className="h-8 w-8 text-primary" />
               </div>
-              <DialogTitle className="text-xl">הורדת כל התמונות</DialogTitle>
+              <DialogTitle className="text-xl">
+                {albumName ? `הורדת אלבום ${albumName}` : "הורדת כל התמונות"}
+              </DialogTitle>
               <DialogDescription className="text-base">
                 {imageCount} תמונות ממתינות לכם!
                 <br />

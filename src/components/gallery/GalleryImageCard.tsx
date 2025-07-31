@@ -117,34 +117,6 @@ export const GalleryImageCard = ({
         />
       )}
       
-        {/* Favorite Star Button - only show when NOT in selection mode */}
-        {!isSelectionMode && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              handleFavoriteClick(e);
-            }}
-            className={cn(
-              "absolute top-1 right-1 h-5 w-5 p-0 backdrop-blur-sm transition-all duration-200 z-30",
-              "opacity-0 group-hover:opacity-100", // Show only on hover for all devices
-              isFavorite 
-                ? "bg-black/80 hover:bg-black text-white" 
-                : "bg-black/20 hover:bg-black/40 text-white border border-white/20"
-            )}
-          >
-            <Star 
-              className={cn(
-                "h-2.5 w-2.5 transition-all",
-                isFavorite 
-                  ? "fill-black dark:fill-white" 
-                  : "fill-none group-hover:fill-black dark:group-hover:fill-white"
-              )} 
-            />
-          </Button>
-        )}
 
         {/* Selection mode overlay */}
       {isSelectionMode && (

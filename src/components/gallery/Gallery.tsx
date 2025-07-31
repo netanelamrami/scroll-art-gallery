@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GalleryImage } from "@/types/gallery";
 import { MasonryGrid } from "./MasonryGrid";
 import { LightboxModal } from "./LightboxModal";
@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
 import { downloadMultipleImages } from "@/utils/downloadUtils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface GalleryProps {
   event: event; 
@@ -29,8 +30,39 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
   const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
+  // Reset displayed images count when images change
+  useEffect(() => {
+    setDisplayedImagesCount(30);
+  }, [images]);
+
+  // Infinite scroll effect
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < images.length) {
+          setIsLoadingMore(true);
+          // Simulate loading delay
+          setTimeout(() => {
+            setDisplayedImagesCount(prev => Math.min(prev + 30, images.length));
+            setIsLoadingMore(false);
+          }, 1500);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [displayedImagesCount, images.length, isLoadingMore]);
+
   // Responsive columns based on screen size
   useEffect(() => {
     const updateColumns = () => {
@@ -165,6 +197,9 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
     }
   };
 
+  // Get displayed images based on pagination
+  const displayedImages = images.slice(0, displayedImagesCount);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -199,7 +234,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
       {/* Gallery Grid */}
       <div className=" w-full px-2 py-8">
         <MasonryGrid
-          images={images}
+          images={displayedImages}
           onImageClick={handleImageClick}
           columns={columns}
           isSelectionMode={isSelectionMode}
@@ -208,6 +243,30 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
           favoriteImages={favoriteImages}
           onToggleFavorite={onToggleFavorite}
         />
+        
+        {/* Load More Trigger & Loader */}
+        {displayedImagesCount < images.length && (
+          <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
+            {isLoadingMore ? (
+              <div className="space-y-4 w-full">
+                <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+                  {Array.from({ length: columns }).map((_, colIndex) => (
+                    <div key={colIndex} className="space-y-1">
+                      {Array.from({ length: 3 }).map((_, rowIndex) => (
+                        <Skeleton key={rowIndex} className="w-full h-48 rounded-lg" />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center text-muted-foreground">
+                  טוען עוד תמונות...
+                </div>
+              </div>
+            ) : (
+              <div className="h-4" />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Lightbox Modal */}

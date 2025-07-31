@@ -5,6 +5,7 @@ import { MasonryGrid } from "./MasonryGrid";
 import { LightboxModal } from "./LightboxModal";
 import { GalleryHeader } from "./GalleryHeader";
 import { AlbumSection } from "./AlbumSection";
+import { DownloadModal } from "./DownloadModal";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
@@ -26,6 +27,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
   const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
   // Responsive columns based on screen size
@@ -85,10 +87,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
   };
 
   const handleDownloadAll = () => {
-    toast({
-      title: t('toast.downloadAll.title'),
-      description: t('toast.downloadAll.description'),
-    });
+    setShowDownloadModal(true);
   };
 
   const handleDownloadSelected = () => {
@@ -210,6 +209,13 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
           onPrevious={handlePreviousImage}
         />
       )}
+
+      {/* Download Modal */}
+      <DownloadModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
+        imageCount={images.length}
+      />
     </div>
   );
 };

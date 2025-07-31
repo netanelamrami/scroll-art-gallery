@@ -54,16 +54,15 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum }: Album
           )}
         </div>
 
-        {/* Center section with album title and expand button */}
+        {/* Center section with expand button */}
         <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-          <h2 className="text-sm sm:text-lg font-bold">אלבומים</h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleToggleExpand}
-            className="h-5 w-5 sm:h-6 sm:w-6 p-0"
+            className="h-6 w-6 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-accent"
           >
-            {isExpanded ? <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" /> : <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />}
+            {isExpanded ? <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5" /> : <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button>
         </div>
 

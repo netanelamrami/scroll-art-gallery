@@ -80,25 +80,43 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
 
         {/* Other albums on the right - collapsed view with expand button */}
         <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0">
-          {otherAlbums.slice(0, 2).map((album) => (
-            <Button
-              key={album.id}
-              variant={selectedAlbum === album.id ? "default" : "ghost"}
-              className="h-8 px-2 text-xs whitespace-nowrap"
-              onClick={() => onAlbumClick(album.id)}
-            >
-              {album.name}
-            </Button>
-          ))}
-          {otherAlbums.length > 2 && (
-            <Button
-              variant="ghost"
-              className="h-8 px-2 text-xs flex-shrink-0"
-              onClick={handleToggleExpand}
-            >
-              +{otherAlbums.length - 2}
-            </Button>
-          )}
+          {/* Show selected album first if it's not in the initial visible albums */}
+          {(() => {
+            const visibleCount = window.innerWidth >= 768 ? 4 : 2; // More albums on larger screens
+            let albumsToShow = [...otherAlbums];
+            
+            // If an album is selected and it's not in the first visible albums, bring it to front
+            if (selectedAlbum && selectedAlbum !== 'favorites') {
+              const selectedAlbumData = otherAlbums.find(album => album.id === selectedAlbum);
+              if (selectedAlbumData) {
+                albumsToShow = albumsToShow.filter(album => album.id !== selectedAlbum);
+                albumsToShow.unshift(selectedAlbumData);
+              }
+            }
+            
+            return albumsToShow.slice(0, visibleCount).map((album) => (
+              <Button
+                key={album.id}
+                variant={selectedAlbum === album.id ? "default" : "ghost"}
+                className="h-8 px-2 text-xs whitespace-nowrap"
+                onClick={() => onAlbumClick(album.id)}
+              >
+                {album.name}
+              </Button>
+            ));
+          })()}
+          {(() => {
+            const visibleCount = window.innerWidth >= 768 ? 4 : 2;
+            return otherAlbums.length > visibleCount && (
+              <Button
+                variant="ghost"
+                className="h-8 px-2 text-xs flex-shrink-0"
+                onClick={handleToggleExpand}
+              >
+                +{otherAlbums.length - visibleCount}
+              </Button>
+            );
+          })()}
           {/* Expand button moved here to be close to albums */}
           <Button
             variant="ghost"

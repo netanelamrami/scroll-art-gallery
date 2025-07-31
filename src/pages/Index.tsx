@@ -4,6 +4,7 @@ import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { AuthFlow } from "@/components/auth/AuthFlow";
 import { LeadGenerationModal } from "@/components/leads/LeadGenerationModal";
+import { BackToTopButton } from "@/components/ui/back-to-top";
 import { generateGalleryImages } from "@/data/galleryData";
 import { log } from "console";
 import { apiService } from "../data/services/apiService";
@@ -263,6 +264,9 @@ const Index = () => {
         isOpen={showLeadModal}
         onClose={handleLeadModalClose}
       />
+
+      {/* Back to Top Button */}
+      <BackToTopButton />
     </div>
   );
 };

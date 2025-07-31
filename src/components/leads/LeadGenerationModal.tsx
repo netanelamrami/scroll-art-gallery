@@ -7,12 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Heart, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-interface FeedbackModalProps {
+interface LeadGenerationModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
+export const LeadGenerationModal = ({ isOpen, onClose }: LeadGenerationModalProps) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -27,21 +27,32 @@ export const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
   const handleNotLiked = () => {
     toast({
       title: "תודה על המשוב!",
-      description: "נשמח לשמוע איך נוכל להשתפר בפעם הבאה"
+      description: "נשמח לשמוע מכם בעתיד ולעזור בכל שאלה"
     });
     onClose();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // כאן תוכל להוסיף שליחה לשרת
-    toast({
-      title: "תודה רבה!",
-      description: "נחזור אליך בהקדם האפשרי ❤️"
-    });
-    onClose();
-    setShowForm(false);
-    setFormData({ name: "", phone: "", message: "" });
+    
+    try {
+      // TODO: שליחה ל-API
+      // await apiService.submitLead(formData);
+      
+      toast({
+        title: "תודה רבה!",
+        description: "הפרטים נשמרו בהצלחה, נחזור אליכם בהקדם ❤️"
+      });
+      onClose();
+      setShowForm(false);
+      setFormData({ name: "", phone: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "שגיאה",
+        description: "אירעה שגיאה בשמירת הפרטים, נסו שוב",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -60,9 +71,9 @@ export const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
               <div className="flex justify-center">
                 <Heart className="h-8 w-8 text-primary animate-pulse" />
               </div>
-              <DialogTitle className="text-xl">אהבתם את התמונות?</DialogTitle>
+              <DialogTitle className="text-xl">אהבתם את השירות שלנו?</DialogTitle>
               <DialogDescription className="text-base">
-                נשמח לשמוע מכם ולעזור בכל שאלה!
+                יש לכם אירוע בקרוב? נשמח לעזור לכם ליצור זיכרונות מושלמים!
               </DialogDescription>
               
               <div className="flex gap-3 pt-4">
@@ -70,22 +81,22 @@ export const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
                   onClick={handleLiked}
                   className="flex-1 bg-primary hover:bg-primary/90"
                 >
-                  כן, מדהים! 😍
+                  כן! יש לנו אירוע 🎉
                 </Button>
                 <Button 
                   onClick={handleNotLiked}
                   variant="outline"
                   className="flex-1"
                 >
-                  לא בדיוק
+                  לא בזמן הקרוב
                 </Button>
               </div>
             </>
           ) : (
             <>
-              <DialogTitle className="text-xl">נשמח ליצור קשר!</DialogTitle>
+              <DialogTitle className="text-xl">בואו נדבר! 📞</DialogTitle>
               <DialogDescription className="text-base">
-                השאירו פרטים ונחזור אליכם בהקדם
+                השאירו פרטים ונחזור אליכם עם הצעה מיוחדת לאירוע שלכם
               </DialogDescription>
               
               <form onSubmit={handleSubmit} className="space-y-4 pt-4">
@@ -115,12 +126,12 @@ export const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="message">הודעה (אופציונלי)</Label>
+                  <Label htmlFor="message">איזה סוג אירוע? (אופציונלי)</Label>
                   <Textarea
                     id="message"
                     value={formData.message}
                     onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                    placeholder="איך נוכל לעזור לכם?"
+                    placeholder="חתונה, בר/בת מצווה, יום הולדת, אירוע עסקי..."
                     className="text-right resize-none"
                     rows={3}
                   />
@@ -128,7 +139,7 @@ export const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
                 
                 <div className="flex gap-3 pt-2">
                   <Button type="submit" className="flex-1">
-                    שלח
+                    שלח וקבל הצעה 🎯
                   </Button>
                   <Button 
                     type="button" 

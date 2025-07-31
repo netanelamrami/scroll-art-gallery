@@ -3,7 +3,7 @@ import { Gallery } from "@/components/gallery/Gallery";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { AuthFlow } from "@/components/auth/AuthFlow";
-import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { LeadGenerationModal } from "@/components/leads/LeadGenerationModal";
 import { generateGalleryImages } from "@/data/galleryData";
 import { log } from "console";
 import { apiService } from "../data/services/apiService";
@@ -19,7 +19,7 @@ const Index = () => {
   const [event, setEvent] = useState(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showLeadModal, setShowLeadModal] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -34,16 +34,16 @@ const Index = () => {
     });
   }, []);
 
-  // Feedback modal timer - show after 10 seconds of viewing gallery with images
+  // Lead generation modal timer - show after 15 seconds of viewing gallery with images
   useEffect(() => {
-    if (!showGallery || galleryImages.length === 0 || showFeedbackModal) return;
+    if (!showGallery || galleryImages.length === 0 || showLeadModal) return;
 
     const timer = setTimeout(() => {
-      setShowFeedbackModal(true);
-    }, 10000); // 10 seconds
+      setShowLeadModal(true);
+    }, 15000); // 15 seconds
 
     return () => clearTimeout(timer);
-  }, [showGallery, galleryImages.length, showFeedbackModal]);
+  }, [showGallery, galleryImages.length, showLeadModal]);
 
   const handleViewAllPhotos = () => {
     setGalleryType('all');
@@ -180,10 +180,10 @@ const Index = () => {
         />
       )}
 
-      {/* Feedback Modal */}
-      <FeedbackModal 
-        isOpen={showFeedbackModal}
-        onClose={() => setShowFeedbackModal(false)}
+      {/* Lead Generation Modal */}
+      <LeadGenerationModal 
+        isOpen={showLeadModal}
+        onClose={() => setShowLeadModal(false)}
       />
     </div>
   );

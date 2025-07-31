@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Folder, Image, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { Folder, Image, ChevronDown, ChevronUp, Download, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DownloadModal } from "./DownloadModal";
 import { GalleryImage } from "@/types/gallery";
@@ -71,7 +71,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
               className="h-8 px-2 text-xs sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap"
               onClick={() => onAlbumClick('favorites')}
             >
-              <span className="text-red-500 text-sm sm:text-base">❤️</span>
+              <Star className="text-yellow-500 h-3 w-3 sm:h-4 sm:w-4 fill-current" />
               <span className="hidden sm:inline">נבחרות</span>
               <span className="text-xs text-muted-foreground">({favoritesAlbum.imageCount})</span>
             </Button>
@@ -122,10 +122,10 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 className="h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full"
                 onClick={() => onAlbumClick('favorites')}
               >
-                <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
-                  <div className="w-full h-full bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900 dark:to-pink-900 flex items-center justify-center">
-                    <span className="text-lg sm:text-2xl">❤️</span>
-                  </div>
+                 <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
+                   <div className="w-full h-full bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 flex items-center justify-center">
+                     <Star className="text-lg sm:text-2xl text-yellow-500 fill-current" />
+                   </div>
                   <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
                     {favoritesAlbum.imageCount}
                   </div>

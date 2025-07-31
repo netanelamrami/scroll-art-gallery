@@ -103,7 +103,12 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
           className="rounded-full min-w-[60px] px-1 py-1 text-sm sm:px-4 sm:py-2"
         >
           <Images className="h-4 w-4 ml-2" />
-          {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : 'נבחרות'}
+          <span className="hidden sm:inline">
+            {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : 'נבחרות'}
+          </span>
+          <span className="sm:hidden">
+            {galleryType === 'all' ? 'הכל' : galleryType === 'my' ? 'שלי' : 'נבחרות'}
+          </span>
         </Button>
 
         {/* Share Event */}

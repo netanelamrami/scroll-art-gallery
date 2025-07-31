@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Download, Mail, Phone, CheckCircle } from "lucide-react";
@@ -21,12 +22,76 @@ interface DownloadModalProps {
 
 export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false, albumName }: DownloadModalProps) => {
   const [step, setStep] = useState<'contact' | 'quality' | 'success'>('contact');
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
+    countryCode: "+972",
     quality: "high" // "high" or "web"
   });
+
+  const countries = [
+    { 
+      code: "+972", 
+      name: { he: "ישראל", en: "Israel" }, 
+      flag: "🇮🇱",
+      pattern: /^5[0-9]{8}$/
+    },
+    { 
+      code: "+1", 
+      name: { he: "ארה״ב", en: "United States" }, 
+      flag: "🇺🇸",
+      pattern: /^[2-9][0-9]{9}$/
+    },
+    { 
+      code: "+44", 
+      name: { he: "בריטניה", en: "United Kingdom" }, 
+      flag: "🇬🇧",
+      pattern: /^7[0-9]{9}$/
+    },
+    { 
+      code: "+33", 
+      name: { he: "צרפת", en: "France" }, 
+      flag: "🇫🇷",
+      pattern: /^[67][0-9]{8}$/
+    },
+    { 
+      code: "+49", 
+      name: { he: "גרמניה", en: "Germany" }, 
+      flag: "🇩🇪",
+      pattern: /^1[5-7][0-9]{8,9}$/
+    },
+    { 
+      code: "+39", 
+      name: { he: "איטליה", en: "Italy" }, 
+      flag: "🇮🇹",
+      pattern: /^3[0-9]{8,9}$/
+    },
+    { 
+      code: "+34", 
+      name: { he: "ספרד", en: "Spain" }, 
+      flag: "🇪🇸",
+      pattern: /^[67][0-9]{8}$/
+    },
+    { 
+      code: "+31", 
+      name: { he: "הולנד", en: "Netherlands" }, 
+      flag: "🇳🇱",
+      pattern: /^6[0-9]{8}$/
+    },
+    { 
+      code: "+41", 
+      name: { he: "שוויץ", en: "Switzerland" }, 
+      flag: "🇨🇭",
+      pattern: /^7[0-9]{8}$/
+    },
+    { 
+      code: "+43", 
+      name: { he: "אוסטריה", en: "Austria" }, 
+      flag: "🇦🇹",
+      pattern: /^6[0-9]{8,10}$/
+    },
+  ];
   
   // Load saved data on mount
   useEffect(() => {
@@ -54,9 +119,10 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
     }
     
     // Save form data for future use
+    const phoneData = formData.phone ? `${formData.countryCode}${formData.phone.replace(/^0/, '')}` : '';
     saveDownloadFormData({
       email: formData.email,
-      phone: formData.phone
+      phone: phoneData
     });
     
     setStep('quality');
@@ -107,12 +173,12 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
   const handleClose = () => {
     onClose();
     setStep('contact');
-    setFormData({ email: "", phone: "", quality: "high" });
+    setFormData({ email: "", phone: "", countryCode: "+972", quality: "high" });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[400px] border-none bg-background/95 backdrop-blur-sm">
+      <DialogContent className="sm:max-w-[400px] border-none bg-background/95 backdrop-blur-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
         <DialogHeader className="text-center space-y-4">
           {step === 'contact' && (
             <>
@@ -143,7 +209,8 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                      value={formData.email}
                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                      placeholder="example@email.com"
-                     className="text-right"
+                     className={language === 'he' ? 'text-right' : 'text-left'}
+                     dir="ltr"
                    />
                  </div>
                  
@@ -152,14 +219,36 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                      <Phone className="h-4 w-4" />
                      {t('downloadModal.phoneOptional')}
                    </Label>
-                   <Input
-                     id="phone"
-                     type="tel"
-                     value={formData.phone}
-                     onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                     placeholder="05X-XXXXXXX"
-                     className="text-right"
-                   />
+                   <div className="flex gap-2" dir="ltr">
+                     <Select value={formData.countryCode} onValueChange={(value) => setFormData(prev => ({ ...prev, countryCode: value }))}>
+                       <SelectTrigger className="w-32">
+                         <SelectValue />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {countries.map((country) => (
+                           <SelectItem key={country.code} value={country.code}>
+                             <div className="flex items-center gap-2">
+                               <span>{country.flag}</span>
+                               <span>{country.code}</span>
+                               <span className="text-sm text-muted-foreground">
+                                 {country.name[language as keyof typeof country.name]}
+                               </span>
+                             </div>
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                     
+                     <Input
+                       id="phone"
+                       type="tel"
+                       value={formData.phone}
+                       onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                       placeholder={t('auth.enterPhone')}
+                       className="flex-1"
+                       dir="ltr"
+                     />
+                   </div>
                  </div>
                  
                  <p className="text-xs text-muted-foreground text-center">

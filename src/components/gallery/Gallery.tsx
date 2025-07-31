@@ -14,9 +14,11 @@ interface GalleryProps {
   images: GalleryImage[];
   favoriteImages: Set<string>;
   onToggleFavorite: (imageId: string) => void;
+  galleryType?: 'all' | 'my' | 'favorites';
+  onAlbumClick?: (albumId: string) => void;
 }
 
-export const Gallery = ({ event, images, favoriteImages, onToggleFavorite }: GalleryProps) => {
+export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galleryType, onAlbumClick }: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [columns, setColumns] = useState(4);
@@ -135,11 +137,21 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite }: Gal
   };
 
   const handleAlbumClick = (albumId: string) => {
-    setSelectedAlbum(albumId);
-    toast({
-      title: "אלבום נבחר",
-      description: `נבחר אלבום: ${albumId}`,
-    });
+    if (onAlbumClick) {
+      onAlbumClick(albumId);
+    } else if (albumId === 'favorites') {
+      // Fallback handling
+      toast({
+        title: "אלבום נבחר",
+        description: "הצגת התמונות הנבחרות שלכם",
+      });
+    } else {
+      setSelectedAlbum(albumId);
+      toast({
+        title: "אלבום נבחר",
+        description: `נבחר אלבום: ${albumId}`,
+      });
+    }
   };
 
   return (
@@ -160,7 +172,14 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite }: Gal
 
       {/* Albums Section */}
       <AlbumSection 
-        albums={[]}
+        albums={[
+          { 
+            id: 'favorites', 
+            name: '❤️ התמונות הנבחרות שלכם', 
+            imageCount: favoriteImages.size,
+            thumbnail: Array.from(favoriteImages)[0] ? images.find(img => img.id === Array.from(favoriteImages)[0])?.src : 'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=300&h=300&fit=crop'
+          }
+        ]}
         onAlbumClick={handleAlbumClick}
       />
 

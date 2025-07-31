@@ -97,6 +97,12 @@ const Index = () => {
     }, 100);
   };
 
+  const handleAlbumClick = (albumId: string) => {
+    if (albumId === 'favorites') {
+      handleViewFavorites();
+    }
+  };
+
   const handleToggleGalleryType = () => {
     // אם המשתמש מנסה לעבור ל"התמונות שלי" בלי להיות מחובר
     if (galleryType === 'all' && !isAuthenticated) {
@@ -205,7 +211,6 @@ const Index = () => {
           event={event}
           onViewAllPhotos={handleViewAllPhotos}
           onViewMyPhotos={handleViewMyPhotos}
-          onViewFavorites={handleViewFavorites}
         />
       {showGallery && (
         <div id="gallery">
@@ -214,6 +219,8 @@ const Index = () => {
             images={filteredImages}
             favoriteImages={favoriteImages}
             onToggleFavorite={handleToggleFavorite}
+            galleryType={galleryType}
+            onAlbumClick={handleAlbumClick}
           />
 
           {showFloatingNavbar && !isLightboxOpen && (

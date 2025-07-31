@@ -150,63 +150,6 @@ export const GalleryImageCard = ({
         <>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-300" />
           
-           {/* Image ID - only show in hover when not favorite button visible */}
-           {!isFavorite && (
-             <div className="absolute top-2 left-2">
-               <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">
-                 ID: {image.id}
-               </div>
-             </div>
-           )}
-
-          {/* Actions menu */}
-          <div className="absolute top-2 right-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className="h-8 w-8 p-0 bg-black/70 backdrop-blur-sm text-white hover:bg-black/90 rounded-md flex items-center justify-center transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  <MoreVertical className="h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="bg-background border border-border shadow-xl"
-                style={{ zIndex: 999999 }}
-                onCloseAutoFocus={(e) => e.preventDefault()}
-                side="bottom"
-                sideOffset={8}
-              >
-                <DropdownMenuItem 
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDownload();
-                  }}
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  הורד תמונה
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCopyLink();
-                  }}
-                >
-                  <Copy className="mr-2 h-4 w-4" />
-                  העתק קישור
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          
           <div className="absolute bottom-2 right-2">
             <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">
               {image.id}

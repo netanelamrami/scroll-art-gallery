@@ -7,7 +7,7 @@ interface Album {
   id: string;
   name: string;
   imageCount: number;
-  thumbnail: string;
+  thumbnail?: string;
 }
 
 interface AlbumSectionProps {

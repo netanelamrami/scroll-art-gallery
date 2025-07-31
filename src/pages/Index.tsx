@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Gallery } from "@/components/gallery/Gallery";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
@@ -11,6 +12,7 @@ import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
+  const { eventId } = useParams();
   const [showGallery, setShowGallery] = useState(false);
   const [galleryType, setGalleryType] = useState<'all' | 'my' | 'favorites'>('all');
   const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
@@ -27,15 +29,21 @@ const Index = () => {
   const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
+    // אם אין eventId ב-URL, נשתמש ב-default
+    const currentEventId = eventId || '614';
+    
     Promise.all([
-      apiService.getEvent(),
-      generateGalleryImages()
+      apiService.getEvent(currentEventId),
+      apiService.getEventImagesFullData(currentEventId)
     ]).then(([eventData, imagesData]) => {
       setEvent(eventData);
       setGalleryImages(imagesData);
       setIsLoading(false);
+    }).catch(error => {
+      console.error('Error loading data:', error);
+      setIsLoading(false);
     });
-  }, []);
+  }, [eventId]);
 
   // Lead generation modal timer - show after 15 seconds if not shown before
   useEffect(() => {

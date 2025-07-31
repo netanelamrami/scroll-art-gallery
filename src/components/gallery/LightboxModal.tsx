@@ -162,10 +162,10 @@ export const LightboxModal = ({
                 onClick={onToggleFavorite}
                 className={cn(
                   "text-foreground hover:bg-accent",
-                  isFavorite ? "text-black" : ""
+                  isFavorite ? "text-black dark:text-white" : ""
                 )}
               >
-                <Star className={cn("h-4 w-4", isFavorite ? "fill-current" : "fill-none")} />
+                <Star className={cn("h-4 w-4", isFavorite ? "fill-black dark:fill-white" : "fill-none")} />
               </Button>
             )}
             

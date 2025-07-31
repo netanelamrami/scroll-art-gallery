@@ -57,8 +57,8 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
   };
 
   return (
-    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 ${className}`}>
-      <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-6 py-3 flex items-center gap-3 ">
+    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`}>
+      <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-3 flex items-center gap-2 overflow-x-auto sm:px-6 sm:gap-3">
         {/* Support */}
  
           <FAQSupportDialog

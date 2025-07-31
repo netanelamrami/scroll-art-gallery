@@ -265,8 +265,6 @@ const Index = () => {
         onClose={handleLeadModalClose}
       />
 
-      {/* Back to Top Button */}
-      <BackToTopButton />
     </div>
   );
 };

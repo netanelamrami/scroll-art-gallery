@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Share2, Images, MessageCircle, QrCode } from 'lucide-react';
+import { Share2, Images, MessageCircle, QrCode, ArrowUp } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { FAQSupportDialog } from './FAQSupportDialog';
@@ -22,6 +22,18 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
   const { toast } = useToast();
   const { t } = useLanguage();
   const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Track scroll to show/hide back to top button
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setShowBackToTop(scrollTop > 500);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const questions: question[] = [
     { title: "איך מעלים תמונה?", answer: "לחץ על כפתור ההעלאה ובחר קובץ מהמכשיר." },
@@ -56,12 +68,27 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
     });
   };
 
+  const scrollToGallery = () => {
+    const galleryElement = document.getElementById('gallery');
+    if (galleryElement) {
+      galleryElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    } else {
+      // Fallback to top if gallery not found
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`}>
       <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-3 flex items-center gap-2 overflow-x-auto sm:px-6 sm:gap-3">
         {/* Support */}
- 
-          <FAQSupportDialog
+        <FAQSupportDialog
           isOpen={isSupportOpen}
           setIsOpen={setIsSupportOpen}
           questions={questions}
@@ -78,6 +105,19 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
           <Images className="h-4 w-4 ml-2" />
           {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : 'נבחרות'}
         </Button>
+
+        {/* Back to Top Button - Only show when scrolled down */}
+        {showBackToTop && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={scrollToGallery}
+            className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-3 sm:py-2 transition-all duration-300"
+            title="חזרה למעלה"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+        )}
 
         {/* Share Event */}
         <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>

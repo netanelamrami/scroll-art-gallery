@@ -44,16 +44,22 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   const handleAlbumDownload = (albumId: string, imageCount: number) => {
     // Get album name for display
     let albumName = "";
+    let albumImages: GalleryImage[] = [];
+    
     if (albumId === 'favorites') {
       albumName = "נבחרות";
+      // For favorites, use a subset of images as mock data
+      albumImages = allImages.slice(0, Math.min(imageCount, allImages.length));
     } else {
       const album = otherAlbums.find(a => a.id === albumId);
       albumName = album?.name || "אלבום";
+      // Filter images by album ID - mock filtering logic
+      const albumIndex = otherAlbums.findIndex(a => a.id === albumId);
+      albumImages = allImages.filter((_, index) => {
+        return index % otherAlbums.length === albumIndex;
+      }).slice(0, Math.min(imageCount, allImages.length));
     }
     
-    // For now, use all images as album images
-    // You can customize this to filter by album later
-    const albumImages = allImages; 
     setDownloadAlbumImages(albumImages);
     setDownloadAlbumName(albumName);
     setShowDownloadModal(true);

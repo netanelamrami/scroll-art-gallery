@@ -23,28 +23,31 @@ export const MasonryGrid = ({
   favoriteImages = new Set(),
   onToggleFavorite
 }: MasonryGridProps) => {
-  // אלגוריתם מאוזן פשוט - לוקח בחשבון גובה אמיתי של תמונות
+  // אלגוריתם מאוזן משופר - מחשב גובה אמיתי ומאזן טוב יותר
   const distributeImagesBalanced = (images: GalleryImage[], numColumns: number) => {
     const columnArrays = Array.from({ length: numColumns }, () => [] as GalleryImage[]);
     const columnHeights = Array.from({ length: numColumns }, () => 0);
 
     images.forEach((image) => {
-      // חישוב גובה אמיתי של התמונה
-      const baseWidth = 300; // רוחב בסיס
-      let actualHeight = 400; // ברירת מחדל לתמונה ריבועית
+      // חישוב גובה אמיתי של התמונה בהתבסס על רוחב קבוע
+      const baseWidth = 300; // רוחב קבוע לכל התמונות
+      let actualHeight = 300; // ברירת מחדל ריבועית
       
-      if (image.width && image.height) {
-        // חישוב גובה לפי יחס גובה-רוחב
+      if (image.width && image.height && image.width > 0) {
+        // חישוב גובה לפי יחס האספקט האמיתי
         const aspectRatio = image.height / image.width;
-        actualHeight = baseWidth * aspectRatio;
+        actualHeight = Math.round(baseWidth * aspectRatio);
+        
+        // הגבלת גובה מינימלי ומקסימלי
+        actualHeight = Math.max(200, Math.min(600, actualHeight));
       }
       
-      // מוצא את העמודה עם הגובה הנמוך ביותר
+      // מציאת העמודה הקצרה ביותר
       const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
       
-      // מוסיף את התמונה לעמודה הקצרה ביותר
+      // הוספת התמונה לעמודה הקצרה ביותר
       columnArrays[shortestColumnIndex].push(image);
-      columnHeights[shortestColumnIndex] += actualHeight + 8; // +8 עבור מרווח
+      columnHeights[shortestColumnIndex] += actualHeight + 8; // +8 עבור מרווח בין תמונות
     });
 
     return columnArrays;

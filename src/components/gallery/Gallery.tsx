@@ -248,16 +248,8 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
         {displayedImagesCount < images.length && (
           <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
             {isLoadingMore ? (
-              <div className="space-y-4 w-full">
-                <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-                  {Array.from({ length: columns }).map((_, colIndex) => (
-                    <div key={colIndex} className="space-y-1">
-                      {Array.from({ length: 3 }).map((_, rowIndex) => (
-                        <Skeleton key={rowIndex} className="w-full h-48 rounded-lg" />
-                      ))}
-                    </div>
-                  ))}
-                </div>
+              <div className="flex flex-col items-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-black"></div>
                 <div className="text-center text-muted-foreground">
                   טוען עוד תמונות...
                 </div>

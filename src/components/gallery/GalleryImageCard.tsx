@@ -138,7 +138,7 @@ export const GalleryImageCard = ({
             <Star 
               className={cn(
                 "h-2.5 w-2.5 transition-all",
-                isFavorite ? "fill-current" : "fill-none"
+                isFavorite ? "fill-current" : "fill-none group-hover:fill-current"
               )} 
             />
           </Button>

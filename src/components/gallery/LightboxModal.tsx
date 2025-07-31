@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
 import { toast } from "@/hooks/use-toast";
@@ -13,6 +13,8 @@ interface LightboxModalProps {
   onClose: () => void;
   onNext: () => void;
   onPrevious: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 export const LightboxModal = ({
@@ -22,6 +24,8 @@ export const LightboxModal = ({
   onClose,
   onNext,
   onPrevious,
+  isFavorite = false,
+  onToggleFavorite,
 }: LightboxModalProps) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -118,6 +122,20 @@ export const LightboxModal = ({
             >
               <Download className="h-4 w-4" />
             </Button>
+            
+            {onToggleFavorite && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onToggleFavorite}
+                className={cn(
+                  "text-foreground hover:bg-accent",
+                  isFavorite ? "text-yellow-500" : ""
+                )}
+              >
+                <Star className={cn("h-4 w-4", isFavorite ? "fill-current" : "fill-none")} />
+              </Button>
+            )}
             
             <Button
               variant="ghost"

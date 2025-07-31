@@ -129,8 +129,7 @@ export const GalleryImageCard = ({
             }}
             className={cn(
               "absolute top-1 right-1 h-5 w-5 p-0 backdrop-blur-sm transition-all duration-200 z-30",
-              "md:opacity-0 md:group-hover:opacity-100", // Desktop: only on hover
-              "opacity-100", // Mobile: always visible
+              "opacity-0 group-hover:opacity-100", // Show only on hover for all devices
               isFavorite 
                 ? "bg-yellow-500/90 hover:bg-yellow-500 text-white" 
                 : "bg-black/20 hover:bg-black/40 text-white border border-white/20"

@@ -219,6 +219,8 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
           onClose={handleCloseLightbox}
           onNext={handleNextImage}
           onPrevious={handlePreviousImage}
+          isFavorite={selectedImageIndex !== null ? favoriteImages.has(images[selectedImageIndex]?.id) : false}
+          onToggleFavorite={selectedImageIndex !== null ? () => onToggleFavorite(images[selectedImageIndex].id) : undefined}
         />
       )}
 

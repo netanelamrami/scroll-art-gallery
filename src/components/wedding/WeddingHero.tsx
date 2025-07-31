@@ -14,6 +14,22 @@ interface WeddingHeroProps {
 export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos }: WeddingHeroProps) => {
   const { t } = useLanguage();
 
+  // Return loading skeleton if event data is not yet loaded
+  if (!event) {
+    return (
+      <div className="relative h-screen w-full overflow-hidden bg-muted animate-pulse">
+        <div className="absolute inset-0 bg-gradient-to-b from-muted to-muted-foreground/20" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-end text-center px-4 pb-24">
+          <div className="mb-4 h-12 w-64 bg-muted-foreground/20 rounded animate-pulse" />
+          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
+            <div className="h-12 bg-muted-foreground/20 rounded flex-1 animate-pulse" />
+            <div className="h-12 bg-muted-foreground/20 rounded flex-1 animate-pulse" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   console.log(event)
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -43,7 +59,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos }: WeddingH
         {/* Names */}
         <div className="mb-4">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 tracking-wide">
-            {event?.name}
+            {event?.name || 'Loading...'}
           </h1>
           {/* <p className="text-xl md:text-2xl text-white/90 font-light">
             15.06.2024
@@ -66,8 +82,8 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos }: WeddingH
             className="border-white bg-white/10 text-white hover:bg-white/20 backdrop-blur-md px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px]"
           >
           {t('en') === 'en'
-            ? event.btFaceRecognitionTextEN
-            : event.btFaceRecognitionText}
+            ? (event?.btFaceRecognitionTextEN || t('auth.takeSelfie'))
+            : (event?.btFaceRecognitionText || t('auth.takeSelfie'))}
             <Users className="w-5 h-5 mr-2" />
         </Button>
 

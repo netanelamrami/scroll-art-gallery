@@ -122,9 +122,13 @@ export const GalleryImageCard = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={handleFavoriteClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              handleFavoriteClick(e);
+            }}
             className={cn(
-              "absolute top-1 right-1 h-5 w-5 p-0 backdrop-blur-sm transition-all duration-200",
+              "absolute top-1 right-1 h-5 w-5 p-0 backdrop-blur-sm transition-all duration-200 z-30",
               "md:opacity-0 md:group-hover:opacity-100", // Desktop: only on hover
               "opacity-100", // Mobile: always visible
               isFavorite 

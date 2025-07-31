@@ -21,6 +21,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [favoriteImages, setFavoriteImages] = useState<Set<string>>(new Set());
+  const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
 
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -98,8 +99,18 @@ const Index = () => {
   };
 
   const handleAlbumClick = (albumId: string) => {
+    setSelectedAlbum(albumId);
     if (albumId === 'favorites') {
       handleViewFavorites();
+    } else {
+      // For other albums, show all images for now
+      setGalleryType('all');
+      setShowGallery(true);
+      setTimeout(() => {
+        document.getElementById('gallery')?.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }, 100);
     }
   };
 
@@ -178,14 +189,19 @@ const Index = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [showGallery]);
 
-  // Filter images based on gallery type
-  const filteredImages = galleryType === 'all' 
-    ? galleryImages 
-    : galleryType === 'favorites'
-      ? galleryImages.filter(img => favoriteImages.has(img.id))
-      : isAuthenticated 
-        ? galleryImages.filter(img => img.id.includes('couple')) // Mock filter for authenticated user's photos
-        : [];
+  // Filter images based on gallery type and selected album
+  const filteredImages = (() => {
+    let baseImages = galleryImages;
+    
+    if (galleryType === 'favorites') {
+      baseImages = galleryImages.filter(img => favoriteImages.has(img.id));
+    } else if (galleryType === 'my' && isAuthenticated) {
+      baseImages = galleryImages.filter(img => img.id.includes('couple'));
+    }
+    
+    // For now, all albums show all images (you can customize this later)
+    return baseImages;
+  })();
 
   // Show loading skeleton while data is loading
   if (isLoading) {
@@ -221,6 +237,7 @@ const Index = () => {
             onToggleFavorite={handleToggleFavorite}
             galleryType={galleryType}
             onAlbumClick={handleAlbumClick}
+            selectedAlbum={selectedAlbum}
           />
 
           {showFloatingNavbar && !isLightboxOpen && (

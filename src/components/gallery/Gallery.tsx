@@ -16,15 +16,16 @@ interface GalleryProps {
   onToggleFavorite: (imageId: string) => void;
   galleryType?: 'all' | 'my' | 'favorites';
   onAlbumClick?: (albumId: string) => void;
+  selectedAlbum?: string | null;
 }
 
-export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galleryType, onAlbumClick }: GalleryProps) => {
+export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galleryType, onAlbumClick, selectedAlbum }: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [columns, setColumns] = useState(4);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
-  const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
+  const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
   // Responsive columns based on screen size
@@ -146,7 +147,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
         description: "הצגת התמונות הנבחרות שלכם",
       });
     } else {
-      setSelectedAlbum(albumId);
+      setLocalSelectedAlbum(albumId);
       toast({
         title: "אלבום נבחר",
         description: `נבחר אלבום: ${albumId}`,
@@ -181,6 +182,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
           }
         ]}
         onAlbumClick={handleAlbumClick}
+        selectedAlbum={selectedAlbum}
       />
 
       {/* Gallery Grid */}

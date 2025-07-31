@@ -37,7 +37,21 @@ const Index = () => {
       apiService.getEventImagesFullData(currentEventLink)
     ]).then(([eventData, imagesData]) => {
       setEvent(eventData);
-      setGalleryImages(imagesData);
+      
+      // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
+      const formattedImages = imagesData.map((imageData: any, index: number) => ({
+        id: imageData.name || `image-${index}`,
+        src: imageData.smallUrl,
+        mediumSrc: imageData.medUrl,
+        largeSrc: imageData.largeUrl,
+        alt: `Gallery image ${index + 1}`,
+        size: 'medium' as const,
+        width: 400,
+        height: 300,
+        albumId: imageData.albomId?.toString() || 'main'
+      }));
+      
+      setGalleryImages(formattedImages);
       setIsLoading(false);
     }).catch(error => {
       console.error('Error loading data:', error);

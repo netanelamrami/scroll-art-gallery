@@ -80,6 +80,20 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos }: WeddingH
           </Button>
         </div>
 
+        {/* Privacy Agreement */}
+        <div className="mt-6 text-center">
+          <p className="text-xs text-white/70 max-w-sm mx-auto leading-relaxed">
+            על ידי שימוש באתר אני מאשר/ת את{' '}
+            <button className="underline hover:text-white/90 transition-colors">
+              תנאי השימוש
+            </button>
+            {' '}ו
+            <button className="underline hover:text-white/90 transition-colors">
+              מדיניות הפרטיות
+            </button>
+          </p>
+        </div>
+
         {/* Scroll Indicator */}
         {/* <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">

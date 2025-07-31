@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
 import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star } from "lucide-react";
@@ -30,6 +30,8 @@ export const LightboxModal = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   const currentImage = images[currentIndex];
 
@@ -71,6 +73,36 @@ export const LightboxModal = ({
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
+
+  // Touch handlers for swipe gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    
+    const deltaX = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0 && currentIndex < images.length - 1) {
+        // Swipe left - next image
+        onNext();
+      } else if (deltaX < 0 && currentIndex > 0) {
+        // Swipe right - previous image
+        onPrevious();
+      }
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
 
   if (!isOpen || !currentImage) return null;
 
@@ -176,6 +208,9 @@ export const LightboxModal = ({
       <div
         className="absolute inset-0 flex items-center justify-center p-4 cursor-pointer"
         onClick={onClose}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <div
           className={cn(

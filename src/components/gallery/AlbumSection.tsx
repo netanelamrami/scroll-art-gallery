@@ -166,7 +166,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute top-1 right-1 h-6 w-6 p-0 bg-black/20 hover:bg-black/40 backdrop-blur-sm"
+                className="absolute top-2 right-2 h-6 w-6 p-0 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleAlbumDownload('favorites', favoritesAlbum.imageCount);
@@ -206,7 +206,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute top-1 right-1 h-6 w-6 p-0 bg-black/20 hover:bg-black/40 backdrop-blur-sm"
+                className="absolute top-2 right-2 h-6 w-6 p-0 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleAlbumDownload(album.id, album.imageCount);

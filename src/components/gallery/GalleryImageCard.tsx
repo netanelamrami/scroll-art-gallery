@@ -131,7 +131,7 @@ export const GalleryImageCard = ({
               "absolute top-1 right-1 h-5 w-5 p-0 backdrop-blur-sm transition-all duration-200 z-30",
               "opacity-0 group-hover:opacity-100", // Show only on hover for all devices
               isFavorite 
-                ? "bg-yellow-500/90 hover:bg-yellow-500 text-white" 
+                ? "bg-black/80 hover:bg-black text-white" 
                 : "bg-black/20 hover:bg-black/40 text-white border border-white/20"
             )}
           >

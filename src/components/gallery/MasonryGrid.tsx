@@ -23,16 +23,30 @@ export const MasonryGrid = ({
   favoriteImages = new Set(),
   onToggleFavorite
 }: MasonryGridProps) => {
-  // אלגוריתם חלוקה סיבובית פשוטה - מבטיח איזון מושלם
+  // אלגוריתם מאוזן פשוט - לוקח בחשבון גובה אמיתי של תמונות
   const distributeImagesBalanced = (images: GalleryImage[], numColumns: number) => {
     const columnArrays = Array.from({ length: numColumns }, () => [] as GalleryImage[]);
-    
-    // חלוקה סיבובית פשוטה - כל תמונה הולכת לעמודה הבאה ברצף
-    images.forEach((image, index) => {
-      const columnIndex = index % numColumns;
-      columnArrays[columnIndex].push(image);
+    const columnHeights = Array.from({ length: numColumns }, () => 0);
+
+    images.forEach((image) => {
+      // חישוב גובה אמיתי של התמונה
+      const baseWidth = 300; // רוחב בסיס
+      let actualHeight = 400; // ברירת מחדל לתמונה ריבועית
+      
+      if (image.width && image.height) {
+        // חישוב גובה לפי יחס גובה-רוחב
+        const aspectRatio = image.height / image.width;
+        actualHeight = baseWidth * aspectRatio;
+      }
+      
+      // מוצא את העמודה עם הגובה הנמוך ביותר
+      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+      
+      // מוסיף את התמונה לעמודה הקצרה ביותר
+      columnArrays[shortestColumnIndex].push(image);
+      columnHeights[shortestColumnIndex] += actualHeight + 8; // +8 עבור מרווח
     });
-    
+
     return columnArrays;
   };
 

@@ -34,6 +34,7 @@ const translations = {
     'navbar.allPhotos': 'כל התמונות',
     'navbar.myPhotos': 'התמונות שלי',
     'navbar.shareEvent': 'שתף אירוע',
+    'navbar.shareEventMobile': 'שתף',
     
     // Share Dialog
     'share.title': 'שתף את הגלריה',
@@ -151,6 +152,7 @@ const translations = {
     'navbar.allPhotos': 'All Photos',
     'navbar.myPhotos': 'My Photos',
     'navbar.shareEvent': 'Share Event',
+    'navbar.shareEventMobile': 'Share',
     
     // Share Dialog
     'share.title': 'Share Gallery',

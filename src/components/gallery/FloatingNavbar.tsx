@@ -121,7 +121,8 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
               className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-4 sm:py-2"
             >
               <Share2 className="h-4 w-4 ml-2" />
-              {t('navbar.shareEvent')}
+              <span className="hidden sm:inline">{t('navbar.shareEvent')}</span>
+              <span className="sm:hidden">{t('navbar.shareEventMobile')}</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">

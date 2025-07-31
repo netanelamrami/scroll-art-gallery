@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface LeadGenerationModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface LeadGenerationModalProps {
 
 export const LeadGenerationModal = ({ isOpen, onClose }: LeadGenerationModalProps) => {
   const [showForm, setShowForm] = useState(false);
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -26,8 +28,8 @@ export const LeadGenerationModal = ({ isOpen, onClose }: LeadGenerationModalProp
 
   const handleNotLiked = () => {
     toast({
-      title: "תודה על המשוב!",
-      description: "נשמח לשמוע מכם בעתיד ולעזור בכל שאלה"
+      title: t('leads.thanksFeedback'),
+      description: t('leads.futureHelp')
     });
     onClose();
   };
@@ -40,16 +42,16 @@ export const LeadGenerationModal = ({ isOpen, onClose }: LeadGenerationModalProp
       // await apiService.submitLead(formData);
       
       toast({
-        title: "תודה רבה!",
-        description: "הפרטים נשמרו בהצלחה, נחזור אליכם בהקדם ❤️"
+        title: t('leads.thankYou'),
+        description: t('leads.detailsSaved')
       });
       onClose();
       setShowForm(false);
       setFormData({ name: "", phone: "", message: "" });
     } catch (error) {
       toast({
-        title: "שגיאה",
-        description: "אירעה שגיאה בשמירת הפרטים, נסו שוב",
+        title: t('toast.error.title'),
+        description: t('leads.saveError'),
         variant: "destructive"
       });
     }
@@ -71,9 +73,9 @@ export const LeadGenerationModal = ({ isOpen, onClose }: LeadGenerationModalProp
               <div className="flex justify-center">
                 <Heart className="h-8 w-8 text-primary animate-pulse" />
               </div>
-              <DialogTitle className="text-xl">אהבתם את השירות שלנו?</DialogTitle>
+              <DialogTitle className="text-xl">{t('leads.likedService')}</DialogTitle>
               <DialogDescription className="text-base">
-                יש לכם אירוע בקרוב? נשמח לעזור לכם ליצור זיכרונות מושלמים!
+                {t('leads.upcomingEvent')}
               </DialogDescription>
               
               <div className="flex gap-3 pt-4">
@@ -81,75 +83,75 @@ export const LeadGenerationModal = ({ isOpen, onClose }: LeadGenerationModalProp
                   onClick={handleLiked}
                   className="flex-1 bg-primary hover:bg-primary/90"
                 >
-                  כן! יש לנו אירוע 🎉
+                  {t('leads.yesEvent')}
                 </Button>
                 <Button 
                   onClick={handleNotLiked}
                   variant="outline"
                   className="flex-1"
                 >
-                  לא בזמן הקרוב
+                  {t('leads.notSoon')}
                 </Button>
               </div>
             </>
           ) : (
             <>
-              <DialogTitle className="text-xl">בואו נדבר! 📞</DialogTitle>
+              <DialogTitle className="text-xl">{t('leads.letsTalk')}</DialogTitle>
               <DialogDescription className="text-base">
-                השאירו פרטים ונחזור אליכם עם הצעה מיוחדת לאירוע שלכם
+                {t('leads.leaveDetails')}
               </DialogDescription>
               
               <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">שם מלא</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="השם שלכם"
-                    required
-                    className="text-right"
-                  />
-                </div>
+                 <div className="space-y-2">
+                   <Label htmlFor="name">{t('leads.fullName')}</Label>
+                   <Input
+                     id="name"
+                     value={formData.name}
+                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                     placeholder={t('leads.fullNamePlaceholder')}
+                     required
+                     className="text-right"
+                   />
+                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">טלפון</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    placeholder="05X-XXXXXXX"
-                    required
-                    className="text-right"
-                  />
-                </div>
+                 <div className="space-y-2">
+                   <Label htmlFor="phone">{t('leads.phone')}</Label>
+                   <Input
+                     id="phone"
+                     type="tel"
+                     value={formData.phone}
+                     onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                     placeholder="05X-XXXXXXX"
+                     required
+                     className="text-right"
+                   />
+                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="message">איזה סוג אירוע? (אופציונלי)</Label>
-                  <Textarea
-                    id="message"
-                    value={formData.message}
-                    onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                    placeholder="חתונה, בר/בת מצווה, יום הולדת, אירוע עסקי..."
-                    className="text-right resize-none"
-                    rows={3}
-                  />
-                </div>
+                 <div className="space-y-2">
+                   <Label htmlFor="message">{t('leads.eventType')}</Label>
+                   <Textarea
+                     id="message"
+                     value={formData.message}
+                     onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                     placeholder={t('leads.eventTypePlaceholder')}
+                     className="text-right resize-none"
+                     rows={3}
+                   />
+                 </div>
                 
-                <div className="flex gap-3 pt-2">
-                  <Button type="submit" className="flex-1">
-                    שלח וקבל הצעה 🎯
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => setShowForm(false)}
-                    className="flex-1"
-                  >
-                    חזור
-                  </Button>
-                </div>
+                 <div className="flex gap-3 pt-2">
+                   <Button type="submit" className="flex-1">
+                     {t('leads.sendOffer')}
+                   </Button>
+                   <Button 
+                     type="button" 
+                     variant="outline" 
+                     onClick={() => setShowForm(false)}
+                     className="flex-1"
+                   >
+                     {t('common.back')}
+                   </Button>
+                 </div>
               </form>
             </>
           )}

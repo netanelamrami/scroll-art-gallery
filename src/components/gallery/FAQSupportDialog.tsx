@@ -56,8 +56,8 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
             &times;
           </button>
           {/* כותרות */}
-          <h3 className="font-bold text-lg mt-4 mb-1">תמיכה לאורחים</h3>
-          <h4 className="mb-4 text-base">שאלות נפוצות ומענה מהיר</h4>
+          <h3 className="font-bold text-lg mt-4 mb-1">{t('support.guestSupport')}</h3>
+          <h4 className="mb-4 text-base">{t('support.faqAndQuickHelp')}</h4>
           {/* שאלות ותשובות */}
           <div className="w-full">
             {faq.map((question, idx) => (
@@ -82,16 +82,16 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
           {/* וואטסאפ */}
           <div className="flex items-center mt-6 w-full gap-4">
             <a
-              href={`https://wa.me/585500232?text=יש+לי+שאלה+בנוגע+למערכת+%0Aשם+האירוע:+${encodeURIComponent(event.name)}%0Aמזהה+אירוע:+${encodeURIComponent(event.id.toString())}`}
+              href={`https://wa.me/585500232?text=${t('support.whatsappMessage')}%0A${t('support.eventName')}:+${encodeURIComponent(event.name)}%0A${t('support.eventId')}:+${encodeURIComponent(event.id.toString())}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2"
             >
               <img src="/whatapp-icon.png" alt="whatsapp" width={36} />
               <div>
-                <span>לא מצאת תשובה?</span>
+                <span>{t('support.noAnswer')}</span>
                 <br />
-                <strong>צור קשר בוואטסאפ</strong>
+                <strong>{t('support.contactWhatsapp')}</strong>
               </div>
             </a>
             <a
@@ -102,7 +102,7 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
             >
               <img src="/atar.svg" alt="web" width={40} />
               <div>
-                <span>מידע נוסף באתר</span>
+                <span>{t('support.moreInfo')}</span>
                 <br />
                 <strong>Pixshare-ai.com</strong>
               </div>
@@ -111,11 +111,11 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
           {/* תחתית */}
           <div className="mt-4 text-xs opacity-80">
             <a className="underline mx-1" href="https://www.pixshare.live/takanon" target="_blank" rel="noopener noreferrer">
-              תקנון
+              {t('support.terms')}
             </a>
             |
             <a className="underline mx-1" href="https://www.pixshare.live/privacy" target="_blank" rel="noopener noreferrer">
-              פרטיות
+              {t('support.privacy')}
             </a>
           </div>
         </div>

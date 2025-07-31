@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Download, Mail, Phone, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 import { getDownloadFormData, saveDownloadFormData, downloadMultipleImages } from "@/utils/downloadUtils";
 import { GalleryImage } from "@/types/gallery";
 
@@ -20,6 +21,7 @@ interface DownloadModalProps {
 
 export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false, albumName }: DownloadModalProps) => {
   const [step, setStep] = useState<'contact' | 'quality' | 'success'>('contact');
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
@@ -44,8 +46,8 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
     e.preventDefault();
     if (!formData.email && !formData.phone) {
       toast({
-        title: "שגיאה",
-        description: "אנא הזינו טלפון או מייל",
+        title: t('toast.error.title'),
+        description: t('downloadModal.contactRequired'),
         variant: "destructive"
       });
       return;
@@ -72,13 +74,13 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
         
         if (success) {
           toast({
-            title: "הורדה הושלמה!",
-            description: `${imageCount} תמונות הורדו בהצלחה`,
+            title: t('downloadModal.downloadComplete'),
+            description: `${imageCount} ${t('downloadModal.photosDownloaded')}`,
           });
         } else {
           toast({
-            title: "שגיאה חלקית",
-            description: "חלק מהתמונות לא הורדו, נסו שוב",
+            title: t('downloadModal.partialError'),
+            description: t('downloadModal.partialErrorDesc'),
             variant: "destructive"
           });
         }
@@ -95,8 +97,8 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
       }, 3000);
     } catch (error) {
       toast({
-        title: "שגיאה",
-        description: "אירעה שגיאה בהורדת התמונות, נסו שוב",
+        title: t('toast.error.title'),
+        description: t('downloadModal.downloadError'),
         variant: "destructive"
       });
     }
@@ -118,56 +120,56 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                 <Download className="h-8 w-8 text-primary" />
               </div>
               <DialogTitle className="text-xl">
-                {albumName ? `הורדת אלבום ${albumName}` : "הורדת כל התמונות"}
+                {albumName ? `${t('downloadModal.albumDownload')} ${albumName}` : t('downloadModal.allPhotosDownload')}
               </DialogTitle>
               <DialogDescription className="text-base">
-                {imageCount} תמונות ממתינות לכם!
+                {imageCount} {t('downloadModal.photosWaiting')}
                 <br />
                 {imageCount <= 20 
-                  ? "התמונות יורדו ישירות למכשיר שלכם"
-                  : "השאירו פרטים ונשלח לכם קישור להורדה כשהתמונות מוכנות"
+                  ? t('downloadModal.directDownload')
+                  : t('downloadModal.linkDownload')
                 }
               </DialogDescription>
               
-              <form onSubmit={handleContactSubmit} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    מייל (אופציונלי)
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    placeholder="example@email.com"
-                    className="text-right"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="flex items-center gap-2">
-                    <Phone className="h-4 w-4" />
-                    טלפון (אופציונלי)
-                  </Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    placeholder="05X-XXXXXXX"
-                    className="text-right"
-                  />
-                </div>
-                
-                <p className="text-xs text-muted-foreground text-center">
-                  * נדרש לפחות אחד מהפרטים לשליחת הקישור
-                </p>
-                
-                <Button type="submit" className="w-full">
-                  {imageCount <= 20 ? "המשך להורדה" : "המשך לבחירת איכות"}
-                </Button>
-              </form>
+               <form onSubmit={handleContactSubmit} className="space-y-4 pt-4">
+                 <div className="space-y-2">
+                   <Label htmlFor="email" className="flex items-center gap-2">
+                     <Mail className="h-4 w-4" />
+                     {t('downloadModal.emailOptional')}
+                   </Label>
+                   <Input
+                     id="email"
+                     type="email"
+                     value={formData.email}
+                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                     placeholder="example@email.com"
+                     className="text-right"
+                   />
+                 </div>
+                 
+                 <div className="space-y-2">
+                   <Label htmlFor="phone" className="flex items-center gap-2">
+                     <Phone className="h-4 w-4" />
+                     {t('downloadModal.phoneOptional')}
+                   </Label>
+                   <Input
+                     id="phone"
+                     type="tel"
+                     value={formData.phone}
+                     onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                     placeholder="05X-XXXXXXX"
+                     className="text-right"
+                   />
+                 </div>
+                 
+                 <p className="text-xs text-muted-foreground text-center">
+                   {t('downloadModal.contactNote')}
+                 </p>
+                 
+                 <Button type="submit" className="w-full">
+                   {imageCount <= 20 ? t('downloadModal.continueDownload') : t('downloadModal.continueQuality')}
+                 </Button>
+               </form>
             </>
           )}
 
@@ -176,9 +178,9 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
               <div className="flex justify-center">
                 <Download className="h-8 w-8 text-primary" />
               </div>
-              <DialogTitle className="text-xl">בחירת איכות התמונות</DialogTitle>
+              <DialogTitle className="text-xl">{t('downloadModal.qualityTitle')}</DialogTitle>
               <DialogDescription className="text-base">
-                איזו איכות תמונות תעדיפו?
+                {t('downloadModal.qualityQuestion')}
               </DialogDescription>
               
               <div className="space-y-4 pt-4">
@@ -190,9 +192,9 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                   <div className="flex items-center space-x-2 p-3 rounded-lg border hover:bg-accent">
                     <RadioGroupItem value="high" id="high" />
                     <Label htmlFor="high" className="flex-1 cursor-pointer">
-                      <div className="font-medium">איכות גבוהה</div>
+                      <div className="font-medium">{t('downloadModal.highQuality')}</div>
                       <div className="text-sm text-muted-foreground">
-                        מתאים להדפסה ועריכה (קובץ גדול יותר)
+                        {t('downloadModal.highQualityDesc')}
                       </div>
                     </Label>
                   </div>
@@ -200,26 +202,26 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                   <div className="flex items-center space-x-2 p-3 rounded-lg border hover:bg-accent">
                     <RadioGroupItem value="web" id="web" />
                     <Label htmlFor="web" className="flex-1 cursor-pointer">
-                      <div className="font-medium">איכות אינטרנט</div>
+                      <div className="font-medium">{t('downloadModal.webQuality')}</div>
                       <div className="text-sm text-muted-foreground">
-                        מתאים לשיתוף ברשתות (הורדה מהירה יותר)
+                        {t('downloadModal.webQualityDesc')}
                       </div>
                     </Label>
                   </div>
                 </RadioGroup>
                 
-                <div className="flex gap-3 pt-2">
-                <Button onClick={handleQualitySubmit} className="flex-1">
-                  {imageCount <= 20 ? "הורד עכשיו" : "שלח בקשה"}
-                </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setStep('contact')}
-                    className="flex-1"
-                  >
-                    חזור
-                  </Button>
-                </div>
+                 <div className="flex gap-3 pt-2">
+                 <Button onClick={handleQualitySubmit} className="flex-1">
+                   {imageCount <= 20 ? t('downloadModal.downloadNow') : t('downloadModal.sendRequest')}
+                 </Button>
+                   <Button 
+                     variant="outline" 
+                     onClick={() => setStep('contact')}
+                     className="flex-1"
+                   >
+                     {t('common.back')}
+                   </Button>
+                 </div>
               </div>
             </>
           )}
@@ -230,25 +232,25 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                 <CheckCircle className="h-12 w-12 text-green-500" />
               </div>
               <DialogTitle className="text-xl">
-                {imageCount <= 20 ? "ההורדה החלה!" : "הבקשה נשלחה בהצלחה!"}
+                {imageCount <= 20 ? t('downloadModal.downloadStarted') : t('downloadModal.requestSent')}
               </DialogTitle>
               <DialogDescription className="text-base">
                 {imageCount <= 20 ? (
                   <>
-                    התמונות מורדות למכשיר שלכם.
+                    {t('downloadModal.downloadingToDevice')}
                     <br />
                     <span className="text-sm text-muted-foreground">
-                      (חלון זה ייסגר אוטומטית)
+                      {t('downloadModal.autoClose')}
                     </span>
                   </>
                 ) : (
                   <>
-                    תהליך הכנת התמונות החל.
+                    {t('downloadModal.processingStarted')}
                     <br />
-                    נשלח לכם קישור להורדה תוך מספר דקות.
+                    {t('downloadModal.linkSoon')}
                     <br />
                     <span className="text-sm text-muted-foreground">
-                      (חלון זה ייסגר אוטומטית)
+                      {t('downloadModal.autoClose')}
                     </span>
                   </>
                 )}

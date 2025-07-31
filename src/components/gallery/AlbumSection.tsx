@@ -91,10 +91,13 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
             const visibleCount = window.innerWidth >= 768 ? 4 : 2; // More albums on larger screens
             let albumsToShow = [...otherAlbums];
             
-            // If an album is selected and it's not in the first visible albums, bring it to front
+            // If an album is selected and it's NOT in the first visible albums, bring it to front
             if (selectedAlbum && selectedAlbum !== 'favorites') {
               const selectedAlbumData = otherAlbums.find(album => album.id === selectedAlbum);
-              if (selectedAlbumData) {
+              const selectedAlbumIndex = otherAlbums.findIndex(album => album.id === selectedAlbum);
+              
+              // Only move to front if it's not already in the visible range
+              if (selectedAlbumData && selectedAlbumIndex >= visibleCount) {
                 albumsToShow = albumsToShow.filter(album => album.id !== selectedAlbum);
                 albumsToShow.unshift(selectedAlbumData);
               }

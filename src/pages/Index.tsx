@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { Gallery } from "@/components/gallery/Gallery";
 import { NotificationSubscription } from "@/components/notifications/NotificationSubscription";
@@ -16,6 +16,7 @@ import { BottomMenu } from "@/components/ui/bottom-menu";
 
 const Index = () => {
   const { eventLink } = useParams();
+  const navigate = useNavigate();
   const [showGallery, setShowGallery] = useState(false);
   const [galleryType, setGalleryType] = useState<'all' | 'my' | 'favorites'>('all');
   const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
@@ -47,6 +48,20 @@ const Index = () => {
       apiService.getEvent(currentEventLink),
       apiService.getEventImagesFullData(currentEventLink)
     ]).then(([eventData, imagesData]) => {
+      console.log('Event data:', eventData);
+      
+      // Check if event is not found
+      if (!eventData || eventData.error) {
+        navigate('/event-not-found/' + currentEventLink);
+        return;
+      }
+      
+      // Check if event is inactive or deleted
+      if (eventData.isDeleted === true || eventData.isActive === false) {
+        navigate('/event-inactive/' + currentEventLink);
+        return;
+      }
+      
       setEvent(eventData);
       
       // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
@@ -66,9 +81,10 @@ const Index = () => {
       setIsLoading(false);
     }).catch(error => {
       console.error('Error loading data:', error);
-      setIsLoading(false);
+      // If there's an error, assume event not found
+      navigate('/event-not-found/' + currentEventLink);
     });
-  }, [eventLink]);
+  }, [eventLink, navigate]);
 
   // Lead generation modal timer - show after 15 seconds if not shown before
   useEffect(() => {

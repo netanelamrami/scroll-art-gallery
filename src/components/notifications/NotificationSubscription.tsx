@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { PhoneCountryInput } from "@/components/auth/PhoneCountryInput";
 import { EmailInput } from "@/components/auth/EmailInput";
@@ -7,7 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
 import { Bell, X } from "lucide-react";
 
-type NotificationStep = "collapsed" | "contact" | "otp" | "complete";
+type NotificationStep = "collapsed" | "contact" | "otp" | "complete" | "hidden";
 
 interface NotificationSubscriptionProps {
   event: event;
@@ -22,6 +22,18 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
   const [notifications, setNotifications] = useState(true);
   
   const isEmailMode = event?.registerBy === "Email";
+  
+  
+  // Auto close after 20 seconds
+  useEffect(() => {
+    if (currentStep === "collapsed") {
+      const timer = setTimeout(() => {
+        setCurrentStep("hidden");
+      }, 20000); // 20 שניות
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep]);
 
   const handleContactSubmit = (contact: string, notificationPreference: boolean) => {
     setContactInfo(contact);
@@ -44,9 +56,14 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
     complete: t('notifications.subscribeSuccess')
   };
 
+  
+  if (currentStep === "hidden") {
+    return null;
+  }
+
   if (currentStep === "collapsed") {
     return (
-      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-40 mx-2 max-w-sm w-full">
+      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mx-2 max-w-sm w-full">
         <div className="bg-card border border-accent/50 text-card-foreground rounded-lg shadow-lg p-4 max-w-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

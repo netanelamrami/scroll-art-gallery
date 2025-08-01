@@ -57,7 +57,7 @@ export const GalleryHeader = ({
 
   return (
     <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full">
-      <div className="w-full px-4 py-4">
+      <div className="w-full px-4 py-2 pb-1">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold text-foreground">

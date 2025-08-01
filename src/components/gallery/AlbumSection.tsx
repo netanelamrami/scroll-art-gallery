@@ -52,7 +52,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   };
 
   return (
-    <div className="w-full px-2 mb-2 sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border pb-2 z-40">
+    <div className="w-full px-2 mb-2 sticky top-16 bg-background/95 backdrop-blur-sm border-b border-border pb-2 z-40 mt-2">
       {/* Collapsed view - horizontal bar */}
       <div className="flex items-center justify-between gap-2 mb-2 overflow-hidden">
         {/* Favorites album on the left */}

@@ -60,7 +60,7 @@ export const GalleryHeader = ({
       <div className="w-full px-4 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-foreground">
+            <h1 className="text-lg font-bold text-foreground">
               {event.name} 
             </h1>
             {/* <p className="text-muted-foreground mt-1">

@@ -141,20 +141,15 @@ const Index = () => {
   };
 
   const handleToggleMyPhotos = () => {
-    // אם המשתמש לא מחובר, נציג את תהליך ההרשמה
-    if (!isAuthenticated) {
-      setShowAuthFlow(true);
+    // אם המשתמש כבר מחובר, עבור ישירות לגלרייה
+    if (isAuthenticated) {
+      setGalleryType('my');
+      setShowGallery(true);
       return;
     }
     
-    setGalleryType('my');
-    setShowGallery(true);
-    // Smooth scroll to gallery
-    setTimeout(() => {
-      document.getElementById('gallery')?.scrollIntoView({
-        behavior: 'smooth'
-      });
-    }, 100);
+    // אם המשתמש לא מחובר, נציג את תהליך ההרשמה
+    setShowAuthFlow(true);
   };
   const handleViewFavorites = () => {
     setGalleryType('favorites');
@@ -385,6 +380,11 @@ const Index = () => {
       {showGallery && (
         <BottomMenu 
           onViewAllPhotos={handleViewAllPhotos}
+          onShareEvent={() => {/* FloatingNavbar יטפל בזה */}}
+          onDownloadAll={() => {/* נוסיף ב-Gallery */}}
+          onToggleSelectionMode={() => {/* נוסיף ב-Gallery */}}
+          onColumnsChange={(cols) => {/* נוסיף ב-Gallery */}}
+          columns={3}
           event={event}
           onAuthComplete={handleAuthComplete}
         />

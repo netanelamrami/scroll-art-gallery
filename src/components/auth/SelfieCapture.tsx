@@ -39,8 +39,10 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
         },
         audio: false
       };
-
+      
+      console.log('Requesting camera access with constraints:', constraints);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Camera stream obtained successfully');
       
       streamRef.current = stream;
       if (videoRef.current) {

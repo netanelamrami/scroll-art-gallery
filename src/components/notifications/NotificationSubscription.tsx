@@ -47,7 +47,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
   if (currentStep === "collapsed") {
     return (
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 mx-4">
-        <div className="bg-primary text-primary-foreground rounded-lg shadow-lg p-4 max-w-sm">
+        <div className="bg-card border border-accent/50 text-card-foreground rounded-lg shadow-lg p-4 max-w-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div>
@@ -68,7 +68,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
                 size="sm"
                 variant="ghost"
                 onClick={onClose}
-                className="text-primary-foreground hover:bg-primary-foreground/20 p-1"
+                className="text-muted-foreground hover:bg-accent/20 p-1"
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -86,8 +86,8 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
         <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Bell className="w-5 h-5 text-primary" />
+              <div className="bg-accent/10 p-2 rounded-full">
+                <Bell className="w-5 h-5 text-accent-foreground" />
               </div>
               <h2 className="text-xl font-semibold text-foreground">
                 {stepTitles[currentStep]}
@@ -110,7 +110,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
                   className={`h-2 flex-1 rounded-full transition-colors ${
                     step === currentStep || 
                     (currentStep === "otp" && step === "contact")
-                      ? "bg-primary" 
+                      ? "bg-accent border border-accent/50" 
                       : "bg-muted"
                   }`}
                 />

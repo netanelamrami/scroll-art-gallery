@@ -24,6 +24,9 @@ export function SettingsMenu({ onAddUser, onShowUserManager, event }: SettingsMe
   const { language, t } = useLanguage();
   const { isAuthenticated, currentUser, hasMultipleUsers, logout } = useMultiUserAuth();
   
+  console.log('SettingsMenu render - isAuthenticated:', isAuthenticated);
+  console.log('SettingsMenu render - currentUser:', currentUser);
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

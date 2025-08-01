@@ -29,6 +29,7 @@ export const useMultiUserAuth = () => {
   }, [authState]);
 
   const addUser = (userData: Omit<User, 'id' | 'createdAt' | 'isActive'>) => {
+    console.log('addUser called with:', userData);
     const newUser: User = {
       ...userData,
       id: Date.now().toString(),
@@ -36,12 +37,18 @@ export const useMultiUserAuth = () => {
       isActive: true
     };
 
-    setAuthState(prev => ({
-      ...prev,
-      users: [...prev.users.map(u => ({ ...u, isActive: false })), newUser],
-      currentUser: newUser,
-      isAuthenticated: true
-    }));
+    console.log('Creating new user:', newUser);
+
+    setAuthState(prev => {
+      const newState = {
+        ...prev,
+        users: [...prev.users.map(u => ({ ...u, isActive: false })), newUser],
+        currentUser: newUser,
+        isAuthenticated: true
+      };
+      console.log('New auth state:', newState);
+      return newState;
+    });
 
     return newUser;
   };

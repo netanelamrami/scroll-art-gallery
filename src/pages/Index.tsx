@@ -185,19 +185,22 @@ const Index = () => {
   };
 
   const handleAuthComplete = (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
+    console.log('handleAuthComplete called with:', authData);
     setUserData(authData);
     setShowAuthFlow(false);
     setIsLoadingMyPhotos(true);
     
     // Add user to multi-user system
-    addUser({
+    console.log('About to call addUser...');
+    const newUser = addUser({
       name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
       phone: authData.contact.includes('@') ? '' : authData.contact,
       email: authData.contact.includes('@') ? authData.contact : '',
       selfieImage: authData.selfieData
     });
     
-    console.log('User added to multi-user system');
+    console.log('User added to multi-user system:', newUser);
+    console.log('Current isAuthenticated state:', isAuthenticated);
     
     // Simulate loading delay for server response
     setTimeout(() => {

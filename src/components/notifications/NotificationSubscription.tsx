@@ -60,9 +60,8 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
 
   if (currentStep === "collapsed") {
     return (
-      <div className="sticky top-0 z-[60] bg-background/95 backdrop-blur-sm border-b border-border animate-fade-in">
-        <div className="max-w-4xl mx-auto px-4 py-2">
-          <div className="bg-card/95 backdrop-blur-sm border border-accent/50 text-card-foreground rounded-lg shadow-lg p-3 max-w-md mx-auto">
+      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-[60] mx-2 max-w-full animate-fade-in">
+        <div className="bg-card/95 backdrop-blur-sm border border-accent/50 text-card-foreground rounded-lg shadow-lg p-3 max-w-md mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-blue-500" />
@@ -91,7 +90,6 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
                 >
                   <X className="w-3 h-3" />
                 </Button>
-              </div>
             </div>
           </div>
         </div>

@@ -16,7 +16,8 @@ interface AuthFlowProps {
 }
 
 export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
-  const [currentStep, setCurrentStep] = useState<AuthStep>("contact");
+  const needsFullAuth = event?.needDetect !== false;
+  const [currentStep, setCurrentStep] = useState<AuthStep>(needsFullAuth ? "contact" : "selfie");
   const [contactInfo, setContactInfo] = useState("");
   const [notifications, setNotifications] = useState(true);
   const [otpCode, setOtpCode] = useState("");
@@ -44,8 +45,8 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
     
     // שמירת הנתונים והשלמת התהליך
     onComplete({
-      contact: contactInfo,
-      otp: otpCode,
+      contact: contactInfo || "selfie-only",
+      otp: otpCode || "no-otp",
       selfieData: imageData,
       notifications: notifications
     });
@@ -77,12 +78,12 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
           
           {/* Progress indicator */}
           <div className="mt-4 flex gap-2">
-            {["contact", "otp", "selfie"].map((step, index) => (
+            {(needsFullAuth ? ["contact", "otp", "selfie"] : ["selfie"]).map((step, index) => (
               <div
                 key={step}
                 className={`h-2 flex-1 rounded-full transition-colors ${
                   step === currentStep || 
-                  (currentStep === "complete" && index < 3)
+                  (currentStep === "complete" && index < (needsFullAuth ? 3 : 1))
                     ? "bg-primary" 
                     : currentStep === "otp" && step === "contact"
                     ? "bg-primary"
@@ -97,7 +98,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
 
         {/* Content */}
         <div className="p-6">
-          {currentStep === "contact" && (
+          {needsFullAuth && currentStep === "contact" && (
             isEmailMode ? (
               <EmailInput 
                 onSubmit={handleContactSubmit}
@@ -111,7 +112,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
             )
           )}
           
-          {currentStep === "otp" && (
+          {needsFullAuth && currentStep === "otp" && (
             <OTPVerification 
               phoneNumber={contactInfo}
               onSubmit={handleOTPSubmit}
@@ -122,7 +123,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
           {currentStep === "selfie" && (
             <SelfieCapture 
               onCapture={handleSelfieCapture}
-              onBack={() => setCurrentStep("otp")}
+              onBack={needsFullAuth ? () => setCurrentStep("otp") : onCancel}
             />
           )}
         </div>

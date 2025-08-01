@@ -18,7 +18,6 @@ export interface event {
   eventPhoto: string;
   // businessCard: BusinessCard;
   payOneEvent: string;
-  needDetect: boolean;
   withPhotos: boolean;
   withSmartSms: boolean;
   photoUploaded: number;
@@ -40,8 +39,8 @@ export interface event {
   btFaceRecognitionTextEN: string;
   userScreenType: number;
   registerBy: "PhoneNumber" | "Email";
+  needDetect: boolean;
   isAllPhotoEventLock: boolean;
-  // eventPhotoLockType: EventLockEnum;
   // eventLanguage: EventLanguageEnum;
   galleryGridSize: number;
 }

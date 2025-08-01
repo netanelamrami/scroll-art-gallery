@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Gallery } from "@/components/gallery/Gallery";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
+import { Gallery } from "@/components/gallery/Gallery";
+import { NotificationSubscription } from "@/components/notifications/NotificationSubscription";
 import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { AuthFlow } from "@/components/auth/AuthFlow";
 import { LeadGenerationModal } from "@/components/leads/LeadGenerationModal";
@@ -27,6 +28,7 @@ const Index = () => {
   const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
   const [isLoadingAllPhotos, setIsLoadingAllPhotos] = useState(false);
   const [isLoadingMyPhotos, setIsLoadingMyPhotos] = useState(false);
+  const [showNotificationSubscription, setShowNotificationSubscription] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -102,6 +104,14 @@ const Index = () => {
   };
 
   const handleViewMyPhotos = () => {
+    setIsLoadingMyPhotos(true);
+    setTimeout(() => {
+      setShowAuthFlow(true);
+      setIsLoadingMyPhotos(false);
+    }, 1000 + Math.random() * 500);
+  };
+
+  const handleToggleMyPhotos = () => {
     // אם המשתמש לא מחובר, נציג את תהליך ההרשמה
     if (!isAuthenticated) {
       setShowAuthFlow(true);
@@ -117,7 +127,6 @@ const Index = () => {
       });
     }, 100);
   };
-
   const handleViewFavorites = () => {
     setGalleryType('favorites');
     setShowGallery(true);
@@ -184,6 +193,13 @@ const Index = () => {
       setShowGallery(true);
       setIsLoadingMyPhotos(false);
       
+      // Show notification subscription for selfie-only users
+      if (event?.needDetect === false && authData.contact === "selfie-only") {
+        setTimeout(() => {
+          setShowNotificationSubscription(true);
+        }, 2000);
+      }
+      
       // Smooth scroll to gallery
       setTimeout(() => {
         document.getElementById('gallery')?.scrollIntoView({
@@ -191,6 +207,11 @@ const Index = () => {
         });
       }, 100);
     }, 1500);
+  };
+
+  const handleNotificationSubscribe = (contact: string, notifications: boolean) => {
+    console.log('Notification subscription:', { contact, notifications });
+    setShowNotificationSubscription(false);
   };
 
   const handleAuthCancel = () => {
@@ -260,13 +281,14 @@ const Index = () => {
 
   return (
     <div>
-          <WeddingHero 
-            event={event} 
-            onViewAllPhotos={handleViewAllPhotos}
-            onViewMyPhotos={handleViewMyPhotos}
-            isLoadingAllPhotos={isLoadingAllPhotos}
-            isLoadingMyPhotos={isLoadingMyPhotos}
-          />
+      <WeddingHero 
+        event={event} 
+        onViewAllPhotos={handleViewAllPhotos}
+        onViewMyPhotos={handleViewMyPhotos}
+        isLoadingAllPhotos={isLoadingAllPhotos}
+        isLoadingMyPhotos={isLoadingMyPhotos}
+      />
+      
       {showGallery && (
         <div id="gallery">
           <Gallery 
@@ -304,6 +326,15 @@ const Index = () => {
         onClose={handleLeadModalClose}
       />
 
+      {showNotificationSubscription && event?.needDetect === false && (
+        <NotificationSubscription
+          event={event}
+          onSubscribe={handleNotificationSubscribe}
+          onClose={() => setShowNotificationSubscription(false)}
+        />
+      )}
+      
+      <BackToTopButton />
     </div>
   );
 };

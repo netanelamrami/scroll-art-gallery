@@ -11,6 +11,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
 import { downloadMultipleImages } from "@/utils/downloadUtils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyPhotosState } from "./EmptyPhotosState";
 
 interface GalleryProps {
   event: event; 
@@ -232,32 +233,38 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
       />
 
       {/* Gallery Grid */}
-      <div className=" w-full px-2 py-8">
-        <MasonryGrid
-          images={displayedImages}
-          onImageClick={handleImageClick}
-          columns={columns}
-          isSelectionMode={isSelectionMode}
-          selectedImages={selectedImages}
-          onImageSelection={handleImageSelection}
-          favoriteImages={favoriteImages}
-          onToggleFavorite={onToggleFavorite}
-        />
-        
-        {/* Load More Trigger & Loader */}
-        {displayedImagesCount < images.length && (
-          <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
-            {isLoadingMore ? (
-              <div className="flex flex-col items-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-black"></div>
-                <div className="text-center text-muted-foreground">
-                  טוען עוד תמונות...
-                </div>
+      <div className="w-full px-2 py-8">
+        {images.length === 0 ? (
+          <EmptyPhotosState type={galleryType === 'all' ? 'allPhotos' : 'myPhotos'} />
+        ) : (
+          <>
+            <MasonryGrid
+              images={displayedImages}
+              onImageClick={handleImageClick}
+              columns={columns}
+              isSelectionMode={isSelectionMode}
+              selectedImages={selectedImages}
+              onImageSelection={handleImageSelection}
+              favoriteImages={favoriteImages}
+              onToggleFavorite={onToggleFavorite}
+            />
+            
+            {/* Load More Trigger & Loader */}
+            {displayedImagesCount < images.length && (
+              <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
+                {isLoadingMore ? (
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-black"></div>
+                    <div className="text-center text-muted-foreground">
+                      טוען עוד תמונות...
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-4" />
+                )}
               </div>
-            ) : (
-              <div className="h-4" />
             )}
-          </div>
+          </>
         )}
       </div>
 

@@ -19,7 +19,8 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
 
   const handleContactSubmit = (contact: string, notifications: boolean) => {
     onSubscribe(contact, notifications);
-    setIsExpanded(false);
+    // לא לסגור את הפופאפ כאן - רק להעביר לשלב הבא
+    console.log('Contact submitted for notifications:', contact);
   };
 
   if (!isExpanded) {

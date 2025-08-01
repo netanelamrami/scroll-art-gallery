@@ -6,6 +6,9 @@ import { LightboxModal } from "./LightboxModal";
 import { GalleryHeader } from "./GalleryHeader";
 import { AlbumSection } from "./AlbumSection";
 import { DownloadModal } from "./DownloadModal";
+import { BottomActionBar } from "./BottomActionBar";
+import { FloatingNavbar } from "./FloatingNavbar";
+import { FAQSupportDialog } from "./FAQSupportDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
@@ -50,6 +53,7 @@ export const Gallery = ({
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isFAQOpen, setIsFAQOpen] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -233,6 +237,19 @@ export const Gallery = ({
     }
   };
 
+  const handleToggleFavorites = () => {
+    Array.from(selectedImages).forEach(imageId => {
+      onToggleFavorite(imageId);
+    });
+    setSelectedImages(new Set());
+    setIsSelectionMode(false);
+  };
+
+  const handleCancelSelection = () => {
+    setSelectedImages(new Set());
+    setIsSelectionMode(false);
+  };
+
   const handleToggleSelection = () => {
     setIsSelectionMode(!isSelectionMode);
     setSelectedImages(new Set());
@@ -284,7 +301,7 @@ export const Gallery = ({
         onColumnsChange={setColumns}
         onDownloadAll={handleDownloadAll}
         onDownloadSelected={handleDownloadSelected}
-        onToggleSelection={handleToggleSelection}
+        onToggleSelection={handleCancelSelection}
         onShare={handleShare}
         isSelectionMode={isSelectionMode}
         selectedCount={selectedImages.size}
@@ -368,6 +385,26 @@ export const Gallery = ({
           onPrevious={handlePreviousImage}
           isFavorite={selectedImageIndex !== null ? favoriteImages.has(filteredImages[selectedImageIndex]?.id) : false}
           onToggleFavorite={selectedImageIndex !== null ? () => onToggleFavorite(filteredImages[selectedImageIndex].id) : undefined}
+        />
+      )}
+
+      
+      {/* Floating Navigation - Hidden in selection mode */}
+      {!isSelectionMode && (
+        <FloatingNavbar 
+          event={event}
+          galleryType={galleryType || 'all'}
+          onToggleGalleryType={() => {}}
+        />
+      )}
+
+      {/* Bottom Action Bar for Selection Mode */}
+      {isSelectionMode && (
+        <BottomActionBar
+          selectedCount={selectedImages.size}
+          onDownloadSelected={handleDownloadSelected}
+          onToggleFavorites={handleToggleFavorites}
+          onCancel={handleCancelSelection}
         />
       )}
 

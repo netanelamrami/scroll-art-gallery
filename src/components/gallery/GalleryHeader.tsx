@@ -63,51 +63,6 @@ export const GalleryHeader = ({
             <h1 className="text-lg font-bold text-foreground">
               {event.name} 
             </h1>
-            {/* <p className="text-muted-foreground mt-1">
-              {isSelectionMode && selectedCount > 0 
-                ? `${selectedCount} ${t('gallery.selectedImages')} ${totalImages.toLocaleString()}`
-                : `${totalImages.toLocaleString()} ${t('gallery.totalImages')}`
-              }
-            </p> */}
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {/* Selection mode indicator and controls */}
-            {isSelectionMode && (
-              <div className="flex items-center gap-3 mr-4 animate-in slide-in-from-left duration-300">
-                {/* Selected count indicator */}
-                <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-lg px-3 py-2 backdrop-blur-sm">
-                  <CheckSquare className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-primary">
-                    {selectedCount} נבחרו
-                  </span>
-                </div>
-
-                {/* Action buttons */}
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={onDownloadSelected}
-                    disabled={selectedCount === 0}
-                    className="gap-2 bg-primary hover:bg-primary/90 shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
-                  >
-                    <Download className="h-4 w-4" />
-                    הורדה
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onToggleSelection}
-                    className="gap-2 border-muted-foreground/30 hover:border-muted-foreground/50 transition-all duration-200 hover:scale-105"
-                  >
-                    <X className="h-4 w-4" />
-                    ביטול
-                  </Button>
-                </div>
-              </div>
-            )}
-
           </div>
         </div>
       </div>

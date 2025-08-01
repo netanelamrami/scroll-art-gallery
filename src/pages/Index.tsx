@@ -135,6 +135,12 @@ const Index = () => {
     setTimeout(() => {
       setShowGallery(true);
       setIsLoadingAllPhotos(false);
+      
+      // Show notification subscription
+      setTimeout(() => {
+        setShowNotificationSubscription(true);
+      }, 1000);
+      
       // Smooth scroll to gallery
       setTimeout(() => {
         document.getElementById('gallery')?.scrollIntoView({
@@ -424,7 +430,7 @@ const Index = () => {
         onClose={handleLeadModalClose}
       />
 
-      {showNotificationSubscription && event?.needDetect === false && (
+      {showNotificationSubscription && (
         <NotificationSubscription
           event={event}
           onSubscribe={handleNotificationSubscribe}

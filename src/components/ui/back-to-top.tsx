@@ -6,23 +6,26 @@ import { cn } from '@/lib/utils';
 interface BackToTopButtonProps {
   showAfterScroll?: number;
   className?: string;
+  isSelectionMode?: boolean;
 }
 
 export const BackToTopButton = ({ 
   showAfterScroll = 300, 
-  className 
+  className,
+  isSelectionMode = false
 }: BackToTopButtonProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setIsVisible(scrollTop > showAfterScroll);
+      setIsVisible(scrollTop > showAfterScroll && !isSelectionMode);
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [showAfterScroll]);
+  }, [showAfterScroll, isSelectionMode]);
 
   const scrollToGallery = () => {
     const galleryElement = document.getElementById('gallery');

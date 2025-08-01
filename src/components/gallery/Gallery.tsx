@@ -7,8 +7,6 @@ import { GalleryHeader } from "./GalleryHeader";
 import { AlbumSection } from "./AlbumSection";
 import { DownloadModal } from "./DownloadModal";
 import { BottomActionBar } from "./BottomActionBar";
-import { FloatingNavbar } from "./FloatingNavbar";
-import { FAQSupportDialog } from "./FAQSupportDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
@@ -389,15 +387,6 @@ export const Gallery = ({
       )}
 
       
-      {/* Floating Navigation - Hidden in selection mode */}
-      {!isSelectionMode && (
-        <FloatingNavbar 
-          event={event}
-          galleryType={galleryType || 'all'}
-          onToggleGalleryType={() => {}}
-        />
-      )}
-
       {/* Bottom Action Bar for Selection Mode */}
       {isSelectionMode && (
         <BottomActionBar

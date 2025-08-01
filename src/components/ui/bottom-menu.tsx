@@ -38,9 +38,10 @@ interface BottomMenuProps {
   columns?: number;
   event?: any;
   onAuthComplete?: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
+  isSelectionMode?: boolean;
 }
 
-export const BottomMenu = ({ onViewAllPhotos, onShareEvent, onDownloadAll, onToggleSelectionMode, onColumnsChange, columns = 3, event, onAuthComplete }: BottomMenuProps) => {
+export const BottomMenu = ({ onViewAllPhotos, onShareEvent, onDownloadAll, onToggleSelectionMode, onColumnsChange, columns = 3, event, onAuthComplete, isSelectionMode = false }: BottomMenuProps) => {
   const { users, currentUser, isAuthenticated, switchUser, logout, addUser } = useMultiUserAuth();
   const { language } = useLanguage();
   const [showAddUser, setShowAddUser] = useState(false);
@@ -92,23 +93,25 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, onDownloadAll, onTog
 
   return (
     <>
-      <div className="fixed bottom-6 left-6 z-50">
-        <Popover open={isOpen} onOpenChange={setIsOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-14 w-14 rounded-full bg-white/90 hover:bg-white shadow-lg border border-gray-200 p-0"
+      {/* Only show when not in selection mode */}
+      {!isSelectionMode && (
+        <div className="fixed bottom-6 left-6 z-50">
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                className="h-14 w-14 rounded-full bg-white/90 hover:bg-white shadow-lg border border-gray-200 p-0 transition-all duration-300"
+              >
+                <Menu className="w-6 h-6 text-gray-700" />
+              </Button>
+            </PopoverTrigger>
+            
+            <PopoverContent 
+              side="top" 
+              align="start" 
+              className="w-64 p-2 mb-2"
+              sideOffset={8}
             >
-              <Menu className="w-6 h-6 text-gray-700" />
-            </Button>
-          </PopoverTrigger>
-          
-          <PopoverContent 
-            side="top" 
-            align="start" 
-            className="w-64 p-2 mb-2"
-            sideOffset={8}
-          >
             <div className="space-y-1">
               {/* Main Actions */}
               <div className="space-y-1">
@@ -310,6 +313,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, onDownloadAll, onTog
           </PopoverContent>
         </Popover>
       </div>
+      )}
 
       <AddUserModal 
         isOpen={showAddUser}

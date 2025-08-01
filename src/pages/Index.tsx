@@ -434,7 +434,7 @@ const Index = () => {
         />
       )}
       
-      {/* Bottom Menu - Only show when gallery is visible */}
+      {/* Bottom Menu - Only show when gallery is visible and not in selection mode */}
       {showGallery && (
         <BottomMenu 
           onViewAllPhotos={handleViewAllPhotos}
@@ -445,6 +445,7 @@ const Index = () => {
           columns={columns}
           event={event}
           onAuthComplete={handleAuthComplete}
+          isSelectionMode={selectionMode}
         />
       )}
 
@@ -488,7 +489,7 @@ const Index = () => {
       />
 
       {/* Back to Top Button */}
-      <BackToTopButton />
+      <BackToTopButton isSelectionMode={selectionMode} />
     </div>
   );
 };

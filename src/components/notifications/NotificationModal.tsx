@@ -43,8 +43,9 @@ export const NotificationModal = ({ event, onSubscribe, onClose }: NotificationM
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md relative">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+      <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md relative"
+           style={{ maxHeight: '90vh', overflow: 'auto' }}>
         {/* Header */}
         <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">

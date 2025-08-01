@@ -290,22 +290,24 @@ export const Gallery = ({
         selectedCount={selectedImages.size}
       />
 
-      {/* Albums Section */}
-      <AlbumSection 
-        albums={[
-          { 
-            id: 'favorites', 
-            name: '❤️ נבחרות', 
-            imageCount: favoriteImages.size,
-            thumbnail: Array.from(favoriteImages)[0] ? images.find(img => img.id === Array.from(favoriteImages)[0])?.src : undefined
-          },
-          ...albums
-        ]}
-        onAlbumClick={handleAlbumClick}
-        selectedAlbum={selectedAlbum}
-        allImages={images}
-        getImagesByAlbum={getImagesByAlbum}
-      />
+      {/* Albums Section - Only show if there are images */}
+      {images.length > 0 && (
+        <AlbumSection 
+          albums={[
+            { 
+              id: 'favorites', 
+              name: '❤️ נבחרות', 
+              imageCount: favoriteImages.size,
+              thumbnail: Array.from(favoriteImages)[0] ? images.find(img => img.id === Array.from(favoriteImages)[0])?.src : undefined
+            },
+            ...albums
+          ]}
+          onAlbumClick={handleAlbumClick}
+          selectedAlbum={selectedAlbum}
+          allImages={images}
+          getImagesByAlbum={getImagesByAlbum}
+        />
+      )}
 
       {/* Gallery Grid */}
       <div className="w-full px-2 py-8">

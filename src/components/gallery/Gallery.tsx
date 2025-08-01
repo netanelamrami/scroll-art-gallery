@@ -246,6 +246,16 @@ export const Gallery = ({
   const handleCancelSelection = () => {
     setSelectedImages(new Set());
     setIsSelectionMode(false);
+    
+    // If we have external callback for selection mode, use it
+    if (onImageSelect) {
+      // This means we're controlled by parent, notify parent to exit selection mode
+      // We can trigger this by calling the toggle function
+      if (selectionMode !== undefined) {
+        // Parent is controlling the selection mode
+        window.dispatchEvent(new CustomEvent('exitSelectionMode'));
+      }
+    }
   };
 
   const handleToggleSelection = () => {

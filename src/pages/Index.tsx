@@ -288,6 +288,17 @@ const Index = () => {
     setSelectedImages(new Set());
   };
 
+  // Listen for exit selection mode event
+  useEffect(() => {
+    const handleExitSelectionMode = () => {
+      setSelectionMode(false);
+      setSelectedImages(new Set());
+    };
+
+    window.addEventListener('exitSelectionMode', handleExitSelectionMode);
+    return () => window.removeEventListener('exitSelectionMode', handleExitSelectionMode);
+  }, []);
+
   const handleColumnsChange = (newColumns: number) => {
     setColumns(newColumns);
   };

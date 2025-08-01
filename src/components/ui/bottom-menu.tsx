@@ -51,15 +51,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
   }, []);
 
   const handleShareEvent = () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      navigator.share({
-        title: language === 'he' ? 'שתף אירוע' : 'Share Event',
-        url: url
-      });
-    } else {
-      navigator.clipboard.writeText(url);
-    }
+    onShareEvent?.();
     setIsOpen(false);
   };
 

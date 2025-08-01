@@ -1,5 +1,5 @@
+import React, { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
@@ -18,8 +18,13 @@ interface FAQSupportDialogProps {
 }
 
 export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSupportDialogProps) => {
+  const { t, language } = useLanguage();
   const [faq, setFaq] = useState(questions);
-  const { t } = useLanguage();
+
+  // Update FAQ when language changes or questions change
+  React.useEffect(() => {
+    setFaq(questions);
+  }, [questions, language]);
 
   const toggleAnswer = (idx: number) => {
     setFaq(faq =>

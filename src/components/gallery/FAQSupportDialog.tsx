@@ -1,9 +1,6 @@
-// FAQSupportDialog.tsx
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { Share2, Images, MessageCircle, QrCode } from 'lucide-react';
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
 
@@ -34,17 +31,7 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-       <Button
-          variant="ghost"
-          size="sm"
-          className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-4 sm:py-2"
-        >
-          <MessageCircle className="h-4 w-4 ml-2" />
-          {t('navbar.support')}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-lg p-0">
+      <DialogContent className="max-w-lg p-0 max-h-[90vh] overflow-y-auto">
         <div className="flex flex-col items-center py-4 px-2">
           {/* לוגו */}
           <img src="/main_simple.png" alt="Logo" className="w-24 mb-2" />
@@ -56,8 +43,8 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
             &times;
           </button>
           {/* כותרות */}
-          <h3 className="font-bold text-lg mt-4 mb-1">{t('support.guestSupport')}</h3>
-          <h4 className="mb-4 text-base">{t('support.faqAndQuickHelp')}</h4>
+          <h3 className="font-bold text-lg mt-4 mb-1">תמיכת אורח</h3>
+          <h4 className="mb-4 text-base">שאלות נפוצות ועזרה מהירה</h4>
           {/* שאלות ותשובות */}
           <div className="w-full">
             {faq.map((question, idx) => (
@@ -82,40 +69,40 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
           {/* וואטסאפ */}
           <div className="flex items-center mt-6 w-full gap-4">
             <a
-              href={`https://wa.me/585500232?text=${t('support.whatsappMessage')}%0A${t('support.eventName')}:+${encodeURIComponent(event.name)}%0A${t('support.eventId')}:+${encodeURIComponent(event.id.toString())}`}
+              href={`https://wa.me/585500232?text=היי,%20אני%20צריך%20עזרה%20עם%20האירוע%0Aשם%20האירוע:${encodeURIComponent(event.name)}%0Aמזהה%20האירוע:${encodeURIComponent(event.id.toString())}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <img src="/whatapp-icon.png" alt="whatsapp" width={36} />
               <div>
-                <span>{t('support.noAnswer')}</span>
+                <span className="text-sm">לא מוצא תשובה?</span>
                 <br />
-                <strong>{t('support.contactWhatsapp')}</strong>
+                <strong className="text-green-600">פנה בוואטסאפ</strong>
               </div>
             </a>
             <a
               href="https://pixshare-ai.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <img src="/atar.svg" alt="web" width={40} />
               <div>
-                <span>{t('support.moreInfo')}</span>
+                <span className="text-sm">מידע נוסף</span>
                 <br />
-                <strong>Pixshare-ai.com</strong>
+                <strong className="text-blue-600">Pixshare-ai.com</strong>
               </div>
             </a>
           </div>
           {/* תחתית */}
           <div className="mt-4 text-xs opacity-80">
             <a className="underline mx-1" href="https://www.pixshare.live/takanon" target="_blank" rel="noopener noreferrer">
-              {t('support.terms')}
+              תקנון
             </a>
             |
             <a className="underline mx-1" href="https://www.pixshare.live/privacy" target="_blank" rel="noopener noreferrer">
-              {t('support.privacy')}
+              מדיניות פרטיות
             </a>
           </div>
         </div>

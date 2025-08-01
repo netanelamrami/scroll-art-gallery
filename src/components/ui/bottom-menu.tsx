@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMultiUserAuth } from '@/hooks/useMultiUserAuth';
 import { AddUserModal } from '@/components/users/AddUserModal';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { FAQSupportDialog } from '@/components/gallery/FAQSupportDialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -15,6 +16,8 @@ import {
   User
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { faqData } from '@/data/faqData';
+import { useLanguage } from '@/hooks/useLanguage';
 import {
   Popover,
   PopoverContent,
@@ -30,8 +33,10 @@ interface BottomMenuProps {
 
 export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplete }: BottomMenuProps) => {
   const { users, currentUser, isAuthenticated, switchUser, logout, addUser } = useMultiUserAuth();
+  const { language } = useLanguage();
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showFAQDialog, setShowFAQDialog] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(0);
 
@@ -64,8 +69,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
   };
 
   const handleSupport = () => {
-    // Open WhatsApp or support link
-    window.open('https://wa.me/585500232?text=היי,%20אני%20צריך%20עזרה%20עם%20האירוע', '_blank');
+    setShowFAQDialog(true);
     setIsOpen(false);
   };
 
@@ -229,28 +233,37 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
       />
       
       {event && (
-        <AuthModal 
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-          event={event}
-          onComplete={(authData) => {
-            // Add user to multi-user system
-            const newUser = addUser({
-              name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
-              phone: authData.contact.includes('@') ? '' : authData.contact,
-              email: authData.contact.includes('@') ? authData.contact : '',
-              selfieImage: authData.selfieData
-            });
-            
-            console.log('New user added from BottomMenu:', newUser);
-            setShowAuthModal(false);
-            onAuthComplete?.(authData);
-            
-            // Force immediate re-render
-            setForceUpdate(prev => prev + 1);
-            setIsOpen(false);
-          }}
-        />
+        <>
+          <AuthModal 
+            isOpen={showAuthModal}
+            onClose={() => setShowAuthModal(false)}
+            event={event}
+            onComplete={(authData) => {
+              // Add user to multi-user system
+              const newUser = addUser({
+                name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
+                phone: authData.contact.includes('@') ? '' : authData.contact,
+                email: authData.contact.includes('@') ? authData.contact : '',
+                selfieImage: authData.selfieData
+              });
+              
+              console.log('New user added from BottomMenu:', newUser);
+              setShowAuthModal(false);
+              onAuthComplete?.(authData);
+              
+              // Force immediate re-render
+              setForceUpdate(prev => prev + 1);
+              setIsOpen(false);
+            }}
+          />
+          
+          <FAQSupportDialog
+            isOpen={showFAQDialog}
+            setIsOpen={setShowFAQDialog}
+            questions={faqData[language] || faqData.he}
+            event={event}
+          />
+        </>
       )}
     </>
   );

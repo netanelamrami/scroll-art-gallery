@@ -16,7 +16,10 @@ export const UserSwitcher = () => {
   const [showAddUser, setShowAddUser] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  console.log('UserSwitcher render:', { isAuthenticated, currentUser, users });
+
   if (!isAuthenticated || !currentUser) {
+    console.log('UserSwitcher: Not showing because isAuthenticated=', isAuthenticated, 'currentUser=', currentUser);
     return null;
   }
 

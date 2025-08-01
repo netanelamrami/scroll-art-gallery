@@ -1,28 +1,36 @@
+
 import { useState } from "react";
 import { PhoneCountryInput } from "./PhoneCountryInput";
+import { EmailInput } from "./EmailInput";
 import { OTPVerification } from "./OTPVerification";
 import { SelfieCapture } from "./SelfieCapture";
 import { useLanguage } from "@/hooks/useLanguage";
+import { event } from "@/types/event";
 
-type AuthStep = "phone" | "otp" | "selfie" | "complete";
+type AuthStep = "contact" | "otp" | "selfie" | "complete";
 
 interface AuthFlowProps {
-  onComplete: (userData: { phone: string; otp: string; selfieData: string }) => void;
+  event: event;
+  onComplete: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
   onCancel: () => void;
 }
 
-export const AuthFlow = ({ onComplete, onCancel }: AuthFlowProps) => {
-  const [currentStep, setCurrentStep] = useState<AuthStep>("phone");
-  const [phoneNumber, setPhoneNumber] = useState("");
+export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
+  const [currentStep, setCurrentStep] = useState<AuthStep>("contact");
+  const [contactInfo, setContactInfo] = useState("");
+  const [notifications, setNotifications] = useState(true);
   const [otpCode, setOtpCode] = useState("");
   const [selfieData, setSelfieData] = useState("");
   const { t } = useLanguage();
 
-  const handlePhoneSubmit = (phone: string) => {
-    setPhoneNumber(phone);
+  const isEmailMode = event?.registerBy === "Email";
+
+  const handleContactSubmit = (contact: string, notificationPreference: boolean) => {
+    setContactInfo(contact);
+    setNotifications(notificationPreference);
     setCurrentStep("otp");
-    // כאן נשלח SMS במציאות
-    console.log("SMS sent to:", phone);
+    // כאן נשלח SMS/Email במציאות
+    console.log(`${isEmailMode ? 'Email' : 'SMS'} sent to:`, contact);
   };
 
   const handleOTPSubmit = (otp: string) => {
@@ -36,14 +44,15 @@ export const AuthFlow = ({ onComplete, onCancel }: AuthFlowProps) => {
     
     // שמירת הנתונים והשלמת התהליך
     onComplete({
-      phone: phoneNumber,
+      contact: contactInfo,
       otp: otpCode,
-      selfieData: imageData
+      selfieData: imageData,
+      notifications: notifications
     });
   };
 
   const stepTitles = {
-    phone: t('auth.phoneEntry'),
+    contact: isEmailMode ? t('auth.emailEntry') : t('auth.phoneEntry'),
     otp: t('auth.otpVerification'),
     selfie: t('auth.selfieCapture'),
     complete: t('auth.registrationComplete')
@@ -68,16 +77,16 @@ export const AuthFlow = ({ onComplete, onCancel }: AuthFlowProps) => {
           
           {/* Progress indicator */}
           <div className="mt-4 flex gap-2">
-            {["phone", "otp", "selfie"].map((step, index) => (
+            {["contact", "otp", "selfie"].map((step, index) => (
               <div
                 key={step}
                 className={`h-2 flex-1 rounded-full transition-colors ${
                   step === currentStep || 
                   (currentStep === "complete" && index < 3)
                     ? "bg-primary" 
-                    : currentStep === "otp" && step === "phone"
+                    : currentStep === "otp" && step === "contact"
                     ? "bg-primary"
-                    : currentStep === "selfie" && (step === "phone" || step === "otp")
+                    : currentStep === "selfie" && (step === "contact" || step === "otp")
                     ? "bg-primary"
                     : "bg-muted"
                 }`}
@@ -88,18 +97,25 @@ export const AuthFlow = ({ onComplete, onCancel }: AuthFlowProps) => {
 
         {/* Content */}
         <div className="p-6">
-          {currentStep === "phone" && (
-            <PhoneCountryInput 
-              onSubmit={handlePhoneSubmit}
-              onBack={onCancel}
-            />
+          {currentStep === "contact" && (
+            isEmailMode ? (
+              <EmailInput 
+                onSubmit={handleContactSubmit}
+                onBack={onCancel}
+              />
+            ) : (
+              <PhoneCountryInput 
+                onSubmit={handleContactSubmit}
+                onBack={onCancel}
+              />
+            )
           )}
           
           {currentStep === "otp" && (
             <OTPVerification 
-              phoneNumber={phoneNumber}
+              phoneNumber={contactInfo}
               onSubmit={handleOTPSubmit}
-              onBack={() => setCurrentStep("phone")}
+              onBack={() => setCurrentStep("contact")}
             />
           )}
           

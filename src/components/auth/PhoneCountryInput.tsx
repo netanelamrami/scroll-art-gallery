@@ -1,12 +1,14 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
 
 interface PhoneCountryInputProps {
-  onSubmit: (phone: string) => void;
+  onSubmit: (phone: string, notifications: boolean) => void;
   onBack: () => void;
 }
 
@@ -76,6 +78,7 @@ const countries = [
 export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) => {
   const [countryCode, setCountryCode] = useState("+972");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [notifications, setNotifications] = useState(true);
   const { t, language } = useLanguage();
   const { toast } = useToast();
 
@@ -113,7 +116,7 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
     }
 
     const fullPhone = countryCode + cleanPhoneNumber;
-    onSubmit(fullPhone);
+    onSubmit(fullPhone, notifications);
   };
 
   return (
@@ -159,6 +162,20 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
         
         <div className="text-xs text-muted-foreground text-center" dir={language === 'he' ? 'rtl' : 'ltr'}>
           {t('auth.phoneExample')}
+        </div>
+
+        <div className="flex items-center space-x-2 space-x-reverse" dir={language === 'he' ? 'rtl' : 'ltr'}>
+          <Checkbox
+            id="notifications"
+            checked={notifications}
+            onCheckedChange={(checked) => setNotifications(checked as boolean)}
+          />
+          <label
+            htmlFor="notifications"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            {t('auth.notifyNewPhotos')}
+          </label>
         </div>
 
         <div className="flex gap-3">

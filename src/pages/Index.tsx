@@ -18,7 +18,7 @@ const Index = () => {
   const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthFlow, setShowAuthFlow] = useState(false);
-  const [userData, setUserData] = useState<{phone: string; otp: string; selfieData: string} | null>(null);
+  const [userData, setUserData] = useState<{contact: string; otp: string; selfieData: string; notifications: boolean} | null>(null);
   const [event, setEvent] = useState(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -171,7 +171,7 @@ const Index = () => {
     localStorage.setItem('favoriteImages', JSON.stringify(Array.from(newFavorites)));
   };
 
-  const handleAuthComplete = (authData: {phone: string; otp: string; selfieData: string}) => {
+  const handleAuthComplete = (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
     setUserData(authData);
     setIsAuthenticated(true);
     setShowAuthFlow(false);
@@ -288,8 +288,9 @@ const Index = () => {
       )}
       
       {/* Auth Flow Modal */}
-      {showAuthFlow && (
+      {showAuthFlow && event && (
         <AuthFlow 
+          event={event}
           onComplete={handleAuthComplete}
           onCancel={handleAuthCancel}
         />

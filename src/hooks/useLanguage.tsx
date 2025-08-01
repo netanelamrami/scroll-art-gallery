@@ -91,12 +91,15 @@ const translations = {
     
     // Auth
     'auth.phoneEntry': 'הזנת מספר טלפון',
+    'auth.emailEntry': 'הזנת כתובת מייל',
     'auth.otpVerification': 'אימות קוד',
     'auth.selfieCapture': 'צילום סלפי',
     'auth.registrationComplete': 'הרשמה הושלמה',
     'auth.phoneInstruction': 'נשלח לך קוד אימות בהודעת SMS',
+    'auth.emailInstruction': 'נשלח לך קוד אימות למייל',
     'auth.phoneExample': 'המספר יוזן ללא הקידומת 0. לדוגמה: 50-123-4567',
     'auth.enterPhone': 'הזן מספר טלפון',
+    'auth.enterEmail': 'הזן כתובת מייל',
     'auth.sendCode': 'שלח קוד',
     'auth.resendIn': 'שלח שוב בעוד {seconds} שניות',
     'auth.resendCode': 'שלח קוד שוב',
@@ -112,8 +115,11 @@ const translations = {
     'auth.retake': 'צלם שוב',
     'auth.cameraError': 'שגיאה בגישה למצלמה. אנא וודא שהמצלמה מחוברת ונתת הרשאה.',
     'auth.invalidPhone': 'מספר הטלפון לא תקין עבור המדינה שנבחרה',
+    'auth.invalidEmail': 'כתובת המייל לא תקינה',
     'auth.phoneRequired': 'אנא הזן מספר טלפון',
+    'auth.emailRequired': 'אנא הזן כתובת מייל',
     'auth.selectImageOrCamera': 'בחר תמונה או צלם',
+    'auth.notifyNewPhotos': 'עדכן אותי בעת מציאת תמונות חדשות',
     
     // Leads
     'leads.thanksFeedback': 'תודה על המשוב!',
@@ -156,7 +162,6 @@ const translations = {
 
     // Common
     'common.back': 'חזור',
-
 
   },
   en: {
@@ -227,7 +232,7 @@ const translations = {
     'downloadModal.highQuality': 'High Quality',
     'downloadModal.highQualityDesc': 'Suitable for printing and editing (larger file)',
     'downloadModal.webQuality': 'Web Quality',
-    'downloadModal.webQualityDesc': 'Suitable for social sharing (faster download)',
+    'webQuality.webQualityDesc': 'Suitable for social sharing (faster download)',
     'downloadModal.downloadNow': 'Download Now',
     'downloadModal.sendRequest': 'Send Request',
     'downloadModal.downloadStarted': 'Download Started!',
@@ -239,12 +244,15 @@ const translations = {
     
     // Auth
     'auth.phoneEntry': 'Phone Number Entry',
+    'auth.emailEntry': 'Email Address Entry',
     'auth.otpVerification': 'Code Verification',
     'auth.selfieCapture': 'Selfie Capture',
     'auth.registrationComplete': 'Registration Complete',
     'auth.phoneInstruction': 'We will send you a verification code via SMS',
+    'auth.emailInstruction': 'We will send you a verification code via email',
     'auth.phoneExample': 'Enter number without leading 0. Example: 50-123-4567',
     'auth.enterPhone': 'Enter phone number',
+    'auth.enterEmail': 'Enter email address',
     'auth.sendCode': 'Send Code',
     'auth.resendIn': 'Resend in {seconds} seconds',
     'auth.resendCode': 'Send Code Again',
@@ -260,8 +268,13 @@ const translations = {
     'auth.retake': 'Retake',
     'auth.cameraError': 'Error accessing camera. Please ensure camera is connected and permission is granted.',
     'auth.invalidPhone': 'Phone number is invalid for the selected country',
+    'auth.invalidEmail': 'Email address is invalid',
     'auth.phoneRequired': 'Please enter a phone number',
+    'auth.emailRequired': 'Please enter an email address',
     'auth.selectImageOrCamera': 'Select image or take photo',
+    'auth.notifyNewPhotos': 'Notify me when new photos are found',
+    
+    'auth.otpInstruction': 'Enter the 4-digit code sent to you',
     
     // Leads
     'leads.thanksFeedback': 'Thanks for the feedback!',
@@ -301,10 +314,6 @@ const translations = {
     'privacy.agreement.and': 'and',
     'privacy.terms': 'Terms of Use',
     'privacy.policy': 'Privacy Policy',
-
-    'auth.otpInstruction': 'Enter the 4-digit code sent to you',
-
-    
   }
 };
 

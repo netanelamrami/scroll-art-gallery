@@ -1,3 +1,4 @@
+
 // import { BusinessCard } from "./businessCard";
 // import { RegisterByEnum, EventLockEnum, EventLanguageEnum } from "./enums"; // אם יש לך enums
 
@@ -38,7 +39,7 @@ export interface event {
   btFaceRecognitionText: string;
   btFaceRecognitionTextEN: string;
   userScreenType: number;
-  // registerBy: RegisterByEnum;
+  registerBy: "PhoneNumber" | "Email";
   isAllPhotoEventLock: boolean;
   // eventPhotoLockType: EventLockEnum;
   // eventLanguage: EventLanguageEnum;

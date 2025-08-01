@@ -189,7 +189,34 @@ const translations = {
     'empty.allPhotos.title': 'אין תמונות זמינות עדיין',
     'empty.allPhotos.description': 'התמונות נטענות ומעובדות. חזרו בקרוב לראות את כל התמונות מהאירוע!',
     'empty.myPhotos.title': 'לא נמצאו תמונות שלכם',
-    'empty.myPhotos.description': 'אולי התמונות שלכם עדיין לא הועלו, או שהן בתהליך זיהוי. נסו שוב מאוחר יותר!'
+    'empty.myPhotos.description': 'אולי התמונות שלכם עדיין לא הועלו, או שהן בתהליך זיהוי. נסו שוב מאוחר יותר!',
+
+    // Users
+    'users.addUser': 'הוסף משתמש',
+    'users.manageUsers': 'ניהול משתמשים',
+    'users.switchUser': 'החלף משתמש',
+    'users.deleteConfirm': 'האם אתה בטוח שברצונך למחוק משתמש זה?',
+    'users.userAdded': 'משתמש נוסף בהצלחה',
+    'users.userSwitched': 'המשתמש החדש הפך לפעיל',
+    'users.infoRequired': 'יש להזין לפחות פרט אחד',
+    'users.selfieRequired': 'יש להעלות תמונת סלפי',
+    'users.name': 'שם',
+    'users.phone': 'טלפון',
+    'users.email': 'מייל',
+    'users.namePlaceholder': 'הזן שם',
+    'users.phonePlaceholder': 'הזן מספר טלפון',
+    'users.emailPlaceholder': 'הזן כתובת מייל',
+
+    // Auth
+    'auth.logout': 'התנתק',
+
+    // Common
+    'common.optional': 'אופציונלי',
+    'common.cancel': 'ביטול',
+    'common.delete': 'מחק',
+    'common.close': 'סגור',
+    'common.next': 'הבא',
+    'common.activeUser': 'משתמש פעיל'
   },
   en: {
     // Hero Section
@@ -368,7 +395,34 @@ const translations = {
     'empty.allPhotos.title': 'No Photos Available Yet',
     'empty.allPhotos.description': 'Photos are being uploaded and processed. Check back soon to see all photos from the event!',
     'empty.myPhotos.title': 'No Photos Found for You',
-    'empty.myPhotos.description': 'Your photos might not be uploaded yet, or they\'re still being processed. Try again later!'
+    'empty.myPhotos.description': 'Your photos might not be uploaded yet, or they\'re still being processed. Try again later!',
+
+    // Users
+    'users.addUser': 'Add User',
+    'users.manageUsers': 'Manage Users',
+    'users.switchUser': 'Switch User',
+    'users.deleteConfirm': 'Are you sure you want to delete this user?',
+    'users.userAdded': 'User Added Successfully',
+    'users.userSwitched': 'New user is now active',
+    'users.infoRequired': 'Please enter at least one detail',
+    'users.selfieRequired': 'Please upload a selfie photo',
+    'users.name': 'Name',
+    'users.phone': 'Phone',
+    'users.email': 'Email',
+    'users.namePlaceholder': 'Enter name',
+    'users.phonePlaceholder': 'Enter phone number',
+    'users.emailPlaceholder': 'Enter email address',
+
+    // Auth
+    'auth.logout': 'Logout',
+
+    // Common
+    'common.optional': 'Optional',
+    'common.cancel': 'Cancel',
+    'common.delete': 'Delete',
+    'common.close': 'Close',
+    'common.next': 'Next',
+    'common.activeUser': 'Active User'
   }
 };
 

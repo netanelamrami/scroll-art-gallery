@@ -1,7 +1,10 @@
 import React,{ useEffect, useState,  } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useMultiUserAuth } from "@/hooks/useMultiUserAuth";
 import { SettingsMenu } from "@/components/ui/settings-menu";
+import { UserManagerModal } from "@/components/users/UserManagerModal";
+import { AddUserModal } from "@/components/users/AddUserModal";
 import { Heart, Camera, Users, Loader2 } from "lucide-react";
 import { event } from "@/types/event";
 
@@ -15,6 +18,9 @@ interface WeddingHeroProps {
 
 export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false }: WeddingHeroProps) => {
   const { t, setDefaultLanguage, language } = useLanguage();
+  const { isAuthenticated, currentUser } = useMultiUserAuth();
+  const [showUserManager, setShowUserManager] = useState(false);
+  const [showAddUser, setShowAddUser] = useState(false);
 
   // Set default language based on event language
   useEffect(() => {
@@ -23,6 +29,17 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
       setDefaultLanguage(defaultLang);
     }
   }, [event?.eventLanguage, setDefaultLanguage]);
+
+  // Handle My Photos button click
+  const handleMyPhotosClick = () => {
+    if (isAuthenticated && currentUser) {
+      // User is already authenticated, go directly to their photos
+      onViewMyPhotos();
+    } else {
+      // User needs to authenticate first
+      onViewMyPhotos(); // This will trigger the auth flow
+    }
+  };
 
   // Return loading skeleton if event data is not yet loaded
   if (!event) {
@@ -45,7 +62,11 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
     <div className="relative h-screen w-full overflow-hidden">
       {/* Settings Menu */}
       <div className="absolute top-6 right-6 z-20">
-        <SettingsMenu />
+        <SettingsMenu 
+          onAddUser={() => setShowAddUser(true)}
+          onShowUserManager={() => setShowUserManager(true)}
+          event={event}
+        />
       </div>
 
       {/* Background Image */}
@@ -86,7 +107,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
           <Button
-            onClick={onViewMyPhotos}
+            onClick={handleMyPhotosClick}
             variant="outline"
             size="lg"
             disabled={isLoadingMyPhotos}
@@ -141,6 +162,17 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           </div>
         </div> */}
       </div>
+
+      {/* User Management Modals */}
+      <UserManagerModal 
+        isOpen={showUserManager}
+        onClose={() => setShowUserManager(false)}
+      />
+      
+      <AddUserModal 
+        isOpen={showAddUser}
+        onClose={() => setShowAddUser(false)}
+      />
     </div>
   );
 };

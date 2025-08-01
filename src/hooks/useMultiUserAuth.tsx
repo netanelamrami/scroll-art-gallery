@@ -6,27 +6,58 @@ const AUTH_STORAGE_KEY = 'pixshare_auth_state';
 export const useMultiUserAuth = () => {
   const [authState, setAuthState] = useState<AuthState>(() => {
     const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    console.log('useMultiUserAuth initialization - stored data:', stored);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        return {
+        console.log('useMultiUserAuth initialization - parsed data:', parsed);
+        const initialState = {
           ...parsed,
           users: parsed.users?.map((user: any) => ({
             ...user,
             createdAt: new Date(user.createdAt)
           })) || []
         };
-      } catch {
+        console.log('useMultiUserAuth initialization - initial state:', initialState);
+        return initialState;
+      } catch (e) {
+        console.log('useMultiUserAuth initialization - parse error:', e);
         return { isAuthenticated: false, currentUser: null, users: [] };
       }
     }
+    console.log('useMultiUserAuth initialization - no stored data');
     return { isAuthenticated: false, currentUser: null, users: [] };
   });
 
+  console.log('useMultiUserAuth current state:', authState);
+
   // Save to localStorage whenever state changes
   useEffect(() => {
+    console.log('useMultiUserAuth - saving to localStorage:', authState);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
   }, [authState]);
+
+  // Force re-read from localStorage on component mount
+  useEffect(() => {
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.isAuthenticated && !authState.isAuthenticated) {
+          console.log('useMultiUserAuth - force updating from localStorage:', parsed);
+          setAuthState({
+            ...parsed,
+            users: parsed.users?.map((user: any) => ({
+              ...user,
+              createdAt: new Date(user.createdAt)
+            })) || []
+          });
+        }
+      } catch (e) {
+        console.log('useMultiUserAuth - force update error:', e);
+      }
+    }
+  }, []);
 
   const addUser = (userData: Omit<User, 'id' | 'createdAt' | 'isActive'>) => {
     console.log('addUser called with:', userData);

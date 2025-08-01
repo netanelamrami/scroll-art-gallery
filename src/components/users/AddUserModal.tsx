@@ -110,7 +110,7 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
       
       // Force parent component re-render by triggering window event
       window.dispatchEvent(new CustomEvent('userAdded'));
-    }, 2000);
+    }, 1500);
   };
 
   const handleClose = () => {

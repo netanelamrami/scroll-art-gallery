@@ -33,6 +33,17 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(0);
+
+  // Listen for user updates
+  React.useEffect(() => {
+    const handleUserAdded = () => {
+      setForceUpdate(prev => prev + 1);
+    };
+    
+    window.addEventListener('userAdded', handleUserAdded);
+    return () => window.removeEventListener('userAdded', handleUserAdded);
+  }, []);
 
   const handleShareEvent = () => {
     const url = window.location.href;
@@ -235,11 +246,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
             setShowAuthModal(false);
             onAuthComplete?.(authData);
             
-            // Force immediate re-render by closing and reopening the menu
+            // Force immediate re-render
+            setForceUpdate(prev => prev + 1);
             setIsOpen(false);
-            setTimeout(() => {
-              setIsOpen(false); // Ensure menu stays closed to show new state
-            }, 100);
           }}
         />
       )}

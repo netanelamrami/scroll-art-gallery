@@ -59,8 +59,11 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
         <div className="flex items-center flex-shrink-0">
           {favoritesAlbum && (
             <Button
-              variant={selectedAlbum === 'favorites' ? "default" : "ghost"}
-              className="h-8 px-2 text-xs sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap"
+              variant={selectedAlbum === 'favorites' ? "secondary" : "ghost"}
+              className={cn(
+                "h-8 px-2 text-xs sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all",
+                selectedAlbum === 'favorites' && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+              )}
               onClick={() => onAlbumClick('favorites')}
             >
               <Star className="text-yellow-500 h-3 w-3 sm:h-4 sm:w-4 fill-current" />
@@ -92,8 +95,11 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
             return albumsToShow.slice(0, visibleCount).map((album) => (
               <Button
                 key={album.id}
-                variant={selectedAlbum === album.id ? "default" : "ghost"}
-                className="h-8 px-2 text-xs whitespace-nowrap"
+                variant={selectedAlbum === album.id ? "secondary" : "ghost"}
+                className={cn(
+                  "h-8 px-2 text-xs whitespace-nowrap transition-all",
+                  selectedAlbum === album.id && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+                )}
                 onClick={() => onAlbumClick(album.id)}
               >
                 {album.name}
@@ -131,8 +137,11 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
           {favoritesAlbum && (
             <div className="relative">
               <Button
-                variant={selectedAlbum === 'favorites' ? "default" : "ghost"}
-                className="h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full"
+                variant={selectedAlbum === 'favorites' ? "secondary" : "ghost"}
+                className={cn(
+                  "h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full transition-all",
+                  selectedAlbum === 'favorites' && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+                )}
                 onClick={() => onAlbumClick('favorites')}
               >
                  <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
@@ -169,8 +178,11 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
           {apiAlbums.map((album) => (
             <div key={album.id} className="relative">
               <Button
-                variant={selectedAlbum === album.id ? "default" : "ghost"}
-                className="h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full"
+                variant={selectedAlbum === album.id ? "secondary" : "ghost"}
+                className={cn(
+                  "h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full transition-all",
+                  selectedAlbum === album.id && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+                )}
                 onClick={() => onAlbumClick(album.id)}
               >
                 <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">

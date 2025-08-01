@@ -22,14 +22,30 @@ interface GalleryProps {
   galleryType?: 'all' | 'my' | 'favorites';
   onAlbumClick?: (albumId: string) => void;
   selectedAlbum?: string | null;
+  selectionMode?: boolean;
+  selectedImages?: Set<string>;
+  onImageSelect?: (imageId: string) => void;
+  columns?: number;
 }
 
-export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galleryType, onAlbumClick, selectedAlbum }: GalleryProps) => {
+export const Gallery = ({ 
+  event, 
+  images, 
+  favoriteImages, 
+  onToggleFavorite, 
+  galleryType, 
+  onAlbumClick, 
+  selectedAlbum,
+  selectionMode,
+  selectedImages: externalSelectedImages,
+  onImageSelect,
+  columns: externalColumns
+}: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [columns, setColumns] = useState(4);
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [columns, setColumns] = useState(externalColumns || 4);
+  const [isSelectionMode, setIsSelectionMode] = useState(selectionMode || false);
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(externalSelectedImages || new Set());
   const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
@@ -40,6 +56,25 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
   
   // Use albums hook
   const { albums, getImagesByAlbum } = useAlbums(event.id.toString(), images);
+
+  // Sync external props with internal state
+  useEffect(() => {
+    if (externalColumns !== undefined) {
+      setColumns(externalColumns);
+    }
+  }, [externalColumns]);
+
+  useEffect(() => {
+    if (selectionMode !== undefined) {
+      setIsSelectionMode(selectionMode);
+    }
+  }, [selectionMode]);
+
+  useEffect(() => {
+    if (externalSelectedImages !== undefined) {
+      setSelectedImages(externalSelectedImages);
+    }
+  }, [externalSelectedImages]);
 
   // Set first album as default when albums are loaded
   useEffect(() => {
@@ -115,13 +150,17 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
   };
 
   const handleImageSelection = (imageId: string) => {
-    const newSelection = new Set(selectedImages);
-    if (newSelection.has(imageId)) {
-      newSelection.delete(imageId);
+    if (onImageSelect) {
+      onImageSelect(imageId);
     } else {
-      newSelection.add(imageId);
+      const newSelection = new Set(selectedImages);
+      if (newSelection.has(imageId)) {
+        newSelection.delete(imageId);
+      } else {
+        newSelection.add(imageId);
+      }
+      setSelectedImages(newSelection);
     }
-    setSelectedImages(newSelection);
   };
 
   const handleCloseLightbox = () => {

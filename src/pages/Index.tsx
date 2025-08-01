@@ -13,6 +13,11 @@ import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMultiUserAuth } from "@/hooks/useMultiUserAuth";
 import { BottomMenu } from "@/components/ui/bottom-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import QRCode from "qrcode";
+import { downloadMultipleImages } from "@/utils/downloadUtils";
+import { toast } from "sonner";
 
 const Index = () => {
   const { eventLink } = useParams();
@@ -31,6 +36,11 @@ const Index = () => {
   const [isLoadingAllPhotos, setIsLoadingAllPhotos] = useState(false);
   const [isLoadingMyPhotos, setIsLoadingMyPhotos] = useState(false);
   const [showNotificationSubscription, setShowNotificationSubscription] = useState(false);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [columns, setColumns] = useState(3);
+  const [qrCode, setQrCode] = useState<string>('');
+  const [isQrOpen, setIsQrOpen] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
   
@@ -246,6 +256,50 @@ const Index = () => {
     }, 100);
   };
 
+  const handleShareEvent = async () => {
+    try {
+      const url = window.location.href;
+      const qrDataURL = await QRCode.toDataURL(url, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF',
+        },
+      });
+      setQrCode(qrDataURL);
+      setIsQrOpen(true);
+    } catch (error) {
+      toast.error('שגיאה ביצירת QR קוד');
+    }
+  };
+
+  const handleDownloadAll = async () => {
+    const allImages = galleryImages.map(img => ({ src: img.src, id: img.id }));
+    if (allImages.length === 0) {
+      toast.error('אין תמונות להורדה');
+      return;
+    }
+    
+    toast.loading('מוריד תמונות...');
+    const success = await downloadMultipleImages(allImages);
+    
+    if (success) {
+      toast.success(`${allImages.length} תמונות הורדו בהצלחה`);
+    } else {
+      toast.error('שגיאה בהורדת התמונות');
+    }
+  };
+
+  const handleToggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    setSelectedImages(new Set());
+  };
+
+  const handleColumnsChange = (newColumns: number) => {
+    setColumns(newColumns);
+  };
+
   const handleNotificationSubscribe = (contact: string, notifications: boolean) => {
     console.log('Notification subscription:', { contact, notifications });
     setShowNotificationSubscription(false);
@@ -336,6 +390,18 @@ const Index = () => {
             galleryType={galleryType}
             onAlbumClick={handleAlbumClick}
             selectedAlbum={selectedAlbum}
+            selectionMode={selectionMode}
+            selectedImages={selectedImages}
+            onImageSelect={(imageId) => {
+              const newSelected = new Set(selectedImages);
+              if (newSelected.has(imageId)) {
+                newSelected.delete(imageId);
+              } else {
+                newSelected.add(imageId);
+              }
+              setSelectedImages(newSelected);
+            }}
+            columns={columns}
           />
 
           {/* FloatingNavbar temporarily hidden */}
@@ -380,15 +446,44 @@ const Index = () => {
       {showGallery && (
         <BottomMenu 
           onViewAllPhotos={handleViewAllPhotos}
-          onShareEvent={() => {/* FloatingNavbar יטפל בזה */}}
-          onDownloadAll={() => {/* נוסיף ב-Gallery */}}
-          onToggleSelectionMode={() => {/* נוסיף ב-Gallery */}}
-          onColumnsChange={(cols) => {/* נוסיף ב-Gallery */}}
-          columns={3}
+          onShareEvent={handleShareEvent}
+          onDownloadAll={handleDownloadAll}
+          onToggleSelectionMode={handleToggleSelectionMode}
+          onColumnsChange={handleColumnsChange}
+          columns={columns}
           event={event}
           onAuthComplete={handleAuthComplete}
         />
       )}
+
+      {/* QR Code Dialog */}
+      <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">שתף אירוע</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center space-y-4 py-4">
+            {qrCode && (
+              <div className="bg-white p-4 rounded-lg">
+                <img src={qrCode} alt="QR Code" className="w-48 h-48" />
+              </div>
+            )}
+            <p className="text-sm text-muted-foreground text-center">
+              סרוק את הקוד או שתף את הקישור
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success('הקישור הועתק ללוח');
+              }}
+              className="w-full"
+            >
+              העתק קישור
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Back to Top Button */}
       <BackToTopButton />

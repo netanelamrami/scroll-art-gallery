@@ -50,6 +50,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
         <div className="bg-card border border-accent/50 text-card-foreground rounded-lg shadow-lg p-4 max-w-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              <Bell className="w-5 h-5 text-primary" />
               <div>
                 <p className="font-medium text-sm">{t('notifications.title')}</p>
                 <p className="text-xs opacity-90">{t('notifications.subtitle')}</p>
@@ -86,8 +87,8 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
         <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-accent/10 p-2 rounded-full">
-                <Bell className="w-5 h-5 text-accent-foreground" />
+              <div className="bg-primary/10 p-2 rounded-full">
+                <Bell className="w-5 h-5 text-primary" />
               </div>
               <h2 className="text-xl font-semibold text-foreground">
                 {stepTitles[currentStep]}
@@ -110,7 +111,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
                   className={`h-2 flex-1 rounded-full transition-colors ${
                     step === currentStep || 
                     (currentStep === "otp" && step === "contact")
-                      ? "bg-accent border border-accent/50" 
+                      ? "bg-primary" 
                       : "bg-muted"
                   }`}
                 />

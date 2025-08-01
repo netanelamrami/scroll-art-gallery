@@ -86,11 +86,11 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
                 className={`h-2 flex-1 rounded-full transition-colors ${
                   step === currentStep || 
                   (currentStep === "complete" && index < (needsFullAuth ? 3 : 1))
-                    ? "bg-accent border border-accent/50" 
+                    ? "bg-primary" 
                     : currentStep === "otp" && step === "contact"
-                    ? "bg-accent border border-accent/50"
+                    ? "bg-primary"
                     : currentStep === "selfie" && (step === "contact" || step === "otp")
-                    ? "bg-accent border border-accent/50"
+                    ? "bg-primary"
                     : "bg-muted"
                 }`}
               />

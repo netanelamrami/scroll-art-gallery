@@ -35,6 +35,9 @@ const Index = () => {
   
   // Use multi-user auth system
   const { isAuthenticated, addUser } = useMultiUserAuth();
+  
+  // Force re-render when authentication state changes
+  const [, forceUpdate] = useState({});
 
   useEffect(() => {
     // אם אין eventLink ב-URL, נשתמש ב-default
@@ -203,26 +206,27 @@ const Index = () => {
     console.log('User added to multi-user system:', JSON.stringify(newUser, null, 2));
     console.log('Current isAuthenticated state:', isAuthenticated);
     
-    // Force re-render by updating a dummy state
-    setTimeout(() => {
-      setGalleryType('my');
-      setShowGallery(true);
-      setIsLoadingMyPhotos(false);
-      
-      // Show notification subscription for selfie-only users
-      if (event?.needDetect === false && authData.contact === "selfie-only") {
-        setTimeout(() => {
-          setShowNotificationSubscription(true);
-        }, 2000);
-      }
-      
-      // Smooth scroll to gallery
+    // Force immediate re-render
+    forceUpdate({});
+    
+    // Set gallery state immediately
+    setGalleryType('my');
+    setShowGallery(true);
+    setIsLoadingMyPhotos(false);
+    
+    // Show notification subscription for selfie-only users
+    if (event?.needDetect === false && authData.contact === "selfie-only") {
       setTimeout(() => {
-        document.getElementById('gallery')?.scrollIntoView({
-          behavior: 'smooth'
-        });
-      }, 100);
-    }, 100); // Reduced delay to make UI more responsive
+        setShowNotificationSubscription(true);
+      }, 2000);
+    }
+    
+    // Smooth scroll to gallery
+    setTimeout(() => {
+      document.getElementById('gallery')?.scrollIntoView({
+        behavior: 'smooth'
+      });
+    }, 100);
   };
 
   const handleNotificationSubscribe = (contact: string, notifications: boolean) => {

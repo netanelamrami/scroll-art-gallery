@@ -156,33 +156,33 @@ const translations = {
     'privacy.agreement.and': 'ו',
     'privacy.terms': 'תנאי השימוש',
     'privacy.policy': 'מדיניות הפרטיות',
-
-    
     'auth.otpInstruction': 'הזן את הקוד בן 4 הספרות שנשלח אליך',
 
     // Common
     'common.back': 'חזור',
+    
+    // Notifications
+    'notifications.title': 'התראות על הוספת תמונות חדשות',
+    'notifications.subtitle': 'קבל התראה כשמתווספות תמונות',
+    'notifications.subscribe': 'הרשמה',
+    'notifications.getUpdates': 'קבלת עדכונים',
+    'notifications.subscribeTo': 'הרשמה להתראות',
+    'notifications.subscribeSuccess': 'נרשמת בהצלחה להתראות!',
+    'notifications.enterPhone': 'הכנס מספר טלפון',
+    'notifications.enterEmail': 'הכנס כתובת מייל',
+    'notifications.sendCode': 'שלח קוד',
+    'notifications.verifyCode': 'אמת קוד',
+    'notifications.notificationsEnabled': 'התראות מופעלות',
+    'notifications.notificationsDisabled': 'התראות מבוטלות',
+    'notifications.phoneNumber': 'מספר טלפון',
+    'notifications.email': 'כתובת מייל',
+    'notifications.optional': '(אופציונלי)',
+    'notifications.enableNotifications': 'אפשר התראות',
+    'notifications.close': 'סגור',
 
-    // New section for notifications
-    notifications: {
-      title: "התראות על הוספת תמונות חדשות",
-      subtitle: "קבל התראה כשמתווספות תמונות",
-      subscribe: "הרשמה",
-      getUpdates: "קבלת עדכונים",
-      subscribeTo: "הרשמה להתראות",
-      subscribeSuccess: "נרשמת בהצלחה להתראות!",
-      enterPhone: "הכנס מספר טלפון",
-      enterEmail: "הכנס כתובת מייל",
-      sendCode: "שלח קוד",
-      verifyCode: "אמת קוד",
-      notificationsEnabled: "התראות מופעלות",
-      notificationsDisabled: "התראות מבוטלות",
-      phoneNumber: "מספר טלפון",
-      email: "כתובת מייל",
-      optional: "(אופציונלי)",
-      enableNotifications: "אפשר התראות",
-      close: "סגור"
-    },
+    // Gallery
+    'gallery.language': 'שפה',
+    'gallery.theme': 'ערכת נושא',
 
   },
   en: {
@@ -253,7 +253,7 @@ const translations = {
     'downloadModal.highQuality': 'High Quality',
     'downloadModal.highQualityDesc': 'Suitable for printing and editing (larger file)',
     'downloadModal.webQuality': 'Web Quality',
-    'webQuality.webQualityDesc': 'Suitable for social sharing (faster download)',
+    'downloadModal.webQualityDesc': 'Suitable for social sharing (faster download)',
     'downloadModal.downloadNow': 'Download Now',
     'downloadModal.sendRequest': 'Send Request',
     'downloadModal.downloadStarted': 'Download Started!',
@@ -336,40 +336,36 @@ const translations = {
     'privacy.terms': 'Terms of Use',
     'privacy.policy': 'Privacy Policy',
     
-    // New section for notifications
-    notifications: {
-      title: "New photo alerts",
-      subtitle: "Get notified when new photos are added",
-      subscribe: "Subscribe",
-      getUpdates: "Get Updates",
-      subscribeTo: "Subscribe to notifications",
-      subscribeSuccess: "Successfully subscribed to notifications!",
-      enterPhone: "Enter phone number",
-      enterEmail: "Enter email address",
-      sendCode: "Send code",
-      verifyCode: "Verify code",
-      notificationsEnabled: "Notifications enabled",
-      notificationsDisabled: "Notifications disabled",
-      phoneNumber: "Phone number",
-      email: "Email address",
-      optional: "(Optional)",
-      enableNotifications: "Enable notifications",
-      close: "Close"
-    },
+    // Notifications
+    'notifications.title': 'New photo alerts',
+    'notifications.subtitle': 'Get notified when new photos are added',
+    'notifications.subscribe': 'Subscribe',
+    'notifications.getUpdates': 'Get Updates',
+    'notifications.subscribeTo': 'Subscribe to notifications',
+    'notifications.subscribeSuccess': 'Successfully subscribed to notifications!',
+    'notifications.enterPhone': 'Enter phone number',
+    'notifications.enterEmail': 'Enter email address',
+    'notifications.sendCode': 'Send code',
+    'notifications.verifyCode': 'Verify code',
+    'notifications.notificationsEnabled': 'Notifications enabled',
+    'notifications.notificationsDisabled': 'Notifications disabled',
+    'notifications.phoneNumber': 'Phone number',
+    'notifications.email': 'Email address',
+    'notifications.optional': '(Optional)',
+    'notifications.enableNotifications': 'Enable notifications',
+    'notifications.close': 'Close',
+
+    // Gallery
+    'gallery.language': 'Language',
+    'gallery.theme': 'Theme',
   }
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>('he');
 
-  const t = (key: string): any => {
-    const keys = key.split('.');
-    let translation: any = translations[language];
-    
-    for (const k of keys) {
-      translation = translation?.[k];
-    }
-    
+  const t = (key: string): string => {
+    const translation = translations[language][key as keyof typeof translations[typeof language]];
     return translation || key;
   };
 

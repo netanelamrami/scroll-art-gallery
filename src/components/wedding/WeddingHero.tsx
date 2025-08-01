@@ -9,10 +9,11 @@ interface WeddingHeroProps {
   event: event;
   onViewAllPhotos: () => void;
   onViewMyPhotos: () => void;
-  isLoadingGallery?: boolean;
+  isLoadingAllPhotos?: boolean;
+  isLoadingMyPhotos?: boolean;
 }
 
-export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingGallery = false }: WeddingHeroProps) => {
+export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false }: WeddingHeroProps) => {
   const { t } = useLanguage();
 
   // Return loading skeleton if event data is not yet loaded
@@ -80,25 +81,25 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingG
             onClick={onViewMyPhotos}
             variant="outline"
             size="lg"
-            disabled={isLoadingGallery}
+            disabled={isLoadingMyPhotos}
             className="border-white bg-white/10 text-white hover:bg-white/20 backdrop-blur-md px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px] disabled:opacity-50"
           >
-          {isLoadingGallery && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          {isLoadingMyPhotos && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
           {t('en') === 'en'
             ? (event?.btFaceRecognitionTextEN || t('auth.takeSelfie'))
             : (event?.btFaceRecognitionText || t('auth.takeSelfie'))}
-            {!isLoadingGallery && <Users className="w-5 h-5 mr-2" />}
+            {!isLoadingMyPhotos && <Users className="w-5 h-5 mr-2" />}
         </Button>
 
           <Button
             onClick={onViewAllPhotos}
             size="lg"
-            disabled={isLoadingGallery}
+            disabled={isLoadingAllPhotos}
             className="bg-white text-black hover:bg-white/90 px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px] disabled:opacity-50"
           >
-            {isLoadingGallery && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {isLoadingAllPhotos && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {t('hero.allPhotos')}
-            {!isLoadingGallery && <Camera className="w-5 h-5 mr-2" />}
+            {!isLoadingAllPhotos && <Camera className="w-5 h-5 mr-2" />}
           </Button>
           
         </div>

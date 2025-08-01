@@ -25,7 +25,8 @@ const Index = () => {
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [favoriteImages, setFavoriteImages] = useState<Set<string>>(new Set());
   const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
-  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
+  const [isLoadingAllPhotos, setIsLoadingAllPhotos] = useState(false);
+  const [isLoadingMyPhotos, setIsLoadingMyPhotos] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -84,13 +85,13 @@ const Index = () => {
   }, []);
 
   const handleViewAllPhotos = () => {
-    setIsLoadingGallery(true);
+    setIsLoadingAllPhotos(true);
     setGalleryType('all');
     
     // Simulate loading delay for server response
     setTimeout(() => {
       setShowGallery(true);
-      setIsLoadingGallery(false);
+      setIsLoadingAllPhotos(false);
       // Smooth scroll to gallery
       setTimeout(() => {
         document.getElementById('gallery')?.scrollIntoView({
@@ -175,13 +176,13 @@ const Index = () => {
     setUserData(authData);
     setIsAuthenticated(true);
     setShowAuthFlow(false);
-    setIsLoadingGallery(true);
+    setIsLoadingMyPhotos(true);
     
     // Simulate loading delay for server response
     setTimeout(() => {
       setGalleryType('my');
       setShowGallery(true);
-      setIsLoadingGallery(false);
+      setIsLoadingMyPhotos(false);
       
       // Smooth scroll to gallery
       setTimeout(() => {
@@ -259,12 +260,13 @@ const Index = () => {
 
   return (
     <div>
-        <WeddingHero 
-          event={event}
-          onViewAllPhotos={handleViewAllPhotos}
-          onViewMyPhotos={handleViewMyPhotos}
-          isLoadingGallery={isLoadingGallery}
-        />
+          <WeddingHero 
+            event={event} 
+            onViewAllPhotos={handleViewAllPhotos}
+            onViewMyPhotos={handleViewMyPhotos}
+            isLoadingAllPhotos={isLoadingAllPhotos}
+            isLoadingMyPhotos={isLoadingMyPhotos}
+          />
       {showGallery && (
         <div id="gallery">
           <Gallery 

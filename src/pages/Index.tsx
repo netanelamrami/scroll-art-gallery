@@ -12,7 +12,7 @@ import { log } from "console";
 import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMultiUserAuth } from "@/hooks/useMultiUserAuth";
-import { UserSwitcher } from "@/components/users/UserSwitcher";
+import { BottomMenu } from "@/components/ui/bottom-menu";
 
 const Index = () => {
   const { eventLink } = useParams();
@@ -358,8 +358,18 @@ const Index = () => {
         />
       )}
       
-      {/* User Switcher - Bottom Left */}
-      <UserSwitcher />
+      {/* Bottom Menu - Hamburger with all functions */}
+      <BottomMenu 
+        onViewAllPhotos={handleViewAllPhotos}
+        onShareEvent={() => {
+          const url = window.location.href;
+          if (navigator.share) {
+            navigator.share({ title: 'שתף אירוע', url });
+          } else {
+            navigator.clipboard.writeText(url);
+          }
+        }}
+      />
 
       {/* Back to Top Button */}
       <BackToTopButton />

@@ -54,7 +54,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
     const url = window.location.href;
     if (navigator.share) {
       navigator.share({
-        title: 'שתף אירוע',
+        title: language === 'he' ? 'שתף אירוע' : 'Share Event',
         url: url
       });
     } else {
@@ -101,7 +101,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                   onClick={handleShareEvent}
                 >
                   <Share className="w-5 h-5 mr-3" />
-                  <span className="text-sm font-medium">שתף אירוע</span>
+                  <span className="text-sm font-medium">
+                    {language === 'he' ? 'שתף אירוע' : 'Share Event'}
+                  </span>
                 </Button>
 
                 <Button
@@ -110,7 +112,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                   onClick={handleViewAllPhotos}
                 >
                   <Images className="w-5 h-5 mr-3" />
-                  <span className="text-sm font-medium">כל התמונות</span>
+                  <span className="text-sm font-medium">
+                    {language === 'he' ? 'כל התמונות' : 'All Photos'}
+                  </span>
                 </Button>
 
                 <Button
@@ -119,7 +123,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                   onClick={handleSupport}
                 >
                   <HelpCircle className="w-5 h-5 mr-3" />
-                  <span className="text-sm font-medium">תמיכה</span>
+                  <span className="text-sm font-medium">
+                    {language === 'he' ? 'תמיכה' : 'Support'}
+                  </span>
                 </Button>
               </div>
 
@@ -127,11 +133,15 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
               {isAuthenticated && currentUser && (
                 <>
                   <div className="border-t border-gray-100 pt-2 mt-2">
-                    <p className="text-xs text-muted-foreground px-2 py-1">ניהול משתמשים</p>
+                    <p className="text-xs text-muted-foreground px-2 py-1">
+                      {language === 'he' ? 'ניהול משתמשים' : 'User Management'}
+                    </p>
                     
                     {/* Current User */}
                     <div className="px-2 py-2 bg-gray-50 rounded-md mb-1">
-                      <p className="text-xs text-muted-foreground mb-1">משתמש פעיל</p>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {language === 'he' ? 'משתמש פעיל' : 'Active User'}
+                      </p>
                       <div className="flex items-center gap-2">
                         <Avatar className="w-6 h-6">
                           <AvatarImage src={currentUser.selfieImage} alt={currentUser.name || 'User'} />
@@ -140,7 +150,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                           </AvatarFallback>
                         </Avatar>
                         <span className="text-sm font-medium truncate">
-                          {currentUser.name || 'משתמש'}
+                          {currentUser.name || (language === 'he' ? 'משתמש' : 'User')}
                         </span>
                       </div>
                     </div>
@@ -148,7 +158,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                     {/* Other Users */}
                     {users.filter(u => u.id !== currentUser.id).length > 0 && (
                       <div className="space-y-1">
-                        <p className="text-xs text-muted-foreground px-2">החלף משתמש</p>
+                        <p className="text-xs text-muted-foreground px-2">
+                          {language === 'he' ? 'החלף משתמש' : 'Switch User'}
+                        </p>
                         {users
                           .filter(u => u.id !== currentUser.id)
                           .map((user) => (
@@ -168,7 +180,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                                 </AvatarFallback>
                               </Avatar>
                               <span className="text-sm truncate flex-1 text-left">
-                                {user.name || 'משתמש'}
+                                {user.name || (language === 'he' ? 'משתמש' : 'User')}
                               </span>
                             </Button>
                           ))}
@@ -187,7 +199,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                       <div className="w-5 h-5 mr-2 rounded-full bg-gray-100 flex items-center justify-center">
                         <Plus className="w-3 h-3 text-gray-600" />
                       </div>
-                      <span className="text-sm">הוסף משתמש</span>
+                      <span className="text-sm">
+                        {language === 'he' ? 'הוסף משתמש' : 'Add User'}
+                      </span>
                     </Button>
 
                     {/* Logout */}
@@ -200,7 +214,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                       }}
                     >
                       <LogOut className="w-4 h-4 mr-2" />
-                      <span className="text-sm">התנתק</span>
+                      <span className="text-sm">
+                        {language === 'he' ? 'התנתק' : 'Logout'}
+                      </span>
                     </Button>
                   </div>
                 </>
@@ -218,7 +234,9 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                     }}
                   >
                     <User className="w-5 h-5 mr-3" />
-                    <span className="text-sm font-medium">הירשם לאירוע</span>
+                    <span className="text-sm font-medium">
+                      {language === 'he' ? 'הירשם לאירוע' : 'Register for Event'}
+                    </span>
                   </Button>
                 </div>
               )}

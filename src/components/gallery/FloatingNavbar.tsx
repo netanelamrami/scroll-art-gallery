@@ -104,10 +104,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
         >
           <Images className="h-4 w-4 ml-2" />
           <span className="hidden sm:inline">
-            {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : 'נבחרות'}
+            {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : (useLanguage().language === 'he' ? 'נבחרות' : 'Favorites')}
           </span>
           <span className="sm:hidden">
-            {galleryType === 'all' ? 'הכל' : galleryType === 'my' ? 'שלי' : 'נבחרות'}
+            {galleryType === 'all' ? 'הכל' : galleryType === 'my' ? 'שלי' : (useLanguage().language === 'he' ? 'נבחרות' : 'Favorites')}
           </span>
         </Button>
 

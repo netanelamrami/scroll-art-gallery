@@ -4,8 +4,8 @@ import { Folder, Image, ChevronDown, ChevronUp, Download, Star } from "lucide-re
 import { cn } from "@/lib/utils";
 import { DownloadModal } from "./DownloadModal";
 import { GalleryImage } from "@/types/gallery";
-
 import { Album } from "@/types/gallery";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface AlbumSectionProps {
   albums: Album[];
@@ -20,6 +20,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadAlbumImages, setDownloadAlbumImages] = useState<GalleryImage[]>([]);
   const [downloadAlbumName, setDownloadAlbumName] = useState<string>("");
+  const { language } = useLanguage();
 
   // Separate favorites album from API albums
   const favoritesAlbum = albums.find(album => album.id === 'favorites');
@@ -35,12 +36,12 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
     let albumImages: GalleryImage[] = [];
     
     if (albumId === 'favorites') {
-      albumName = "נבחרות";
+      albumName = language === 'he' ? "נבחרות" : "Favorites";
       // For favorites, use a subset of images as mock data
       albumImages = allImages.slice(0, Math.min(imageCount, allImages.length));
     } else {
       const album = apiAlbums.find(a => a.id === albumId);
-      albumName = album?.name || "אלבום";
+      albumName = album?.name || (language === 'he' ? "אלבום" : "Album");
       // Get images from album using the provided function
       albumImages = getImagesByAlbum ? getImagesByAlbum(albumId) : [];
     }
@@ -63,7 +64,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
               onClick={() => onAlbumClick('favorites')}
             >
               <Star className="text-yellow-500 h-3 w-3 sm:h-4 sm:w-4 fill-current" />
-              <span className="hidden sm:inline">נבחרות</span>
+              <span className="hidden sm:inline">{language === 'he' ? 'נבחרות' : 'Favorites'}</span>
               <span className="text-xs text-muted-foreground">({favoritesAlbum.imageCount})</span>
             </Button>
           )}
@@ -143,7 +144,9 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs font-medium text-center">{favoritesAlbum.name.replace('❤️ נבחרות', 'נבחרות')}</span>
+                  <span className="text-xs font-medium text-center">
+                    {language === 'he' ? favoritesAlbum.name.replace('❤️ נבחרות', 'נבחרות') : 'Favorites'}
+                  </span>
                 </div>
               </Button>
               

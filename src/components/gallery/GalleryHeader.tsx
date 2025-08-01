@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Grid, LayoutGrid, Grid3x3, MoreVertical, Download, CheckSquare, Share2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { event } from "@/types/event";
-import { NotificationBell } from "@/components/notifications/NotificationBell";
+
 
 import {
   DropdownMenu,
@@ -95,11 +95,6 @@ export const GalleryHeader = ({
                   {t('gallery.cancelSelection')}
                 </Button>
               </div>
-            )}
-
-            {/* Notification Bell */}
-            {!isSelectionMode && (
-              <NotificationBell event={event} />
             )}
 
             {/* More options menu */}

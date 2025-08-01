@@ -200,7 +200,7 @@ const Index = () => {
       selfieImage: authData.selfieData
     });
     
-    console.log('User added to multi-user system:', newUser);
+    console.log('User added to multi-user system:', JSON.stringify(newUser, null, 2));
     console.log('Current isAuthenticated state:', isAuthenticated);
     
     // Simulate loading delay for server response

@@ -10,7 +10,7 @@ export const useMultiUserAuth = () => {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        console.log('useMultiUserAuth initialization - parsed data:', parsed);
+        console.log('useMultiUserAuth initialization - parsed data:', JSON.stringify(parsed, null, 2));
         const initialState = {
           ...parsed,
           users: parsed.users?.map((user: any) => ({
@@ -18,7 +18,7 @@ export const useMultiUserAuth = () => {
             createdAt: new Date(user.createdAt)
           })) || []
         };
-        console.log('useMultiUserAuth initialization - initial state:', initialState);
+        console.log('useMultiUserAuth initialization - initial state:', JSON.stringify(initialState, null, 2));
         return initialState;
       } catch (e) {
         console.log('useMultiUserAuth initialization - parse error:', e);
@@ -29,7 +29,7 @@ export const useMultiUserAuth = () => {
     return { isAuthenticated: false, currentUser: null, users: [] };
   });
 
-  console.log('useMultiUserAuth current state:', authState);
+  console.log('useMultiUserAuth current state:', JSON.stringify(authState, null, 2));
 
   // Save to localStorage whenever state changes
   useEffect(() => {

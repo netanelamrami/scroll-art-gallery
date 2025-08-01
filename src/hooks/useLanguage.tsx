@@ -6,6 +6,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  setDefaultLanguage: (lang: Language) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -120,6 +121,7 @@ const translations = {
     'auth.emailRequired': 'אנא הזן כתובת מייל',
     'auth.selectImageOrCamera': 'בחר תמונה או צלם',
     'auth.notifyNewPhotos': 'עדכן אותי בעת מציאת תמונות חדשות',
+    'auth.otpInstruction': 'הזן את הקוד בן 4 הספרות שנשלח אליך',
     
     // Leads
     'leads.thanksFeedback': 'תודה על המשוב!',
@@ -156,7 +158,6 @@ const translations = {
     'privacy.agreement.and': 'ו',
     'privacy.terms': 'תנאי השימוש',
     'privacy.policy': 'מדיניות הפרטיות',
-    'auth.otpInstruction': 'הזן את הקוד בן 4 הספרות שנשלח אליך',
 
     // Common
     'common.back': 'חזור',
@@ -184,6 +185,11 @@ const translations = {
     'gallery.language': 'שפה',
     'gallery.theme': 'ערכת נושא',
 
+    // Empty states
+    'empty.allPhotos.title': 'אין תמונות זמינות עדיין',
+    'empty.allPhotos.description': 'התמונות נטענות ומעובדות. חזרו בקרוב לראות את כל התמונות מהאירוע!',
+    'empty.myPhotos.title': 'לא נמצאו תמונות שלכם',
+    'empty.myPhotos.description': 'אולי התמונות שלכם עדיין לא הועלו, או שהן בתהליך זיהוי. נסו שוב מאוחר יותר!'
   },
   en: {
     // Hero Section
@@ -294,7 +300,6 @@ const translations = {
     'auth.emailRequired': 'Please enter an email address',
     'auth.selectImageOrCamera': 'Select image or take photo',
     'auth.notifyNewPhotos': 'Notify me when new photos are found',
-    
     'auth.otpInstruction': 'Enter the 4-digit code sent to you',
     
     // Leads
@@ -358,11 +363,31 @@ const translations = {
     // Gallery
     'gallery.language': 'Language',
     'gallery.theme': 'Theme',
+
+    // Empty states
+    'empty.allPhotos.title': 'No Photos Available Yet',
+    'empty.allPhotos.description': 'Photos are being uploaded and processed. Check back soon to see all photos from the event!',
+    'empty.myPhotos.title': 'No Photos Found for You',
+    'empty.myPhotos.description': 'Your photos might not be uploaded yet, or they\'re still being processed. Try again later!'
   }
 };
 
-export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('he');
+export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<Language>(() => {
+    const savedLanguage = localStorage.getItem('language') as Language;
+    return savedLanguage || 'he';
+  });
+
+  const setDefaultLanguage = (defaultLang: Language) => {
+    const savedLanguage = localStorage.getItem('language') as Language;
+    if (!savedLanguage) {
+      setLanguage(defaultLang);
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
 
   const t = (key: string): string => {
     const translation = translations[language][key as keyof typeof translations[typeof language]];
@@ -370,7 +395,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, setDefaultLanguage }}>
       <div className={language === 'he' ? 'rtl' : 'ltr'}>
         {children}
       </div>

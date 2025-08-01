@@ -41,6 +41,6 @@ export interface event {
   registerBy: "PhoneNumber" | "Email";
   needDetect: boolean;
   isAllPhotoEventLock: boolean;
-  // eventLanguage: EventLanguageEnum;
+  eventLanguage: "HE" | "EN";
   galleryGridSize: number;
 }

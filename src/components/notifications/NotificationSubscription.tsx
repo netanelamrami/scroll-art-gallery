@@ -46,7 +46,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
 
   if (currentStep === "collapsed") {
     return (
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 mx-2 max-w-sm w-full">
+      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-40 mx-2 max-w-sm w-full">
         <div className="bg-card border border-accent/50 text-card-foreground rounded-lg shadow-lg p-4 max-w-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

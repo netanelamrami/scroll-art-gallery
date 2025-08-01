@@ -7,6 +7,7 @@ import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { AuthFlow } from "@/components/auth/AuthFlow";
 import { LeadGenerationModal } from "@/components/leads/LeadGenerationModal";
 import { BackToTopButton } from "@/components/ui/back-to-top";
+import { DownloadModal } from "@/components/gallery/DownloadModal";
 import { generateGalleryImages } from "@/data/galleryData";
 import { log } from "console";
 import { apiService } from "../data/services/apiService";
@@ -41,6 +42,7 @@ const Index = () => {
   const [columns, setColumns] = useState(3);
   const [qrCode, setQrCode] = useState<string>('');
   const [isQrOpen, setIsQrOpen] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
   
@@ -275,20 +277,8 @@ const Index = () => {
   };
 
   const handleDownloadAll = async () => {
-    const allImages = galleryImages.map(img => ({ src: img.src, id: img.id }));
-    if (allImages.length === 0) {
-      toast.error('אין תמונות להורדה');
-      return;
-    }
-    
-    toast.loading('מוריד תמונות...');
-    const success = await downloadMultipleImages(allImages);
-    
-    if (success) {
-      toast.success(`${allImages.length} תמונות הורדו בהצלחה`);
-    } else {
-      toast.error('שגיאה בהורדת התמונות');
-    }
+    // פתיחת מודל להורדת הכל
+    setShowDownloadModal(true);
   };
 
   const handleToggleSelectionMode = () => {
@@ -484,6 +474,16 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Download All Modal */}
+      <DownloadModal
+        isOpen={showDownloadModal}
+        onClose={() => setShowDownloadModal(false)}
+        imageCount={galleryImages.length}
+        images={galleryImages}
+        autoDownload={galleryImages.length <= 20}
+        albumName={event?.name || "כל התמונות"}
+      />
 
       {/* Back to Top Button */}
       <BackToTopButton />

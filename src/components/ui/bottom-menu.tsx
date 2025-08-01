@@ -13,7 +13,12 @@ import {
   UserCircle, 
   Plus, 
   LogOut,
-  User
+  User,
+  Download,
+  CheckSquare,
+  Grid,
+  LayoutGrid,
+  Grid3x3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { faqData } from '@/data/faqData';
@@ -27,11 +32,15 @@ import {
 interface BottomMenuProps {
   onViewAllPhotos?: () => void;
   onShareEvent?: () => void;
+  onDownloadAll?: () => void;
+  onToggleSelectionMode?: () => void;
+  onColumnsChange?: (columns: number) => void;
+  columns?: number;
   event?: any;
   onAuthComplete?: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
 }
 
-export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplete }: BottomMenuProps) => {
+export const BottomMenu = ({ onViewAllPhotos, onShareEvent, onDownloadAll, onToggleSelectionMode, onColumnsChange, columns = 3, event, onAuthComplete }: BottomMenuProps) => {
   const { users, currentUser, isAuthenticated, switchUser, logout, addUser } = useMultiUserAuth();
   const { language } = useLanguage();
   const [showAddUser, setShowAddUser] = useState(false);
@@ -64,6 +73,22 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
     setShowFAQDialog(true);
     setIsOpen(false);
   };
+
+  const handleDownloadAll = () => {
+    onDownloadAll?.();
+    setIsOpen(false);
+  };
+
+  const handleToggleSelectionMode = () => {
+    onToggleSelectionMode?.();
+    setIsOpen(false);
+  };
+
+  const columnOptions = [
+    { value: 2, icon: Grid, label: language === 'he' ? 'עמודות 2' : '2 Columns' },
+    { value: 3, icon: LayoutGrid, label: language === 'he' ? 'עמודות 3' : '3 Columns' },
+    { value: 4, icon: Grid3x3, label: language === 'he' ? 'עמודות 4' : '4 Columns' },
+  ];
 
   return (
     <>
@@ -108,6 +133,53 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                     {language === 'he' ? 'כל התמונות' : 'All Photos'}
                   </span>
                 </Button>
+
+                <Button
+                  variant="ghost"
+                  className="w-full h-auto p-3 justify-start hover:bg-gray-50"
+                  onClick={handleDownloadAll}
+                >
+                  <Download className="w-5 h-5 mr-3" />
+                  <span className="text-sm font-medium">
+                    {language === 'he' ? 'הורד הכל' : 'Download All'}
+                  </span>
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  className="w-full h-auto p-3 justify-start hover:bg-gray-50"
+                  onClick={handleToggleSelectionMode}
+                >
+                  <CheckSquare className="w-5 h-5 mr-3" />
+                  <span className="text-sm font-medium">
+                    {language === 'he' ? 'בחירת תמונות' : 'Select Images'}
+                  </span>
+                </Button>
+
+                {/* Column Options */}
+                <div className="border-t border-gray-100 pt-2 mt-2">
+                  <p className="text-xs text-muted-foreground px-2 py-1">
+                    {language === 'he' ? 'עמודות' : 'Columns'}
+                  </p>
+                  <div className="flex gap-1 px-2">
+                    {columnOptions.map(({ value, icon: Icon, label }) => (
+                      <Button
+                        key={value}
+                        variant={columns === value ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => {
+                          onColumnsChange?.(value);
+                          setIsOpen(false);
+                        }}
+                        className="flex-1 gap-1"
+                        title={label}
+                      >
+                        <Icon className="h-3 w-3" />
+                        <span className="text-xs">{value}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
 
                 <Button
                   variant="ghost"
@@ -179,23 +251,25 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
                       </div>
                     )}
 
-                    {/* Add User */}
-                    <Button
-                      variant="ghost"
-                      className="w-full h-auto p-2 justify-start hover:bg-gray-50 mt-1"
-                      onClick={() => {
-                        setShowAddUser(true);
-                        setIsOpen(false);
-                      }}
-                    >
+                    {/* Add User - only if less than 3 users */}
+                    {users.length < 3 && (
+                      <Button
+                        variant="ghost"
+                        className="w-full h-auto p-2 justify-start hover:bg-gray-50 mt-1"
+                        onClick={() => {
+                          setShowAddUser(true);
+                          setIsOpen(false);
+                        }}
+                      >
                       <div className="w-5 h-5 mr-2 rounded-full bg-gray-100 flex items-center justify-center">
                         <Plus className="w-3 h-3 text-gray-600" />
                       </div>
                       <span className="text-sm">
                         {language === 'he' ? 'הוסף משתמש' : 'Add User'}
                       </span>
-                    </Button>
-
+                      </Button>
+                    )}
+                    
                     {/* Logout */}
                     <Button
                       variant="ghost"

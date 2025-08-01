@@ -62,7 +62,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
               variant={selectedAlbum === 'favorites' ? "secondary" : "ghost"}
               className={cn(
                 "h-8 px-2 text-xs sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all",
-                selectedAlbum === 'favorites' && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+                selectedAlbum === 'favorites' && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
               )}
               onClick={() => onAlbumClick('favorites')}
             >
@@ -98,7 +98,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 variant={selectedAlbum === album.id ? "secondary" : "ghost"}
                 className={cn(
                   "h-8 px-2 text-xs whitespace-nowrap transition-all",
-                  selectedAlbum === album.id && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+                  selectedAlbum === album.id && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
                 )}
                 onClick={() => onAlbumClick(album.id)}
               >
@@ -140,7 +140,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 variant={selectedAlbum === 'favorites' ? "secondary" : "ghost"}
                 className={cn(
                   "h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full transition-all",
-                  selectedAlbum === 'favorites' && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+                  selectedAlbum === 'favorites' && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
                 )}
                 onClick={() => onAlbumClick('favorites')}
               >
@@ -181,7 +181,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 variant={selectedAlbum === album.id ? "secondary" : "ghost"}
                 className={cn(
                   "h-auto p-1 sm:p-2 flex flex-col items-center group hover:bg-accent w-full transition-all",
-                  selectedAlbum === album.id && "bg-accent/50 border border-accent text-accent-foreground hover:bg-accent/60"
+                  selectedAlbum === album.id && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
                 )}
                 onClick={() => onAlbumClick(album.id)}
               >

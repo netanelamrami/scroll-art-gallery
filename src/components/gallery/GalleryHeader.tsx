@@ -97,54 +97,6 @@ export const GalleryHeader = ({
               </div>
             )}
 
-            {/* More options menu */}
-            {!isSelectionMode && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="ml-2">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align={language === 'he' ? 'start' : 'end'} className="w-48 bg-background z-50">
-                  {/* Column options in dropdown */}
-                  <div className="px-2 py-1.5">
-                    <span className="text-sm font-medium text-muted-foreground">{t('gallery.columns')}</span>
-                    <div className="flex items-center gap-1 mt-2">
-                      {columnOptions.map(({ value, icon: Icon, label }) => (
-                        <Button
-                          key={value}
-                          variant={columns === value ? "default" : "ghost"}
-                          size="sm"
-                          onClick={() => onColumnsChange(value)}
-                          className={cn(
-                            "gap-1 h-8 px-2",
-                            columns === value && "bg-primary text-primary-foreground"
-                          )}
-                          title={label}
-                        >
-                          <Icon className="h-3 w-3" />
-                          <span className="text-xs">{value}</span>
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={onDownloadAll}>
-                    <Download className="h-4 w-4 mr-2" />
-                    {t('gallery.downloadAll')}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={onToggleSelection}>
-                    <CheckSquare className="h-4 w-4 mr-2" />
-                    {t('gallery.selectImages')}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onShare}>
-                    <Share2 className="h-4 w-4 mr-2" />
-                    {t('gallery.share')}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
           </div>
         </div>
       </div>

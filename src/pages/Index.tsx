@@ -381,12 +381,14 @@ const Index = () => {
         />
       )}
       
-      {/* Bottom Menu - Hamburger with all functions */}
-      <BottomMenu 
-        onViewAllPhotos={handleViewAllPhotos}
-        event={event}
-        onAuthComplete={handleAuthComplete}
-      />
+      {/* Bottom Menu - Only show when gallery is visible */}
+      {showGallery && (
+        <BottomMenu 
+          onViewAllPhotos={handleViewAllPhotos}
+          event={event}
+          onAuthComplete={handleAuthComplete}
+        />
+      )}
 
       {/* Back to Top Button */}
       <BackToTopButton />

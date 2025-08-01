@@ -163,7 +163,7 @@ const translations = {
     'common.back': 'חזור',
     
     // Notifications
-    'notifications.title': 'התראות על הוספת תמונות חדשות',
+    'notifications.title': 'התראות על תמונות חדשות',
     'notifications.subtitle': 'קבל התראה כשמתווספות תמונות',
     'notifications.subscribe': 'הרשמה',
     'notifications.getUpdates': 'קבלת עדכונים',

@@ -11,13 +11,13 @@ import { generateGalleryImages } from "@/data/galleryData";
 import { log } from "console";
 import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMultiUserAuth } from "@/hooks/useMultiUserAuth";
 
 const Index = () => {
   const { eventLink } = useParams();
   const [showGallery, setShowGallery] = useState(false);
   const [galleryType, setGalleryType] = useState<'all' | 'my' | 'favorites'>('all');
   const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthFlow, setShowAuthFlow] = useState(false);
   const [userData, setUserData] = useState<{contact: string; otp: string; selfieData: string; notifications: boolean} | null>(null);
   const [event, setEvent] = useState(null);
@@ -31,6 +31,9 @@ const Index = () => {
   const [showNotificationSubscription, setShowNotificationSubscription] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
+  
+  // Use multi-user auth system
+  const { isAuthenticated, addUser } = useMultiUserAuth();
 
   useEffect(() => {
     // אם אין eventLink ב-URL, נשתמש ב-default
@@ -183,9 +186,18 @@ const Index = () => {
 
   const handleAuthComplete = (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
     setUserData(authData);
-    setIsAuthenticated(true);
     setShowAuthFlow(false);
     setIsLoadingMyPhotos(true);
+    
+    // Add user to multi-user system
+    addUser({
+      name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
+      phone: authData.contact.includes('@') ? '' : authData.contact,
+      email: authData.contact.includes('@') ? authData.contact : '',
+      selfieImage: authData.selfieData
+    });
+    
+    console.log('User added to multi-user system');
     
     // Simulate loading delay for server response
     setTimeout(() => {

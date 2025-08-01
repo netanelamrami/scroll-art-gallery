@@ -12,6 +12,7 @@ import { event } from "@/types/event";
 import { downloadMultipleImages } from "@/utils/downloadUtils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyPhotosState } from "./EmptyPhotosState";
+import { useAlbums } from "@/hooks/useAlbums";
 
 interface GalleryProps {
   event: event; 
@@ -36,6 +37,9 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
+  
+  // Use albums hook
+  const { albums, getImagesByAlbum } = useAlbums(event.id.toString(), images);
   // Reset displayed images count when images change
   useEffect(() => {
     setDisplayedImagesCount(30);
@@ -224,12 +228,14 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
             id: 'favorites', 
             name: '❤️ נבחרות', 
             imageCount: favoriteImages.size,
-            thumbnail: Array.from(favoriteImages)[0] ? images.find(img => img.id === Array.from(favoriteImages)[0])?.src : 'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=300&h=300&fit=crop'
-          }
+            thumbnail: Array.from(favoriteImages)[0] ? images.find(img => img.id === Array.from(favoriteImages)[0])?.src : undefined
+          },
+          ...albums
         ]}
         onAlbumClick={handleAlbumClick}
         selectedAlbum={selectedAlbum}
         allImages={images}
+        getImagesByAlbum={getImagesByAlbum}
       />
 
       {/* Gallery Grid */}

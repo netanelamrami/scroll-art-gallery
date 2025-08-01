@@ -19,4 +19,11 @@ export const apiService = {
     if (!res.ok) throw new Error("Failed fetching photos");
     return res.json();
   },
+
+  async getEventAlbums(eventId: string) {
+    const url = `${BASE_URL}/EventAlbom/getForEvent?id=${eventId}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Failed fetching albums");
+    return res.json();
+  },
 };

@@ -5,6 +5,14 @@ export interface GalleryImage {
   size: 'small' | 'medium' | 'large';
   width: number;
   height: number;
+  albumId?: string;
+}
+
+export interface Album {
+  id: string;
+  name: string;
+  imageCount: number;
+  thumbnail?: string;
 }
 
 export interface ImageDimensions {

@@ -5,44 +5,32 @@ import { cn } from "@/lib/utils";
 import { DownloadModal } from "./DownloadModal";
 import { GalleryImage } from "@/types/gallery";
 
-interface Album {
-  id: string;
-  name: string;
-  imageCount: number;
-  thumbnail?: string;
-}
+import { Album } from "@/types/gallery";
 
 interface AlbumSectionProps {
   albums: Album[];
   onAlbumClick: (albumId: string) => void;
   selectedAlbum?: string;
   allImages?: GalleryImage[];
+  getImagesByAlbum?: (albumId: string) => GalleryImage[];
 }
 
-const mockAlbums: Album[] = [
-  { id: "reception", name: "קבלת פנים", imageCount: 67, thumbnail: "https://images.unsplash.com/photo-1519741497674-611481863552?w=300&h=300&fit=crop" },
-  { id: "dance", name: "ריקודים", imageCount: 89, thumbnail: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=300&h=300&fit=crop" },
-  { id: "outdoor", name: "צילומי חוץ", imageCount: 45, thumbnail: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=300&h=300&fit=crop" },
-  { id: "couples", name: "צילומי זוג", imageCount: 23, thumbnail: "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=300&h=300&fit=crop" },
-  { id: "family", name: "משפחה", imageCount: 34, thumbnail: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=300&h=300&fit=crop" },
-];
-
-export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImages = [] }: AlbumSectionProps) => {
+export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImages = [], getImagesByAlbum }: AlbumSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadAlbumImages, setDownloadAlbumImages] = useState<GalleryImage[]>([]);
   const [downloadAlbumName, setDownloadAlbumName] = useState<string>("");
 
-  // Separate favorites album from others
+  // Separate favorites album from API albums
   const favoritesAlbum = albums.find(album => album.id === 'favorites');
-  const otherAlbums = [...mockAlbums]; // Use mock albums for now
+  const apiAlbums = albums.filter(album => album.id !== 'favorites');
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
   const handleAlbumDownload = (albumId: string, imageCount: number) => {
-    // Get album name for display
+    // Get album name and images for display
     let albumName = "";
     let albumImages: GalleryImage[] = [];
     
@@ -51,13 +39,10 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
       // For favorites, use a subset of images as mock data
       albumImages = allImages.slice(0, Math.min(imageCount, allImages.length));
     } else {
-      const album = otherAlbums.find(a => a.id === albumId);
+      const album = apiAlbums.find(a => a.id === albumId);
       albumName = album?.name || "אלבום";
-      // Filter images by album ID - mock filtering logic
-      const albumIndex = otherAlbums.findIndex(a => a.id === albumId);
-      albumImages = allImages.filter((_, index) => {
-        return index % otherAlbums.length === albumIndex;
-      }).slice(0, Math.min(imageCount, allImages.length));
+      // Get images from album using the provided function
+      albumImages = getImagesByAlbum ? getImagesByAlbum(albumId) : [];
     }
     
     setDownloadAlbumImages(albumImages);
@@ -89,12 +74,12 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
           {/* Show selected album first if it's not in the initial visible albums */}
           {(() => {
             const visibleCount = window.innerWidth >= 768 ? 4 : 2; // More albums on larger screens
-            let albumsToShow = [...otherAlbums];
+            let albumsToShow = [...apiAlbums];
             
             // If an album is selected and it's NOT in the first visible albums, bring it to front
             if (selectedAlbum && selectedAlbum !== 'favorites') {
-              const selectedAlbumData = otherAlbums.find(album => album.id === selectedAlbum);
-              const selectedAlbumIndex = otherAlbums.findIndex(album => album.id === selectedAlbum);
+              const selectedAlbumData = apiAlbums.find(album => album.id === selectedAlbum);
+              const selectedAlbumIndex = apiAlbums.findIndex(album => album.id === selectedAlbum);
               
               // Only move to front if it's not already in the visible range
               if (selectedAlbumData && selectedAlbumIndex >= visibleCount) {
@@ -116,13 +101,13 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
           })()}
           {(() => {
             const visibleCount = window.innerWidth >= 768 ? 4 : 2;
-            return otherAlbums.length > visibleCount && (
+            return apiAlbums.length > visibleCount && (
               <Button
                 variant="ghost"
                 className="h-8 px-2 text-xs flex-shrink-0"
                 onClick={handleToggleExpand}
               >
-                +{otherAlbums.length - visibleCount}
+                +{apiAlbums.length - visibleCount}
               </Button>
             );
           })()}
@@ -177,8 +162,8 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
             </div>
           )}
 
-          {/* Other albums */}
-          {otherAlbums.map((album) => (
+          {/* API Albums */}
+          {apiAlbums.map((album) => (
             <div key={album.id} className="relative">
               <Button
                 variant={selectedAlbum === album.id ? "default" : "ghost"}
@@ -186,11 +171,17 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 onClick={() => onAlbumClick(album.id)}
               >
                 <div className="relative w-full aspect-square mb-1 overflow-hidden rounded-lg">
-                  <img
-                    src={album.thumbnail}
-                    alt={album.name}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
+                  {album.thumbnail ? (
+                    <img
+                      src={album.thumbnail}
+                      alt={album.name}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-muted to-muted-foreground/20 flex items-center justify-center">
+                      <Folder className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                   <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
                     {album.imageCount}

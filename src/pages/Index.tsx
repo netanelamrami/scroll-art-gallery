@@ -321,7 +321,8 @@ const Index = () => {
             selectedAlbum={selectedAlbum}
           />
 
-          {showFloatingNavbar && !isLightboxOpen && (
+          {/* FloatingNavbar temporarily hidden */}
+          {false && showFloatingNavbar && !isLightboxOpen && (
             <FloatingNavbar 
               event={event}
               galleryType={galleryType}

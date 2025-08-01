@@ -224,15 +224,22 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplet
           event={event}
           onComplete={(authData) => {
             // Add user to multi-user system
-            addUser({
+            const newUser = addUser({
               name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
               phone: authData.contact.includes('@') ? '' : authData.contact,
               email: authData.contact.includes('@') ? authData.contact : '',
               selfieImage: authData.selfieData
             });
             
+            console.log('New user added from BottomMenu:', newUser);
             setShowAuthModal(false);
             onAuthComplete?.(authData);
+            
+            // Force immediate re-render by closing and reopening the menu
+            setIsOpen(false);
+            setTimeout(() => {
+              setIsOpen(false); // Ensure menu stays closed to show new state
+            }, 100);
           }}
         />
       )}

@@ -98,6 +98,7 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
       selfieImage
     });
 
+    console.log('New user added from AddUserModal:', newUser);
     setStep('complete');
     
     setTimeout(() => {
@@ -106,6 +107,9 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
       setStep('info');
       setUserInfo({ name: '', phone: '', email: '' });
       setSelfieImage(null);
+      
+      // Force parent component re-render by triggering window event
+      window.dispatchEvent(new CustomEvent('userAdded'));
     }, 2000);
   };
 

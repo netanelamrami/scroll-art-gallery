@@ -16,13 +16,12 @@ interface NotificationSubscriptionProps {
 }
 
 export const NotificationSubscription = ({ event, onSubscribe, onClose }: NotificationSubscriptionProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentStep, setCurrentStep] = useState<NotificationStep>("collapsed");
   const [contactInfo, setContactInfo] = useState("");
   const [notifications, setNotifications] = useState(true);
   
   const isEmailMode = event?.registerBy === "Email";
-  
   
   // Auto close after 20 seconds
   useEffect(() => {
@@ -40,7 +39,6 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
     setNotifications(notificationPreference);
     setCurrentStep("otp");
     console.log('Contact submitted for notifications:', contact);
-    // שליחת SMS/Email במציאות
   };
 
   const handleOTPSubmit = (otp: string) => {
@@ -56,40 +54,44 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
     complete: t('notifications.subscribeSuccess')
   };
 
-  
   if (currentStep === "hidden") {
     return null;
   }
 
   if (currentStep === "collapsed") {
     return (
-      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 mx-2 max-w-sm w-full">
-        <div className="bg-card border border-accent/50 text-card-foreground rounded-lg shadow-lg p-4 max-w-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Bell className="w-5 h-5 text-primary" />
-              <div className="mr-4">
-                <p className="font-medium text-sm">{t('notifications.title')}</p>
-                <p className="text-xs opacity-90">{t('notifications.subtitle')}</p>
+      <div className="sticky top-0 z-[60] bg-background/95 backdrop-blur-sm border-b border-border animate-fade-in">
+        <div className="max-w-4xl mx-auto px-4 py-2">
+          <div className="bg-card/95 backdrop-blur-sm border border-accent/50 text-card-foreground rounded-lg shadow-lg p-3 max-w-md mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bell className="w-4 h-4 text-blue-500" />
+                <div>
+                  <h3 className="font-medium text-sm">
+                    {language === 'he' ? 'התראות על תמונות חדשות' : 'New Photo Notifications'}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {language === 'he' ? 'קבל התראה כשמעלים תמונות חדשות' : 'Get notified when new photos are uploaded'}
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={() => setCurrentStep("contact")}
-                className="text-xs"
-              >
-                {t('notifications.subscribe')}
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onClose}
-                className="text-muted-foreground hover:bg-accent/20 p-1"
-              >
-                <X className="w-4 h-4" />
-              </Button>
+              <div className="flex gap-1">
+                <Button
+                  size="sm"
+                  onClick={() => setCurrentStep("contact")}
+                  className="h-7 px-2 text-xs"
+                >
+                  {language === 'he' ? 'הירשם' : 'Subscribe'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCurrentStep("hidden")}
+                  className="h-7 w-7 p-0"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -112,7 +114,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
               </h2>
             </div>
             <button 
-              onClick={() => setCurrentStep("collapsed")}
+              onClick={() => setCurrentStep("hidden")}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="w-5 h-5" />
@@ -177,7 +179,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose }: Notifi
                 </div>
               </div>
               
-              <Button onClick={() => setCurrentStep("collapsed")} className="w-full">
+              <Button onClick={() => setCurrentStep("hidden")} className="w-full">
                 {t('notifications.close')}
               </Button>
             </div>

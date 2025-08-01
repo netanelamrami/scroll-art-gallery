@@ -44,46 +44,52 @@ const Index = () => {
     // אם אין eventLink ב-URL, נשתמש ב-default
     const currentEventLink = eventLink || '2d115c1c-guy-sigal';
     
-    Promise.all([
-      apiService.getEvent(currentEventLink),
-      apiService.getEventImagesFullData(currentEventLink)
-    ]).then(([eventData, imagesData]) => {
-      console.log('Event data:', eventData);
-      
-      // Check if event is not found
-      if (!eventData || eventData.error) {
+    // תחילה ננסה לקבל את האירוע
+    apiService.getEvent(currentEventLink)
+      .then(eventData => {
+        console.log('Event data:', eventData);
+        
+        // אם האירוע לא נמצא בכלל
+        if (!eventData) {
+          navigate('/event-not-found/' + currentEventLink);
+          return null; // לא נמשיך לטעון תמונות
+        }
+        
+        // Check if event is inactive or deleted
+        if (eventData.isDeleted === true || eventData.isActive === false) {
+          navigate('/event-inactive/' + currentEventLink);
+          return null; // לא נמשיך לטעון תמונות
+        }
+        
+        // האירוע קיים ופעיל, נמשיך לטעון תמונות
+        setEvent(eventData);
+        
+        return apiService.getEventImagesFullData(currentEventLink);
+      })
+      .then(imagesData => {
+        if (!imagesData) return; // אם נעברנו לדף אחר
+        
+        // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
+        const formattedImages = imagesData.map((imageData: any, index: number) => ({
+          id: imageData.name || `image-${index}`,
+          src: imageData.smallUrl,
+          mediumSrc: imageData.medUrl,
+          largeSrc: imageData.largeUrl,
+          alt: `Gallery image ${index + 1}`,
+          size: 'medium' as const,
+          width: 400,
+          height: 300,
+          albumId: imageData.albomId?.toString() || 'main'
+        }));
+        
+        setGalleryImages(formattedImages);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading data:', error);
+        // אם יש שגיאה בטעינת האירוע, מניחים שהוא לא קיים
         navigate('/event-not-found/' + currentEventLink);
-        return;
-      }
-      
-      // Check if event is inactive or deleted
-      if (eventData.isDeleted === true || eventData.isActive === false) {
-        navigate('/event-inactive/' + currentEventLink);
-        return;
-      }
-      
-      setEvent(eventData);
-      
-      // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
-      const formattedImages = imagesData.map((imageData: any, index: number) => ({
-        id: imageData.name || `image-${index}`,
-        src: imageData.smallUrl,
-        mediumSrc: imageData.medUrl,
-        largeSrc: imageData.largeUrl,
-        alt: `Gallery image ${index + 1}`,
-        size: 'medium' as const,
-        width: 400,
-        height: 300,
-        albumId: imageData.albomId?.toString() || 'main'
-      }));
-      
-      setGalleryImages(formattedImages);
-      setIsLoading(false);
-    }).catch(error => {
-      console.error('Error loading data:', error);
-      // If there's an error, assume event not found
-      navigate('/event-not-found/' + currentEventLink);
-    });
+      });
   }, [eventLink, navigate]);
 
   // Lead generation modal timer - show after 15 seconds if not shown before

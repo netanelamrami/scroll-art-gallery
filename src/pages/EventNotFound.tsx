@@ -6,7 +6,7 @@ export const EventNotFound = () => {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="max-w-sm w-full bg-card border">
         <CardHeader className="text-center pb-4">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-primary rounded-full flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gallery-primary rounded-full flex items-center justify-center">
             <Search className="w-8 h-8 text-white" />
           </div>
           <CardTitle className="text-xl font-bold text-foreground">

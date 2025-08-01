@@ -19,50 +19,52 @@ export const BottomActionBar = ({
   const { t } = useLanguage();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border shadow-lg animate-slide-in-from-bottom">
-      <div className="safe-area-bottom px-4 py-3 sm:py-4">
-        <div className="flex items-center justify-between max-w-screen-sm mx-auto">
-          {/* Selected count indicator */}
-          <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-lg px-3 py-2 backdrop-blur-sm">
-            <CheckSquare className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-primary">
-              {selectedCount} נבחרו
-            </span>
-          </div>
+    <div className="fixed bottom-6 left-4 right-4 z-50 flex justify-center animate-slide-in-from-bottom">
+      <div className="bg-background/95 backdrop-blur-md border border-border shadow-xl rounded-2xl max-w-screen-sm w-full">
+        <div className="safe-area-bottom px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            {/* Selected count indicator */}
+            <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-xl px-3 py-2 backdrop-blur-sm">
+              <CheckSquare className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium text-primary">
+                {selectedCount} נבחרו
+              </span>
+            </div>
 
-          {/* Action buttons */}
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onToggleFavorites}
-              disabled={selectedCount === 0}
-              className="gap-2 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-700 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
-            >
-              <Heart className="h-4 w-4" />
-              <span className="hidden xs:inline">מועדפים</span>
-            </Button>
-            
-            <Button
-              variant="default"
-              size="sm"
-              onClick={onDownloadSelected}
-              disabled={selectedCount === 0}
-              className="gap-2 bg-primary hover:bg-primary/90 shadow-lg transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
-            >
-              <Download className="h-4 w-4" />
-              <span className="hidden xs:inline">הורדה</span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onCancel}
-              className="gap-2 border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3"
-            >
-              <X className="h-4 w-4" />
-              <span className="hidden xs:inline">ביטול</span>
-            </Button>
+            {/* Action buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onToggleFavorites}
+                disabled={selectedCount === 0}
+                className="gap-2 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-700 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 rounded-xl"
+              >
+                <Heart className="h-4 w-4" />
+                <span className="hidden xs:inline">מועדפים</span>
+              </Button>
+              
+              <Button
+                variant="default"
+                size="sm"
+                onClick={onDownloadSelected}
+                disabled={selectedCount === 0}
+                className="gap-2 bg-primary hover:bg-primary/90 shadow-lg transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 rounded-xl"
+              >
+                <Download className="h-4 w-4" />
+                <span className="hidden xs:inline">הורדה</span>
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onCancel}
+                className="gap-2 border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 rounded-xl"
+              >
+                <X className="h-4 w-4" />
+                <span className="hidden xs:inline">ביטול</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

@@ -55,7 +55,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
   const stepTitles = {
     contact: isEmailMode ? t('auth.emailEntry') : t('auth.phoneEntry'),
     otp: t('auth.otpVerification'),
-    selfie: t('auth.selfieCapture'),
+    selfie: needsFullAuth ? t('auth.selfieCapture') : t('auth.takeSelfie'),
     complete: t('auth.registrationComplete')
   };
 

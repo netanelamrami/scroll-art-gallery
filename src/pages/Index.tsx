@@ -135,12 +135,6 @@ const Index = () => {
     setTimeout(() => {
       setShowGallery(true);
       setIsLoadingAllPhotos(false);
-      
-      // Show notification subscription
-      setTimeout(() => {
-        setShowNotificationSubscription(true);
-      }, 1000);
-      
       // Smooth scroll to gallery
       setTimeout(() => {
         document.getElementById('gallery')?.scrollIntoView({
@@ -250,10 +244,12 @@ const Index = () => {
     setIsLoadingMyPhotos(false);
     
     // Show notification subscription for selfie-only users
-    if (event?.needDetect === false && authData.contact === "selfie-only") {
+    console.log('AuthComplete - event.needDetect:', event?.needDetect);
+    console.log('AuthComplete - authData.contact:', authData.contact);
+    if (authData.contact === "selfie-only") {
       setTimeout(() => {
         setShowNotificationSubscription(true);
-      }, 2000);
+      }, 1000);
     }
     
     // Smooth scroll to gallery

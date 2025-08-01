@@ -95,12 +95,13 @@ export const useMultiUserAuth = () => {
   };
 
   const logout = () => {
-    setAuthState(prev => ({
-      ...prev,
-      currentUser: null,
+    // מחק את כל הנתונים מ-localStorage
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    setAuthState({
       isAuthenticated: false,
-      users: prev.users.map(u => ({ ...u, isActive: false }))
-    }));
+      currentUser: null,
+      users: []
+    });
   };
 
   const deleteUser = (userId: string) => {

@@ -203,7 +203,7 @@ const Index = () => {
     console.log('User added to multi-user system:', JSON.stringify(newUser, null, 2));
     console.log('Current isAuthenticated state:', isAuthenticated);
     
-    // Simulate loading delay for server response
+    // Force re-render by updating a dummy state
     setTimeout(() => {
       setGalleryType('my');
       setShowGallery(true);
@@ -222,7 +222,7 @@ const Index = () => {
           behavior: 'smooth'
         });
       }, 100);
-    }, 1500);
+    }, 100); // Reduced delay to make UI more responsive
   };
 
   const handleNotificationSubscribe = (contact: string, notifications: boolean) => {

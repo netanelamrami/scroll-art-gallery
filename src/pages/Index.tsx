@@ -361,14 +361,8 @@ const Index = () => {
       {/* Bottom Menu - Hamburger with all functions */}
       <BottomMenu 
         onViewAllPhotos={handleViewAllPhotos}
-        onShareEvent={() => {
-          const url = window.location.href;
-          if (navigator.share) {
-            navigator.share({ title: 'שתף אירוע', url });
-          } else {
-            navigator.clipboard.writeText(url);
-          }
-        }}
+        event={event}
+        onAuthComplete={handleAuthComplete}
       />
 
       {/* Back to Top Button */}

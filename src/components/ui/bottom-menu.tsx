@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMultiUserAuth } from '@/hooks/useMultiUserAuth';
 import { AddUserModal } from '@/components/users/AddUserModal';
+import { AuthModal } from '@/components/auth/AuthModal';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -23,11 +24,14 @@ import {
 interface BottomMenuProps {
   onViewAllPhotos?: () => void;
   onShareEvent?: () => void;
+  event?: any;
+  onAuthComplete?: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
 }
 
-export const BottomMenu = ({ onViewAllPhotos, onShareEvent }: BottomMenuProps) => {
-  const { users, currentUser, isAuthenticated, switchUser, logout } = useMultiUserAuth();
+export const BottomMenu = ({ onViewAllPhotos, onShareEvent, event, onAuthComplete }: BottomMenuProps) => {
+  const { users, currentUser, isAuthenticated, switchUser, logout, addUser } = useMultiUserAuth();
   const [showAddUser, setShowAddUser] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleShareEvent = () => {
@@ -81,7 +85,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent }: BottomMenuProps) =
                   className="w-full h-auto p-3 justify-start hover:bg-gray-50"
                   onClick={handleShareEvent}
                 >
-                  <Share className="w-5 h-5 mr-3 text-blue-600" />
+                  <Share className="w-5 h-5 mr-3" />
                   <span className="text-sm font-medium">שתף אירוע</span>
                 </Button>
 
@@ -90,7 +94,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent }: BottomMenuProps) =
                   className="w-full h-auto p-3 justify-start hover:bg-gray-50"
                   onClick={handleViewAllPhotos}
                 >
-                  <Images className="w-5 h-5 mr-3 text-green-600" />
+                  <Images className="w-5 h-5 mr-3" />
                   <span className="text-sm font-medium">כל התמונות</span>
                 </Button>
 
@@ -99,7 +103,7 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent }: BottomMenuProps) =
                   className="w-full h-auto p-3 justify-start hover:bg-gray-50"
                   onClick={handleSupport}
                 >
-                  <HelpCircle className="w-5 h-5 mr-3 text-orange-600" />
+                  <HelpCircle className="w-5 h-5 mr-3" />
                   <span className="text-sm font-medium">תמיכה</span>
                 </Button>
               </div>
@@ -194,11 +198,11 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent }: BottomMenuProps) =
                     variant="ghost"
                     className="w-full h-auto p-3 justify-start hover:bg-gray-50"
                     onClick={() => {
-                      setShowAddUser(true);
+                      setShowAuthModal(true);
                       setIsOpen(false);
                     }}
                   >
-                    <User className="w-5 h-5 mr-3 text-blue-600" />
+                    <User className="w-5 h-5 mr-3" />
                     <span className="text-sm font-medium">הירשם לאירוע</span>
                   </Button>
                 </div>
@@ -212,6 +216,26 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent }: BottomMenuProps) =
         isOpen={showAddUser}
         onClose={() => setShowAddUser(false)}
       />
+      
+      {event && (
+        <AuthModal 
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          event={event}
+          onComplete={(authData) => {
+            // Add user to multi-user system
+            addUser({
+              name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
+              phone: authData.contact.includes('@') ? '' : authData.contact,
+              email: authData.contact.includes('@') ? authData.contact : '',
+              selfieImage: authData.selfieData
+            });
+            
+            setShowAuthModal(false);
+            onAuthComplete?.(authData);
+          }}
+        />
+      )}
     </>
   );
 };

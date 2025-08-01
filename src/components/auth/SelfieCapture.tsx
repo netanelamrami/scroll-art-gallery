@@ -24,22 +24,42 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
   const startCamera = async () => {
     try {
       setIsLoading(true);
-      const stream = await navigator.mediaDevices.getUserMedia({
+      
+      // בדיקה אם יש תמיכה במצלמה
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('המצלמה אינה נתמכת בדפדפן זה');
+        return;
+      }
+
+      const constraints = {
         video: { 
           facingMode: "user",
-          width: { ideal: 640 },
-          height: { ideal: 480 }
-        }
-      });
+          width: { ideal: 640, min: 320 },
+          height: { ideal: 480, min: 240 }
+        },
+        audio: false
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        setIsCapturing(true);
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play();
+          setIsCapturing(true);
+        };
       }
     } catch (error) {
       console.error("Error accessing camera:", error);
-      alert(t('auth.cameraError'));
+      // טיפול בשגיאות ספציפיות
+      if (error.name === 'NotAllowedError') {
+        alert('יש לאשר גישה למצלמה כדי לצלם סלפי');
+      } else if (error.name === 'NotFoundError') {
+        alert('מצלמה לא נמצאה במכשיר');
+      } else {
+        alert('שגיאה בגישה למצלמה. נסה להעלות תמונה במקום זאת.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -118,42 +138,24 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
             <p className="text-muted-foreground mb-4">
               {isMobile ? t('auth.takeSelfie') : t('auth.selectImageOrCamera')}
             </p>
-            <div className="flex gap-2 justify-center">
-              {isMobile ? (
-                <Button onClick={startCamera} disabled={isLoading}>
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      {t('auth.loading')}
-                    </div>
-                  ) : (
-                    <>
-                      <Camera className="w-4 h-4 mr-2" />
-                      {t('auth.takeSelfie')}
-                    </>
-                  )}
-                </Button>
-              ) : (
-                <>
-                  <Button onClick={handleFileUpload} variant="outline">
-                    <Upload className="w-4 h-4 mr-2" />
-                    {t('auth.selectFile')}
-                  </Button>
-                  <Button onClick={startCamera} disabled={isLoading}>
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        {t('auth.loading')}
-                      </div>
-                    ) : (
-                      <>
-                        <Camera className="w-4 h-4 mr-2" />
-                        {t('auth.camera')}
-                      </>
-                    )}
-                  </Button>
-                </>
-              )}
+            <div className="flex gap-2 justify-center flex-wrap">
+              <Button onClick={handleFileUpload} variant="outline">
+                <Upload className="w-4 h-4 mr-2" />
+                {t('auth.selectFile')}
+              </Button>
+              <Button onClick={startCamera} disabled={isLoading}>
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    {t('auth.loading')}
+                  </div>
+                ) : (
+                  <>
+                    <Camera className="w-4 h-4 mr-2" />
+                    {t('auth.camera')}
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         )}
@@ -193,7 +195,6 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        capture="user"
         onChange={handleFileSelect}
         className="hidden"
       />

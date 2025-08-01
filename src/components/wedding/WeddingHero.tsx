@@ -3,8 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useMultiUserAuth } from "@/hooks/useMultiUserAuth";
 import { SettingsMenu } from "@/components/ui/settings-menu";
-import { UserManagerModal } from "@/components/users/UserManagerModal";
-import { AddUserModal } from "@/components/users/AddUserModal";
 import { Heart, Camera, Users, Loader2 } from "lucide-react";
 import { event } from "@/types/event";
 
@@ -19,8 +17,6 @@ interface WeddingHeroProps {
 export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false }: WeddingHeroProps) => {
   const { t, setDefaultLanguage, language } = useLanguage();
   const { isAuthenticated, currentUser } = useMultiUserAuth();
-  const [showUserManager, setShowUserManager] = useState(false);
-  const [showAddUser, setShowAddUser] = useState(false);
 
   // Set default language based on event language
   useEffect(() => {
@@ -62,11 +58,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
     <div className="relative h-screen w-full overflow-hidden">
       {/* Settings Menu */}
       <div className="absolute top-6 right-6 z-20">
-        <SettingsMenu 
-          onAddUser={() => setShowAddUser(true)}
-          onShowUserManager={() => setShowUserManager(true)}
-          event={event}
-        />
+        <SettingsMenu event={event} />
       </div>
 
       {/* Background Image */}
@@ -162,17 +154,6 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           </div>
         </div> */}
       </div>
-
-      {/* User Management Modals */}
-      <UserManagerModal 
-        isOpen={showUserManager}
-        onClose={() => setShowUserManager(false)}
-      />
-      
-      <AddUserModal 
-        isOpen={showAddUser}
-        onClose={() => setShowAddUser(false)}
-      />
     </div>
   );
 };

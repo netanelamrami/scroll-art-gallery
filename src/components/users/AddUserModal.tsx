@@ -26,14 +26,7 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInfoSubmit = () => {
-    if (!userInfo.name && !userInfo.phone && !userInfo.email) {
-      toast({
-        title: t('auth.error') || 'שגיאה',
-        description: t('users.infoRequired') || 'יש להזין לפחות פרט אחד',
-        variant: 'destructive'
-      });
-      return;
-    }
+    // Skip info validation - only name is optional now
     setStep('selfie');
   };
 
@@ -99,7 +92,9 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
     }
 
     const newUser = addUser({
-      ...userInfo,
+      name: userInfo.name || `משתמש ${Date.now()}`,
+      phone: '',
+      email: '',
       selfieImage
     });
 
@@ -144,31 +139,12 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
         {step === 'info' && (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">{t('users.name') || 'שם'}</Label>
+              <Label htmlFor="name">{t('users.name') || 'שם'} ({t('common.optional') || 'אופציונלי'})</Label>
               <Input
                 id="name"
                 value={userInfo.name}
                 onChange={(e) => setUserInfo(prev => ({ ...prev, name: e.target.value }))}
-                placeholder={t('users.namePlaceholder') || 'הזן שם'}
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">{t('users.phone') || 'טלפון'} ({t('common.optional') || 'אופציונלי'})</Label>
-              <Input
-                id="phone"
-                value={userInfo.phone}
-                onChange={(e) => setUserInfo(prev => ({ ...prev, phone: e.target.value }))}
-                placeholder={t('users.phonePlaceholder') || 'הזן מספר טלפון'}
-              />
-            </div>
-            <div>
-              <Label htmlFor="email">{t('users.email') || 'מייל'} ({t('common.optional') || 'אופציונלי'})</Label>
-              <Input
-                id="email"
-                type="email"
-                value={userInfo.email}
-                onChange={(e) => setUserInfo(prev => ({ ...prev, email: e.target.value }))}
-                placeholder={t('users.emailPlaceholder') || 'הזן כתובת מייל'}
+                placeholder={t('users.namePlaceholder') || 'הזן שם (אופציונלי)'}
               />
             </div>
             <div className="flex gap-2 justify-end">

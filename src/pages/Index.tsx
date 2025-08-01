@@ -12,6 +12,7 @@ import { log } from "console";
 import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMultiUserAuth } from "@/hooks/useMultiUserAuth";
+import { UserSwitcher } from "@/components/users/UserSwitcher";
 
 const Index = () => {
   const { eventLink } = useParams();
@@ -353,6 +354,10 @@ const Index = () => {
         />
       )}
       
+      {/* User Switcher - Bottom Left */}
+      <UserSwitcher />
+
+      {/* Back to Top Button */}
       <BackToTopButton />
     </div>
   );

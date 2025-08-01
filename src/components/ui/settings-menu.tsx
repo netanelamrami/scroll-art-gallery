@@ -15,17 +15,11 @@ import { LanguageToggle } from "./language-toggle"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 
 interface SettingsMenuProps {
-  onAddUser?: () => void;
-  onShowUserManager?: () => void;
   event?: any; // For NotificationBell
 }
 
-export function SettingsMenu({ onAddUser, onShowUserManager, event }: SettingsMenuProps) {
+export function SettingsMenu({ event }: SettingsMenuProps) {
   const { language, t } = useLanguage();
-  const { isAuthenticated, currentUser, hasMultipleUsers, logout } = useMultiUserAuth();
-  
-  console.log('SettingsMenu render - isAuthenticated:', isAuthenticated);
-  console.log('SettingsMenu render - currentUser:', currentUser);
   
   return (
     <DropdownMenu>
@@ -36,47 +30,6 @@ export function SettingsMenu({ onAddUser, onShowUserManager, event }: SettingsMe
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align={language === 'he' ? 'start' : 'end'} className="w-56 bg-background z-50">
-        {/* User Section - only for authenticated users */}
-        {isAuthenticated && currentUser && (
-          <>
-            <div className="px-2 py-2 border-b">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-muted">
-                  <img 
-                    src={currentUser.selfieImage} 
-                    alt="User avatar"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {currentUser.name || currentUser.phone || currentUser.email}
-                  </p>
-                  {hasMultipleUsers && (
-                    <p className="text-xs text-muted-foreground">
-                      {t('common.activeUser') || 'משתמש פעיל'}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* User Management */}
-            {hasMultipleUsers && (
-              <DropdownMenuItem onClick={onShowUserManager} className="gap-2">
-                <Users className="h-4 w-4" />
-                <span>{t('users.switchUser') || 'החלף משתמש'}</span>
-              </DropdownMenuItem>
-            )}
-            
-            <DropdownMenuItem onClick={onAddUser} className="gap-2">
-              <UserPlus className="h-4 w-4" />
-              <span>{t('users.addUser') || 'הוסף משתמש'}</span>
-            </DropdownMenuItem>
-
-            <DropdownMenuSeparator />
-          </>
-        )}
 
         {/* Notifications */}
         <DropdownMenuItem asChild className="flex justify-between">
@@ -105,17 +58,6 @@ export function SettingsMenu({ onAddUser, onShowUserManager, event }: SettingsMe
             <LanguageToggle />
           </div>
         </DropdownMenuItem>
-
-        {/* Logout - only for authenticated users */}
-        {isAuthenticated && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout} className="gap-2 text-destructive focus:text-destructive">
-              <LogOut className="h-4 w-4" />
-              <span>{t('auth.logout') || 'התנתק'}</span>
-            </DropdownMenuItem>
-          </>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )

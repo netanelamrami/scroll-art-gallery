@@ -1,8 +1,8 @@
 import { GalleryImage } from "@/types/gallery";
 import { apiService } from "../data/services/apiService";
 
-export const generateGalleryImages = async (count: number = 2000): Promise<GalleryImage[]> => {
-  const data = await apiService.getEventImagesFullData();
+export const generateGalleryImages = async (eventLink: string, count: number = 2000): Promise<GalleryImage[]> => {
+  const data = await apiService.getEventImagesFullData(eventLink);
 
   // נניח ש-data.images הוא מערך של אובייקטים עם {id, url, width, height}
   const imagesFromServer = data || [];

@@ -163,6 +163,27 @@ const translations = {
     // Common
     'common.back': 'חזור',
 
+    // New section for notifications
+    notifications: {
+      title: "התראות על הוספת תמונות חדשות",
+      subtitle: "קבל התראה כשמתווספות תמונות",
+      subscribe: "הרשמה",
+      getUpdates: "קבלת עדכונים",
+      subscribeTo: "הרשמה להתראות",
+      subscribeSuccess: "נרשמת בהצלחה להתראות!",
+      enterPhone: "הכנס מספר טלפון",
+      enterEmail: "הכנס כתובת מייל",
+      sendCode: "שלח קוד",
+      verifyCode: "אמת קוד",
+      notificationsEnabled: "התראות מופעלות",
+      notificationsDisabled: "התראות מבוטלות",
+      phoneNumber: "מספר טלפון",
+      email: "כתובת מייל",
+      optional: "(אופציונלי)",
+      enableNotifications: "אפשר התראות",
+      close: "סגור"
+    },
+
   },
   en: {
     // Hero Section
@@ -314,14 +335,41 @@ const translations = {
     'privacy.agreement.and': 'and',
     'privacy.terms': 'Terms of Use',
     'privacy.policy': 'Privacy Policy',
+    
+    // New section for notifications
+    notifications: {
+      title: "New photo alerts",
+      subtitle: "Get notified when new photos are added",
+      subscribe: "Subscribe",
+      getUpdates: "Get Updates",
+      subscribeTo: "Subscribe to notifications",
+      subscribeSuccess: "Successfully subscribed to notifications!",
+      enterPhone: "Enter phone number",
+      enterEmail: "Enter email address",
+      sendCode: "Send code",
+      verifyCode: "Verify code",
+      notificationsEnabled: "Notifications enabled",
+      notificationsDisabled: "Notifications disabled",
+      phoneNumber: "Phone number",
+      email: "Email address",
+      optional: "(Optional)",
+      enableNotifications: "Enable notifications",
+      close: "Close"
+    },
   }
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>('he');
 
-  const t = (key: string): string => {
-    const translation = translations[language][key as keyof typeof translations[typeof language]];
+  const t = (key: string): any => {
+    const keys = key.split('.');
+    let translation: any = translations[language];
+    
+    for (const k of keys) {
+      translation = translation?.[k];
+    }
+    
     return translation || key;
   };
 

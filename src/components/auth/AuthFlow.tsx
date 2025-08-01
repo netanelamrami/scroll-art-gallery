@@ -17,6 +17,8 @@ interface AuthFlowProps {
 
 export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
   const needsFullAuth = event?.needDetect !== false;
+  console.log('AuthFlow - event.needDetect:', event?.needDetect);
+  console.log('AuthFlow - needsFullAuth:', needsFullAuth);
   const [currentStep, setCurrentStep] = useState<AuthStep>(needsFullAuth ? "contact" : "selfie");
   const [contactInfo, setContactInfo] = useState("");
   const [notifications, setNotifications] = useState(true);

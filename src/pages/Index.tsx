@@ -313,11 +313,15 @@ const Index = () => {
       
       {/* Auth Flow Modal */}
       {showAuthFlow && event && (
-        <AuthFlow 
-          event={event}
-          onComplete={handleAuthComplete}
-          onCancel={handleAuthCancel}
-        />
+        <>
+          {console.log('Index - Showing AuthFlow with event:', event)}
+          {console.log('Index - event.needDetect:', event.needDetect)}
+          <AuthFlow 
+            event={event}
+            onComplete={handleAuthComplete}
+            onCancel={handleAuthCancel}
+          />
+        </>
       )}
 
       {/* Lead Generation Modal */}

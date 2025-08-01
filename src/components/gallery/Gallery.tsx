@@ -40,20 +40,37 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
   
   // Use albums hook
   const { albums, getImagesByAlbum } = useAlbums(event.id.toString(), images);
+
+  // Set first album as default when albums are loaded
+  useEffect(() => {
+    if (albums.length > 0 && !selectedAlbum && onAlbumClick) {
+      onAlbumClick(albums[0].id);
+    }
+  }, [albums, selectedAlbum, onAlbumClick]);
+
   // Reset displayed images count when images change
   useEffect(() => {
     setDisplayedImagesCount(30);
   }, [images]);
 
-  // Infinite scroll effect
+  // Infinite scroll effect - updated to use filtered images
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < images.length) {
+        let currentImages = images;
+        if (selectedAlbum) {
+          if (selectedAlbum === 'favorites') {
+            currentImages = images.filter(img => favoriteImages.has(img.id));
+          } else {
+            currentImages = getImagesByAlbum(selectedAlbum);
+          }
+        }
+        
+        if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < currentImages.length) {
           setIsLoadingMore(true);
           // Simulate loading delay
           setTimeout(() => {
-            setDisplayedImagesCount(prev => Math.min(prev + 30, images.length));
+            setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
             setIsLoadingMore(false);
           }, 1500);
         }
@@ -66,7 +83,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
     }
 
     return () => observer.disconnect();
-  }, [displayedImagesCount, images.length, isLoadingMore]);
+  }, [displayedImagesCount, images, selectedAlbum, favoriteImages, getImagesByAlbum, isLoadingMore]);
 
   // Responsive columns based on screen size
   useEffect(() => {
@@ -112,8 +129,22 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
     setSelectedImageIndex(null);
   };
 
+  // Get filtered images based on selected album
+  const getFilteredImages = () => {
+    if (selectedAlbum) {
+      if (selectedAlbum === 'favorites') {
+        return images.filter(img => favoriteImages.has(img.id));
+      } else {
+        return getImagesByAlbum(selectedAlbum);
+      }
+    }
+    return images;
+  };
+
+  const filteredImages = getFilteredImages();
+
   const handleNextImage = () => {
-    if (selectedImageIndex !== null && selectedImageIndex < images.length - 1) {
+    if (selectedImageIndex !== null && selectedImageIndex < filteredImages.length - 1) {
       setSelectedImageIndex(selectedImageIndex + 1);
     }
   };
@@ -138,7 +169,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
       return;
     }
 
-    const selectedImagesArray = images.filter(img => selectedImages.has(img.id));
+    const selectedImagesArray = filteredImages.filter(img => selectedImages.has(img.id));
     
     toast({
       title: "מתחיל הורדה...",
@@ -202,15 +233,14 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
     }
   };
 
-  // Get displayed images based on pagination
-  const displayedImages = images.slice(0, displayedImagesCount);
+  const displayedImages = filteredImages.slice(0, displayedImagesCount);
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <GalleryHeader
         event={event}
-        totalImages={images.length}
+        totalImages={filteredImages.length}
         columns={columns}
         onColumnsChange={setColumns}
         onDownloadAll={handleDownloadAll}
@@ -256,7 +286,7 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
             />
             
             {/* Load More Trigger & Loader */}
-            {displayedImagesCount < images.length && (
+            {displayedImagesCount < filteredImages.length && (
               <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
                 {isLoadingMore ? (
                   <div className="flex flex-col items-center space-y-4">
@@ -278,13 +308,13 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
       {!isSelectionMode && (
         <LightboxModal
           isOpen={isLightboxOpen}
-          images={images}
+          images={filteredImages}
           currentIndex={selectedImageIndex || 0}
           onClose={handleCloseLightbox}
           onNext={handleNextImage}
           onPrevious={handlePreviousImage}
-          isFavorite={selectedImageIndex !== null ? favoriteImages.has(images[selectedImageIndex]?.id) : false}
-          onToggleFavorite={selectedImageIndex !== null ? () => onToggleFavorite(images[selectedImageIndex].id) : undefined}
+          isFavorite={selectedImageIndex !== null ? favoriteImages.has(filteredImages[selectedImageIndex]?.id) : false}
+          onToggleFavorite={selectedImageIndex !== null ? () => onToggleFavorite(filteredImages[selectedImageIndex].id) : undefined}
         />
       )}
 
@@ -292,8 +322,8 @@ export const Gallery = ({ event, images, favoriteImages, onToggleFavorite, galle
       <DownloadModal
         isOpen={showDownloadModal}
         onClose={() => setShowDownloadModal(false)}
-        imageCount={images.length}
-        images={images}
+        imageCount={filteredImages.length}
+        images={filteredImages}
         autoDownload={false}
       />
     </div>

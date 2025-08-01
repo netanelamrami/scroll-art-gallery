@@ -290,22 +290,36 @@ export const Gallery = ({
         selectedCount={selectedImages.size}
       />
 
-      {/* Albums Section */}
-      <AlbumSection 
-        albums={[
-          { 
+      {/* Albums Section - Only show albums that have images for this user */}
+      {images.length > 0 && (() => {
+        // Filter albums to only show those that have images
+        const albumsWithImages = albums.filter(album => {
+          const albumImages = getImagesByAlbum(album.id);
+          return albumImages.length > 0;
+        });
+
+        const visibleAlbums = [
+          // Only show favorites if there are favorite images
+          ...(favoriteImages.size > 0 ? [{
             id: 'favorites', 
             name: '❤️ נבחרות', 
             imageCount: favoriteImages.size,
             thumbnail: Array.from(favoriteImages)[0] ? images.find(img => img.id === Array.from(favoriteImages)[0])?.src : undefined
-          },
-          ...albums
-        ]}
-        onAlbumClick={handleAlbumClick}
-        selectedAlbum={selectedAlbum}
-        allImages={images}
-        getImagesByAlbum={getImagesByAlbum}
-      />
+          }] : []),
+          ...albumsWithImages
+        ];
+
+        // Only render AlbumSection if there are visible albums
+        return visibleAlbums.length > 0 ? (
+          <AlbumSection 
+            albums={visibleAlbums}
+            onAlbumClick={handleAlbumClick}
+            selectedAlbum={selectedAlbum}
+            allImages={images}
+            getImagesByAlbum={getImagesByAlbum}
+          />
+        ) : null;
+      })()}
 
       {/* Gallery Grid */}
       <div className="w-full px-2 py-8">

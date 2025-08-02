@@ -51,16 +51,15 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack, isEmailMode = f
     setOtp("");
     
     try {
-      const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
-      
       if (isEmailMode) {
-        await apiService.sendOTPEmail(phoneNumber, verificationMessage);
+        await apiService.sendOTPEmail(phoneNumber);
         toast({
           title: "אימייל נשלח מחדש",
           description: "קוד האימות נשלח לכתובת המייל שלך",
           variant: "default",
         });
       } else {
+        const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
         await apiService.sendSMS(phoneNumber, verificationMessage, true);
         toast({
           title: "SMS נשלח מחדש",

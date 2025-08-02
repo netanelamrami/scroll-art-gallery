@@ -36,18 +36,15 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
     setNotifications(notificationPreference);
     
     try {
-      const verificationMessage = isEmailMode 
-        ? "קוד האימות שלך מ Pixshare, ברוכים הבאים" 
-        : "קוד האימות שלך מ Pixshare, ברוכים הבאים";
-      
       if (isEmailMode) {
-        await apiService.sendOTPEmail(contact, verificationMessage);
+        await apiService.sendOTPEmail(contact);
         toast({
           title: "אימייל נשלח",
           description: "קוד האימות נשלח לכתובת המייל שלך",
           variant: "default",
         });
       } else {
+        const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
         await apiService.sendSMS(contact, verificationMessage, true);
         toast({
           title: "SMS נשלח",
@@ -67,9 +64,18 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
     }
   };
 
-  const handleOTPSubmit = (otp: string) => {
-    setOtpCode(otp);
-    setCurrentStep("selfie");
+  const handleOTPSubmit = async (otp: string) => {
+    const isVerified = await apiService.verifyOTP(contactInfo, otp);
+    if (isVerified) {
+      setOtpCode(otp);
+      setCurrentStep("selfie");
+    } else {
+      toast({
+        title: "שגיאה",
+        description: "קוד האימות שגוי. אנא נסה שוב.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSelfieCapture = (imageData: string) => {

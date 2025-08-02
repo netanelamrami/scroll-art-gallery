@@ -31,16 +31,15 @@ export const NotificationModal = ({ event, onSubscribe, onClose }: NotificationM
     setNotifications(notificationPreference);
     
     try {
-      const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
-      
       if (isEmailMode) {
-        await apiService.sendOTPEmail(contact, verificationMessage);
+        await apiService.sendOTPEmail(contact);
         toast({
           title: "אימייל נשלח",
           description: "קוד האימות נשלח לכתובת המייל שלך",
           variant: "default",
         });
       } else {
+        const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
         await apiService.sendSMS(contact, verificationMessage, true);
         toast({
           title: "SMS נשלח", 
@@ -60,10 +59,18 @@ export const NotificationModal = ({ event, onSubscribe, onClose }: NotificationM
     }
   };
 
-  const handleOTPSubmit = (otp: string) => {
-    setCurrentStep("complete");
-    onSubscribe(contactInfo, notifications);
-    console.log('OTP verified:', otp);
+  const handleOTPSubmit = async (otp: string) => {
+    const isVerified = await apiService.verifyOTP(contactInfo, otp);
+    if (isVerified) {
+      setCurrentStep("complete");
+      onSubscribe(contactInfo, notifications);
+    } else {
+      toast({
+        title: "שגיאה",
+        description: "קוד האימות שגוי. אנא נסה שוב.",
+        variant: "destructive",
+      });
+    }
   };
 
   const stepTitles = {

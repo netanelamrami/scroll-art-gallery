@@ -30,32 +30,54 @@ export const apiService = {
     }
   },
 
-  async sendOTPEmail(email: string, message: string) {
+  async sendOTPEmail(email: string) {
     try {
-      const emailData = {
-        email,
-        message,
-        otp: true
-      };
-      
-      const res = await fetch(`${BASE_URL}/Photographer/sendEmail`, {
+      const res = await fetch(`${BASE_URL}/Photographer/SendEmailOtp?email=${email}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(emailData)
+        body: JSON.stringify(email)
       });
       
       if (!res.ok) {
-        throw new Error("Failed to send email");
+        throw new Error("Failed to send email OTP");
       }
       
       // אם התגובה ריקה, נחזיר אובייקט פשוט
       const responseText = await res.text();
       return responseText ? JSON.parse(responseText) : { success: true };
     } catch (error) {
-      console.error('Email API Error:', error);
+      console.error('Email OTP API Error:', error);
       throw error;
+    }
+  },
+
+  async verifyOTP(phoneNumberOrEmail: string, otp: string): Promise<boolean> {
+    try {
+      const request = {
+        PhoneNumberOrEmail: phoneNumberOrEmail,
+        otp: otp
+      };
+      
+      const res = await fetch(`${BASE_URL}/Photographer/verifyOtp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request)
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to verify OTP");
+      }
+      
+      const responseText = await res.text();
+      const response = responseText ? JSON.parse(responseText) : null;
+      return response?.verified || false;
+    } catch (error) {
+      console.error('OTP Verification API Error:', error);
+      return false;
     }
   },
 

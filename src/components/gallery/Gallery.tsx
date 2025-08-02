@@ -330,6 +330,8 @@ export const Gallery = ({
             setLocalGalleryType('all');
           }
         }}
+        onDownloadAll={handleDownloadAll}
+        onToggleSelectionMode={handleToggleSelection}
       />
 
       {/* Albums Section - Only show albums that have images for this user */}

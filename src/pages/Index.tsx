@@ -479,8 +479,6 @@ const Index = () => {
         albumName={event?.name || "כל התמונות"}
       />
 
-      {/* Back to Top Button */}
-      <BackToTopButton isSelectionMode={selectionMode} />
     </div>
   );
 };

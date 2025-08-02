@@ -26,14 +26,38 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
   const [notifications, setNotifications] = useState(true);
   const [otpCode, setOtpCode] = useState("");
   const [selfieData, setSelfieData] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
   const { t } = useLanguage();
   const { toast } = useToast();
 
   const isEmailMode = event?.registerBy === "Email";
 
+  // פונקציה למזעור תמונה
+  const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.7): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const img = new Image();
+      
+      img.onload = () => {
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(resolve, 'image/jpeg', quality);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleContactSubmit = async (contact: string, notificationPreference: boolean) => {
     setContactInfo(contact);
     setNotifications(notificationPreference);
+    setIsLoading(true);
+    setLoadingMessage(isEmailMode ? "שולח אימייל..." : "שולח SMS...");
     
     try {
       if (isEmailMode) {
@@ -61,53 +85,74 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
         description: `שליחת ה${isEmailMode ? 'אימייל' : 'SMS'} נכשלה. אנא נסה שוב.`,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
+      setLoadingMessage("");
     }
   };
 
   const handleOTPSubmit = async (otp: string) => {
-    const isVerified = await apiService.verifyOTP(contactInfo, otp);
-    if (isVerified) {
-      setOtpCode(otp);
-      
-      // בדיקה האם המשתמש כבר רשום
-      try {
-        const authenticateBy = isEmailMode ? "Email" : "PhoneNumber";
-        const userAuth = await apiService.authenticateUser(contactInfo, event.id, authenticateBy);
+    setIsLoading(true);
+    setLoadingMessage("מאמת קוד...");
+    
+    try {
+      const isVerified = await apiService.verifyOTP(contactInfo, otp);
+      if (isVerified) {
+        setOtpCode(otp);
         
-        if (userAuth && userAuth.isAuthenticated) {
-          // המשתמש כבר רשום - מסיימים את התהליך ללא selfie
-          setCurrentStep("complete");
-          onComplete({
-            contact: contactInfo,
-            otp: otp,
-            selfieData: "existing-user", // ציון שזה משתמש קיים
-            notifications: notifications
-          });
-          toast({
-            title: "ברוכים השובים!",
-            description: "זוהית כמשתמש רשום. נכנסת לגלריה!",
-            variant: "default",
-          });
-        } else {
-          // משתמש חדש - ממשיכים לשלב selfie
+        // בדיקה האם המשתמש כבר רשום
+        setLoadingMessage("בודק משתמש קיים...");
+        try {
+          const authenticateBy = isEmailMode ? "Email" : "PhoneNumber";
+          const userAuth = await apiService.authenticateUser(contactInfo, event.id, authenticateBy);
+          
+          if (userAuth && userAuth.isAuthenticated) {
+            // המשתמש כבר רשום - מסיימים את התהליך ללא selfie
+            setCurrentStep("complete");
+            onComplete({
+              contact: contactInfo,
+              otp: otp,
+              selfieData: "existing-user", // ציון שזה משתמש קיים
+              notifications: notifications
+            });
+            toast({
+              title: "ברוכים השובים!",
+              description: "זוהית כמשתמש רשום. נכנסת לגלריה!",
+              variant: "default",
+            });
+          } else {
+            // משתמש חדש - ממשיכים לשלב selfie
+            setCurrentStep("selfie");
+          }
+        } catch (error) {
+          // אם יש שגיאה באימות, ממשיכים לשלב selfie
+          console.error('Error authenticating existing user:', error);
           setCurrentStep("selfie");
         }
-      } catch (error) {
-        // אם יש שגיאה באימות, ממשיכים לשלב selfie
-        console.error('Error authenticating existing user:', error);
-        setCurrentStep("selfie");
+      } else {
+        toast({
+          title: "שגיאה",
+          description: "קוד האימות שגוי. אנא נסה שוב.",
+          variant: "destructive",
+        });
       }
-    } else {
+    } catch (error) {
+      console.error('Error in OTP verification:', error);
       toast({
         title: "שגיאה",
-        description: "קוד האימות שגוי. אנא נסה שוב.",
+        description: "אירעה שגיאה באימות הקוד. אנא נסה שוב.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
+      setLoadingMessage("");
     }
   };
 
   const handleSelfieCapture = async (imageData: string) => {
     setSelfieData(imageData);
+    setIsLoading(true);
+    setLoadingMessage("מעבד תמונה...");
     
     try {
       // יצירת FormData לרישום המשתמש
@@ -116,33 +161,45 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
       // המרת base64 לblob ואז לfile
       const response = await fetch(imageData);
       const blob = await response.blob();
-      const imageFile = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+      const originalFile = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
       
-      formData.append('image', imageFile);
+      // מזעור התמונה
+      setLoadingMessage("מקטין תמונה...");
+      const compressedBlob = await compressImage(originalFile, 800, 0.7);
+      const compressedFile = new File([compressedBlob], 'selfie_compressed.jpg', { type: 'image/jpeg' });
+      
+      formData.append('image', compressedFile);
       formData.append('eventid', event.id.toString());
       
       if (event.needDetect) {
+        setLoadingMessage("רושם משתמש חדש...");
+        
         // משתמש חדש - משתמשים בטלפון/אימייל כid
         formData.append('id', contactInfo || "selfie-only");
-        formData.append('fullname', 'Anonymous'); // אין שם מלא במערכת שלנו כרגע
+        formData.append('fullname', 'Anonymous');
         formData.append('sendNotification', notifications.toString());
         formData.append('email', isEmailMode ? contactInfo : '');
         formData.append('AuthenticateBy', isEmailMode ? 'Email' : 'PhoneNumber');
         
-        const response = await apiService.registerUser(formData);
+        const registrationResponse = await apiService.registerUser(formData);
         
-        if (response && response.token) {
+        if (registrationResponse && registrationResponse.token) {
           // שמירת הטוקן
-          sessionStorage.setItem("jwtUser", response.token);
+          sessionStorage.setItem("jwtUser", registrationResponse.token);
           sessionStorage.setItem("isRegister", "true");
           
           // שליחת SMS עם קישור לגלריה (רק לטלפון)
-          if (!isEmailMode && response.user?.id) {
+          if (!isEmailMode && registrationResponse.user?.id) {
             try {
-              await apiService.sendWelcomeSMS(contactInfo, event.eventLink, response.user.id);
+              setLoadingMessage("שולח קישור לגלריה...");
+              await apiService.sendWelcomeSMS(contactInfo, event.eventLink, registrationResponse.user.id);
             } catch (smsError) {
               console.error('Failed to send welcome SMS:', smsError);
-              // לא נוותר על הרישום בגלל שגיאת SMS
+              toast({
+                title: "התראה",
+                description: "הרישום הצליח אבל שליחת SMS נכשלה. תוכל לגשת לגלריה דרך הקישור באתר.",
+                variant: "default",
+              });
             }
           }
           
@@ -163,11 +220,13 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
           throw new Error("Registration failed - no token received");
         }
       } else {
-        // לאירועים ללא זיהוי פנים
-        const response = await apiService.registerUserByPhoto(formData);
+        setLoadingMessage("רושם משתמש...");
         
-        if (response && response.token) {
-          sessionStorage.setItem("jwtUser", response.token);
+        // לאירועים ללא זיהוי פנים
+        const registrationResponse = await apiService.registerUserByPhoto(formData);
+        
+        if (registrationResponse && registrationResponse.token) {
+          sessionStorage.setItem("jwtUser", registrationResponse.token);
           sessionStorage.setItem("isRegister", "true");
           
           setCurrentStep("complete");
@@ -194,6 +253,9 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
         description: "אירעה שגיאה ברישום. אנא נסה שוב.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
+      setLoadingMessage("");
     }
   };
 
@@ -243,7 +305,17 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
 
         {/* Content */}
         <div className="p-6">
-          {needsFullAuth && currentStep === "contact" && (
+          {/* Loading indicator */}
+          {isLoading && (
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="text-muted-foreground text-sm text-center">
+                {loadingMessage}
+              </p>
+            </div>
+          )}
+          
+          {!isLoading && needsFullAuth && currentStep === "contact" && (
             isEmailMode ? (
               <EmailInput 
                 onSubmit={handleContactSubmit}
@@ -257,7 +329,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
             )
           )}
           
-          {needsFullAuth && currentStep === "otp" && (
+          {!isLoading && needsFullAuth && currentStep === "otp" && (
             <OTPVerification 
               phoneNumber={contactInfo}
               onSubmit={handleOTPSubmit}
@@ -266,7 +338,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
             />
           )}
           
-          {currentStep === "selfie" && (
+          {!isLoading && currentStep === "selfie" && (
             <SelfieCapture 
               onCapture={handleSelfieCapture}
               onBack={needsFullAuth ? () => setCurrentStep("otp") : onCancel}

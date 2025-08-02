@@ -166,6 +166,56 @@ export const apiService = {
     }
   },
 
+  async loginUser(userId: number): Promise<any> {
+    try {
+      const res = await fetch(`${BASE_URL}/User?userId=${userId}`);
+      
+      if (!res.ok) {
+        throw new Error("Failed to login user");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : null;
+    } catch (error) {
+      console.error('Login User API Error:', error);
+      throw error;
+    }
+  },
+
+  async getUserForUser(userId: number): Promise<any> {
+    try {
+      const res = await fetch(`${BASE_URL}/User/getUsersForUser?userId=${userId}`);
+      
+      if (!res.ok) {
+        throw new Error("Failed to get users for user");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : null;
+    } catch (error) {
+      console.error('Get Users For User API Error:', error);
+      throw error;
+    }
+  },
+
+  async getImages(userId: number, eventId: number): Promise<any> {
+    try {
+      const queryParams = `?userid=${userId}&eventid=${eventId}`;
+      const url = `${BASE_URL}/User/getImages${queryParams}`;
+      const res = await fetch(url);
+      
+      if (!res.ok) {
+        throw new Error("Failed to get user images");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : null;
+    } catch (error) {
+      console.error('Get Images API Error:', error);
+      throw error;
+    }
+  },
+
   async getEvent(eventLink: string) {
     try {
       // דמה לאירוע נמחק - לבדיקה בלבד

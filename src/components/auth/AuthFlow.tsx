@@ -53,6 +53,55 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
     });
   };
 
+  // פונקציה לטעינת נתוני המשתמש אחרי רישום
+  const setUserData = async (userId: number) => {
+    try {
+      setLoadingMessage("טוען נתוני משתמש...");
+      
+      // שמירת מזהה המשתמש ב-sessionStorage
+      sessionStorage.setItem('userid', userId.toString());
+      sessionStorage.setItem('userFullName', 'Anonymous');
+      
+      // טעינת נתוני המשתמש
+      const loginResponse = await apiService.loginUser(userId);
+      
+      if (loginResponse && loginResponse.user) {
+        setLoadingMessage("טוען תמונות...");
+        
+        // טעינת תמונות המשתמש
+        try {
+          const imagesResponse = await apiService.getImages(userId, event.id);
+          console.log('User images loaded:', imagesResponse);
+        } catch (error) {
+          console.log('No images found for user or error loading images:', error);
+        }
+        
+        setLoadingMessage("טוען משתמשים קשורים...");
+        
+        // טעינת משתמשים קשורים
+        try {
+          const usersResponse = await apiService.getUserForUser(userId);
+          console.log('Related users loaded:', usersResponse);
+        } catch (error) {
+          console.log('No related users found or error loading users:', error);
+        }
+        
+        toast({
+          title: "מוכן!",
+          description: "הגלריה האישית שלך נטענה בהצלחה",
+          variant: "default",
+        });
+      }
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      toast({
+        title: "התראה",
+        description: "אירעה שגיאה בטעינת הנתונים, אבל הרישום הצליח",
+        variant: "default",
+      });
+    }
+  };
+
   const handleContactSubmit = async (contact: string, notificationPreference: boolean) => {
     setContactInfo(contact);
     setNotifications(notificationPreference);
@@ -203,6 +252,11 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
             }
           }
           
+          // טעינת נתוני המשתמש (תמונות, משתמשים קשורים)
+          if (registrationResponse.user?.id) {
+            await setUserData(registrationResponse.user.id);
+          }
+          
           setCurrentStep("complete");
           onComplete({
             contact: contactInfo || "selfie-only",
@@ -228,6 +282,11 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
         if (registrationResponse && registrationResponse.token) {
           sessionStorage.setItem("jwtUser", registrationResponse.token);
           sessionStorage.setItem("isRegister", "true");
+          
+          // טעינת נתוני המשתמש (תמונות, משתמשים קשורים)
+          if (registrationResponse.user?.id) {
+            await setUserData(registrationResponse.user.id);
+          }
           
           setCurrentStep("complete");
           onComplete({

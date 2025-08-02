@@ -98,6 +98,74 @@ export const apiService = {
     }
   },
 
+  async registerUser(formData: FormData): Promise<any> {
+    try {
+      const res = await fetch(`${BASE_URL}/User`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to register user");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : null;
+    } catch (error) {
+      console.error('User Registration API Error:', error);
+      throw error;
+    }
+  },
+
+  async registerUserByPhoto(formData: FormData): Promise<any> {
+    try {
+      const res = await fetch(`${BASE_URL}/User/registerByPhoto`, {
+        method: 'POST', 
+        body: formData
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to register user by photo");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : null;
+    } catch (error) {
+      console.error('User Registration by Photo API Error:', error);
+      throw error;
+    }
+  },
+
+  async sendWelcomeSMS(phoneNumber: string, eventLink: string, userId: string): Promise<any> {
+    try {
+      const message = `היי, נתפסת בעדשה!📸\nתמונות חדשות מחכות לך בגלריה האישית שלך >>>\nhttps://www.pixshare.live/gallery/${eventLink}?userid=${userId}\n\nPixShare AI`;
+      
+      const smsData = {
+        phoneNumber,
+        message,
+        otp: false
+      };
+      
+      const res = await fetch(`${BASE_URL}/Photographer/sendSMS`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(smsData)
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to send welcome SMS");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : { success: true };
+    } catch (error) {
+      console.error('Welcome SMS API Error:', error);
+      throw error;
+    }
+  },
+
   async getEvent(eventLink: string) {
     try {
       // דמה לאירוע נמחק - לבדיקה בלבד

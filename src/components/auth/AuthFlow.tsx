@@ -106,17 +106,95 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
     }
   };
 
-  const handleSelfieCapture = (imageData: string) => {
+  const handleSelfieCapture = async (imageData: string) => {
     setSelfieData(imageData);
-    setCurrentStep("complete");
     
-    // שמירת הנתונים והשלמת התהליך
-    onComplete({
-      contact: contactInfo || "selfie-only",
-      otp: otpCode || "no-otp",
-      selfieData: imageData,
-      notifications: notifications
-    });
+    try {
+      // יצירת FormData לרישום המשתמש
+      const formData = new FormData();
+      
+      // המרת base64 לblob ואז לfile
+      const response = await fetch(imageData);
+      const blob = await response.blob();
+      const imageFile = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+      
+      formData.append('image', imageFile);
+      formData.append('eventid', event.id.toString());
+      
+      if (event.needDetect) {
+        // משתמש חדש - משתמשים בטלפון/אימייל כid
+        formData.append('id', contactInfo || "selfie-only");
+        formData.append('fullname', ''); // אין שם מלא במערכת שלנו כרגע
+        formData.append('sendNotification', notifications.toString());
+        formData.append('email', isEmailMode ? contactInfo : '');
+        formData.append('AuthenticateBy', isEmailMode ? 'Email' : 'PhoneNumber');
+        
+        const response = await apiService.registerUser(formData);
+        
+        if (response && response.token) {
+          // שמירת הטוקן
+          sessionStorage.setItem("jwtUser", response.token);
+          sessionStorage.setItem("isRegister", "true");
+          
+          // שליחת SMS עם קישור לגלריה (רק לטלפון)
+          if (!isEmailMode && response.user?.id) {
+            try {
+              await apiService.sendWelcomeSMS(contactInfo, event.eventLink, response.user.id);
+            } catch (smsError) {
+              console.error('Failed to send welcome SMS:', smsError);
+              // לא נוותר על הרישום בגלל שגיאת SMS
+            }
+          }
+          
+          setCurrentStep("complete");
+          onComplete({
+            contact: contactInfo || "selfie-only",
+            otp: otpCode || "no-otp",
+            selfieData: imageData,
+            notifications: notifications
+          });
+          
+          toast({
+            title: "רישום הושלם בהצלחה!",
+            description: isEmailMode ? "נרשמת בהצלחה!" : "נרשמת בהצלחה! SMS נשלח עם קישור לגלריה שלך",
+            variant: "default",
+          });
+        } else {
+          throw new Error("Registration failed - no token received");
+        }
+      } else {
+        // לאירועים ללא זיהוי פנים
+        const response = await apiService.registerUserByPhoto(formData);
+        
+        if (response && response.token) {
+          sessionStorage.setItem("jwtUser", response.token);
+          sessionStorage.setItem("isRegister", "true");
+          
+          setCurrentStep("complete");
+          onComplete({
+            contact: contactInfo || "selfie-only",
+            otp: otpCode || "no-otp", 
+            selfieData: imageData,
+            notifications: notifications
+          });
+          
+          toast({
+            title: "רישום הושלם!",
+            description: "נרשמת בהצלחה לאירוע!",
+            variant: "default",
+          });
+        } else {
+          throw new Error("Registration by photo failed");
+        }
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: "שגיאה ברישום",
+        description: "אירעה שגיאה ברישום. אנא נסה שוב.",
+        variant: "destructive",
+      });
+    }
   };
 
   const stepTitles = {

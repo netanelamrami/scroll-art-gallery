@@ -109,7 +109,7 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
       setSelfieImage(null);
       
       // Force parent component re-render by triggering window event
-      window.dispatchEvent(new CustomEvent('userAdded'));
+      window.dispatchEvent(new CustomEvent('userAdded', { detail: newUser }));
     }, 1500);
   };
 

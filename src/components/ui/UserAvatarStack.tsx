@@ -21,6 +21,23 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
   const [isOpen, setIsOpen] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(0);
+
+  // Force update when users change
+  React.useEffect(() => {
+    setForceUpdate(prev => prev + 1);
+  }, [users.length, currentUser?.id]);
+
+  // Listen for user added events
+  React.useEffect(() => {
+    const handleUserAdded = () => {
+      console.log('UserAvatarStack - user added event received');
+      setForceUpdate(prev => prev + 1);
+    };
+    
+    window.addEventListener('userAdded', handleUserAdded);
+    return () => window.removeEventListener('userAdded', handleUserAdded);
+  }, []);
 
   if (!isAuthenticated || !currentUser) {
     return (
@@ -65,8 +82,15 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                 selfieImage: authData.selfieData
               });
               
+              console.log('New user added in UserAvatarStack:', newUser);
               setShowAuthModal(false);
               onAuthComplete?.(authData);
+              
+              // Force immediate re-render
+              setForceUpdate(prev => prev + 1);
+              
+              // Dispatch custom event for other components
+              window.dispatchEvent(new CustomEvent('userAdded', { detail: newUser }));
             }}
           />
         )}

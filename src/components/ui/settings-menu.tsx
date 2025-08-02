@@ -2,7 +2,7 @@ import React from "react"
 import { Settings, LogOut, Bell, Users, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/hooks/useLanguage"
-import { useMultiUserAuth } from "@/hooks/useMultiUserAuth"
+import { useMultiUserAuth } from "@/contexts/AuthContext"
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -12,7 +12,7 @@ import { generateGalleryImages } from "@/data/galleryData";
 import { log } from "console";
 import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMultiUserAuth } from "@/hooks/useMultiUserAuth";
+import { useMultiUserAuth } from "@/contexts/AuthContext";
 import { BottomMenu } from "@/components/ui/bottom-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";

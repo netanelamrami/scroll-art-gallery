@@ -3,7 +3,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { UserCircle, Plus, LogOut } from 'lucide-react';
-import { useMultiUserAuth } from '@/hooks/useMultiUserAuth';
+import { useMultiUserAuth } from '@/contexts/AuthContext';
 import { AddUserModal } from '@/components/users/AddUserModal';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { useLanguage } from '@/hooks/useLanguage';

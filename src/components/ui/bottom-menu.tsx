@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMultiUserAuth } from '@/hooks/useMultiUserAuth';
+import { useMultiUserAuth } from '@/contexts/AuthContext';
 import { AddUserModal } from '@/components/users/AddUserModal';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { FAQSupportDialog } from '@/components/gallery/FAQSupportDialog';

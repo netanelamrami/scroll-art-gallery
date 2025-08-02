@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useMultiUserAuth } from '@/hooks/useMultiUserAuth';
+import { useMultiUserAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';

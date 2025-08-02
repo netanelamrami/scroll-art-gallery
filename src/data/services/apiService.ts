@@ -9,7 +9,7 @@ export const apiService = {
         otp
       };
       
-      const res = await fetch(`${BASE_URL}/api/Photographer/sendSMS`, {
+      const res = await fetch(`${BASE_URL}/Photographer/sendSMS`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export const apiService = {
         otp: true
       };
       
-      const res = await fetch(`${BASE_URL}/api/Photographer/sendEmail`, {
+      const res = await fetch(`${BASE_URL}/Photographer/sendEmail`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

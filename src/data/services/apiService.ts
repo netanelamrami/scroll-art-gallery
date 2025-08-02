@@ -217,6 +217,28 @@ export const apiService = {
     }
   },
 
+  async downloadUserImg(downloadRequest: any): Promise<any> {
+    try {
+      const res = await fetch(`${BASE_URL}/User/download-zip-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(downloadRequest)
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to request download");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : null;
+    } catch (error) {
+      console.error('Download User Images API Error:', error);
+      throw error;
+    }
+  },
+
   async getEvent(eventLink: string) {
     try {
       // דמה לאירוע נמחק - לבדיקה בלבד

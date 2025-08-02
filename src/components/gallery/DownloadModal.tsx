@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getDownloadFormData, saveDownloadFormData, downloadMultipleImages } from "@/utils/downloadUtils";
 import { GalleryImage } from "@/types/gallery";
+import { apiService } from "@/data/services/apiService";
 
 interface DownloadModalProps {
   isOpen: boolean;
@@ -18,9 +19,11 @@ interface DownloadModalProps {
   images?: GalleryImage[];
   autoDownload?: boolean; // For immediate download if <= 20 images
   albumName?: string; // Name of the album being downloaded
+  galleryType?: 'all' | 'my' | 'favorites'; // סוג הגלרייה - עבור קביעת DownloadAllPhotos
+  eventId?: number; // מזהה האירוע
 }
 
-export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false, albumName }: DownloadModalProps) => {
+export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false, albumName, galleryType = 'all', eventId }: DownloadModalProps) => {
   const [step, setStep] = useState<'contact' | 'quality' | 'success'>('contact');
   const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
@@ -152,8 +155,39 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
         }
       } else {
         // For large albums - API request
-        // TODO: שליחה ל-API
-        // await apiService.submitDownloadRequest(formData);
+        const userId = parseInt(sessionStorage.getItem('userid') || '0');
+        const phoneData = formData.phone ? `${formData.countryCode}${formData.phone.replace(/^0/, '')}` : '';
+        
+        const downloadRequest = {
+          UserId: userId,
+          EventId: eventId,
+          Email: formData.email,
+          Phone: phoneData,
+          Quality: formData.quality, // "high" or "web"
+          DownloadAllPhotos: galleryType === 'all' // true אם זה כל התמונות, false אם זה התמונות שלי
+        };
+        
+        console.log('Sending download request:', downloadRequest);
+        
+        try {
+          await apiService.downloadUserImg(downloadRequest);
+          
+          toast({
+            title: t('downloadModal.requestSent'),
+            description: galleryType === 'all' 
+              ? 'בקשת הורדה נשלחה עבור כל תמונות האירוע'
+              : 'בקשת הורדה נשלחה עבור התמונות שלך',
+          });
+        } catch (error) {
+          console.error('Download API Error:', error);
+          toast({
+            title: t('toast.error.title'),
+            description: 'שגיאה בשליחת בקשת ההורדה. אנא נסה שוב.',
+            variant: "destructive"
+          });
+          return;
+        }
+        
         setStep('success');
       }
       

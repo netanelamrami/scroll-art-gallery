@@ -541,6 +541,8 @@ const Index = () => {
         images={galleryImages}
         autoDownload={galleryImages.length <= 20}
         albumName={event?.name || "כל התמונות"}
+        galleryType={galleryType}
+        eventId={event?.id}
       />
 
     </div>

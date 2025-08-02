@@ -204,22 +204,18 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   // Mobile version - collapsible vertically
   return (
     <div className={`fixed bottom-6 left-6 z-50 ${className}`}>
-      <div className={`transition-all duration-500 ease-out flex flex-col items-start ${
-        isExpanded 
-          ? 'gap-3' 
-          : 'gap-0'
-      }`}>
+      <div className="relative">
         
         {/* Expanded state - full navbar */}
         {isExpanded && (
-          <div className={`bg-background/95 backdrop-blur-sm border shadow-lg rounded-2xl px-4 py-4 flex flex-col gap-3 animate-fade-in transition-all duration-500 transform origin-bottom`}>
+          <div className={`absolute bottom-16 left-0 bg-background/95 backdrop-blur-sm border shadow-lg rounded-2xl px-4 py-4 flex flex-col gap-3 animate-fade-in transition-all duration-500 transform origin-bottom min-w-[200px]`}>
             
             {/* Gallery Toggle */}
             <Button
               variant="outline"
               size="sm"
               onClick={onToggleGalleryType}
-              className="rounded-full px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
+              className="rounded-full px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <Images className="h-4 w-4" />
               <span>
@@ -232,7 +228,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={onDownloadAll}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <Download className="h-4 w-4" />
               <span>הורד הכל</span>
@@ -243,7 +239,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={onToggleSelectionMode}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <CheckSquare className="h-4 w-4" />
               <span>בחר תמונות</span>
@@ -298,7 +294,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={() => setIsSupportOpen(true)}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <MessageCircle className="h-4 w-4" />
               <span>תמיכה</span>
@@ -310,7 +306,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                 variant="ghost"
                 size="sm"
                 onClick={scrollToGallery}
-                className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 justify-start"
+                className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 justify-start w-full"
               >
                 <ArrowUp className="h-4 w-4" />
                 <span>למעלה</span>
@@ -319,7 +315,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
           </div>
         )}
 
-        {/* Collapsed/Close button - always at bottom */}
+        {/* Control button - always stays in place */}
         <Button
           variant="ghost"
           onClick={() => setIsExpanded(!isExpanded)}

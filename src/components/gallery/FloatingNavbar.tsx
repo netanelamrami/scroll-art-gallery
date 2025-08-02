@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Share2, Images, MessageCircle, QrCode, ArrowUp, ChevronUp, ChevronDown, Download, CheckSquare } from 'lucide-react';
+import { Share2, Images, MessageCircle, QrCode, ArrowUp, Menu, Download, CheckSquare } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { FAQSupportDialog } from './FAQSupportDialog';
@@ -339,11 +339,11 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
           onClick={() => setIsExpanded(!isExpanded)}
           className="h-14 w-14 rounded-full bg-white/90 hover:bg-white shadow-lg border border-gray-200 p-0 transition-all duration-300 hover:scale-105"
         >
-          {isExpanded ? (
-            <ChevronDown className="w-6 h-6 text-gray-700" />
-          ) : (
-            <ChevronUp className="w-6 h-6 text-gray-700" />
-          )}
+          <Menu 
+            className={`w-6 h-6 text-gray-700 transition-transform duration-300 ${
+              isExpanded ? 'rotate-180' : 'rotate-0'
+            }`} 
+          />
         </Button>
       </div>
 

@@ -155,8 +155,18 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
           const authenticateBy = isEmailMode ? "Email" : "PhoneNumber";
           const userAuth = await apiService.authenticateUser(contactInfo, event.id, authenticateBy);
           
-          if (userAuth && userAuth.isAuthenticated) {
-            // המשתמש כבר רשום - מסיימים את התהליך ללא selfie
+          if (userAuth && userAuth.user && userAuth.user.id) {
+            // המשתמש כבר רשום - טוען את נתוני המשתמש ומעבר ישירות לגלריה
+            setLoadingMessage("משתמש קיים נמצא, טוען נתונים...");
+            
+            // שמירת מזהה המשתמש ב-sessionStorage
+            sessionStorage.setItem('userid', userAuth.user.id.toString());
+            sessionStorage.setItem('userFullName', userAuth.user.fullName || 'Anonymous');
+            sessionStorage.setItem("isRegister", "true");
+            
+            // טעינת נתוני המשתמש
+            await setUserData(userAuth.user.id);
+            
             setCurrentStep("complete");
             onComplete({
               contact: contactInfo,
@@ -164,6 +174,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
               selfieData: "existing-user", // ציון שזה משתמש קיים
               notifications: notifications
             });
+            
             toast({
               title: "ברוכים השובים!",
               description: "זוהית כמשתמש רשום. נכנסת לגלריה!",
@@ -174,8 +185,8 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
             setCurrentStep("selfie");
           }
         } catch (error) {
-          // אם יש שגיאה באימות, ממשיכים לשלב selfie
-          console.error('Error authenticating existing user:', error);
+          // אם יש שגיאה באימות, ממשיכים לשלב selfie (משתמש חדש)
+          console.error('User not found, proceeding to selfie registration:', error);
           setCurrentStep("selfie");
         }
       } else {

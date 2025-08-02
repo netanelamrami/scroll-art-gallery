@@ -193,7 +193,7 @@ const Index = () => {
   const handleToggleGalleryType = () => {
     // אם המשתמש מנסה לעבור ל"התמונות שלי" בלי להיות מחובר
     if (galleryType === 'all' && !isAuthenticated) {
-      setShowAuthFlow(true);
+      handleToggleMyPhotos(); // שימוש בפונקציה הקיימת שמטפלת נכון במקרה הזה
       return;
     }
     
@@ -223,16 +223,21 @@ const Index = () => {
     setShowAuthFlow(false);
     setIsLoadingMyPhotos(true);
     
-    // Add user to multi-user system
-    console.log('About to call addUser...');
-    const newUser = addUser({
-      name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
-      phone: authData.contact.includes('@') ? '' : authData.contact,
-      email: authData.contact.includes('@') ? authData.contact : '',
-      selfieImage: authData.selfieData
-    });
+    // רק אם זה לא משתמש קיים, נוסיף אותו לרשימת המשתמשים
+    if (authData.selfieData !== "existing-user") {
+      console.log('Adding new user to multi-user system...');
+      const newUser = addUser({
+        name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
+        phone: authData.contact.includes('@') ? '' : authData.contact,
+        email: authData.contact.includes('@') ? authData.contact : '',
+        selfieImage: authData.selfieData
+      });
+      
+      console.log('User added to multi-user system:', JSON.stringify(newUser, null, 2));
+    } else {
+      console.log('Existing user - not adding to multi-user system');
+    }
     
-    console.log('User added to multi-user system:', JSON.stringify(newUser, null, 2));
     console.log('Current isAuthenticated state:', isAuthenticated);
     
     // Force immediate re-render

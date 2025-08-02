@@ -332,6 +332,7 @@ export const Gallery = ({
         }}
         onDownloadAll={handleDownloadAll}
         onToggleSelectionMode={handleToggleSelection}
+        imageCount={filteredImages.length}
       />
 
       {/* Albums Section - Only show albums that have images for this user */}

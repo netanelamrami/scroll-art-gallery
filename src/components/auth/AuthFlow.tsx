@@ -171,7 +171,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
             onComplete({
               contact: contactInfo,
               otp: otp,
-              selfieData: "existing-user", // ציון שזה משתמש קיים
+              selfieData: "existing-user", // ציון שזה משתמש קיים - זה לא יוסיף משתמש חדש
               notifications: notifications
             });
             

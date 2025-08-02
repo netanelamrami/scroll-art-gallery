@@ -18,9 +18,10 @@ interface FloatingNavbarProps {
   onDownloadAll?: () => void;
   onToggleSelectionMode?: () => void;
   className?: string;
+  imageCount?: number; // מספר התמונות הנוכחיות
 }
 
-export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDownloadAll, onToggleSelectionMode, className }: FloatingNavbarProps) => {
+export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDownloadAll, onToggleSelectionMode, className, imageCount = 0 }: FloatingNavbarProps) => {
   const [qrCode, setQrCode] = useState<string>('');
   const [isQrOpen, setIsQrOpen] = useState(false);
   const { toast } = useToast();
@@ -30,16 +31,16 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Track scroll to show/hide back to top button
+  // Track scroll to show/hide back to top button - רק אם יש תמונות
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setShowBackToTop(scrollTop > 500);
+      setShowBackToTop(scrollTop > 500 && imageCount > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [imageCount]);
 
   // Close navbar when clicking outside (mobile only)
   useEffect(() => {
@@ -189,10 +190,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             className="rounded-full hover:bg-accent px-4 py-2 text-sm"
           >
             <MessageCircle className="h-4 w-4 mr-2" />
-            <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
+           <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
           </Button>
 
-          {/* Back to Top Button */}
+          {/* Back to Top Button - Desktop */}
           {showBackToTop && (
             <Button
               variant="ghost"
@@ -205,6 +206,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               <span>{language === 'he' ? 'למעלה' : 'To Top'}</span>
             </Button>
           )}
+
         </div>
 
         <FAQSupportDialog
@@ -347,7 +349,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
         </Button>
       </div>
 
-      {/* Back to Top Button - Fixed separate button on the right */}
+      {/* Back to Top Button - Mobile (Fixed separate button on the right) */}
       {showBackToTop && (
         <div className="fixed bottom-6 right-6 z-40">
           <Button

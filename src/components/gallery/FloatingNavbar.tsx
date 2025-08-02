@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Share2, Images, MessageCircle, QrCode, ArrowUp, ChevronLeft, ChevronRight, Download, CheckSquare } from 'lucide-react';
+import { Share2, Images, MessageCircle, QrCode, ArrowUp, ChevronUp, ChevronDown, Download, CheckSquare } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { FAQSupportDialog } from './FAQSupportDialog';
@@ -201,45 +201,30 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
     );
   }
 
-  // Mobile version - collapsible
+  // Mobile version - collapsible vertically
   return (
     <div className={`fixed bottom-6 left-6 z-50 ${className}`}>
-      <div className={`transition-all duration-500 ease-out ${
+      <div className={`transition-all duration-500 ease-out flex flex-col items-start ${
         isExpanded 
-          ? 'transform scale-100 opacity-100' 
-          : 'transform scale-95 opacity-100'
+          ? 'gap-3' 
+          : 'gap-0'
       }`}>
-        {!isExpanded ? (
-          // Collapsed state - open arrow button
-          <Button
-            variant="ghost"
-            onClick={() => setIsExpanded(true)}
-            className="h-14 w-14 rounded-full bg-white/90 hover:bg-white shadow-lg border border-gray-200 p-0 transition-all duration-300 hover:scale-105"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-700" />
-          </Button>
-        ) : (
-          // Expanded state - full navbar with close arrow
-          <div className={`bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-3 flex items-center gap-2 animate-scale-in transition-all duration-500`}>
-            {/* Close button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsExpanded(false)}
-              className="rounded-full px-2 py-2 shrink-0 hover:bg-accent transition-all duration-200"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-
+        
+        {/* Expanded state - full navbar */}
+        {isExpanded && (
+          <div className={`bg-background/95 backdrop-blur-sm border shadow-lg rounded-2xl px-4 py-4 flex flex-col gap-3 animate-fade-in transition-all duration-500 transform origin-bottom`}>
+            
             {/* Gallery Toggle */}
             <Button
               variant="outline"
               size="sm"
               onClick={onToggleGalleryType}
-              className="rounded-full px-2 py-2 text-xs transition-all duration-200 hover:scale-105"
-              title={galleryType === 'all' ? 'כל התמונות' : galleryType === 'my' ? 'התמונות שלי' : 'נבחרות'}
+              className="rounded-full px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
             >
               <Images className="h-4 w-4" />
+              <span>
+                {galleryType === 'all' ? 'כל התמונות' : galleryType === 'my' ? 'התמונות שלי' : 'נבחרות'}
+              </span>
             </Button>
 
             {/* Download All */}
@@ -247,10 +232,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={onDownloadAll}
-              className="rounded-full hover:bg-accent px-2 py-2 text-xs transition-all duration-200 hover:scale-105"
-              title="הורד הכל"
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
             >
               <Download className="h-4 w-4" />
+              <span>הורד הכל</span>
             </Button>
 
             {/* Toggle Selection Mode */}
@@ -258,10 +243,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={onToggleSelectionMode}
-              className="rounded-full hover:bg-accent px-2 py-2 text-xs transition-all duration-200 hover:scale-105"
-              title="בחר תמונות"
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
             >
               <CheckSquare className="h-4 w-4" />
+              <span>בחר תמונות</span>
             </Button>
 
             {/* Share Event */}
@@ -271,10 +256,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                   variant="ghost"
                   size="sm"
                   onClick={generateQRCode}
-                  className="rounded-full hover:bg-accent px-2 py-2 text-xs transition-all duration-200 hover:scale-105"
-                  title="שתף אירוע"
+                  className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
                 >
                   <Share2 className="h-4 w-4" />
+                  <span>שתף אירוע</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
@@ -313,10 +298,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={() => setIsSupportOpen(true)}
-              className="rounded-full hover:bg-accent px-2 py-2 text-xs transition-all duration-200 hover:scale-105"
-              title="תמיכה"
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start"
             >
               <MessageCircle className="h-4 w-4" />
+              <span>תמיכה</span>
             </Button>
 
             {/* Back to Top Button - Only show when scrolled down */}
@@ -325,14 +310,27 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                 variant="ghost"
                 size="sm"
                 onClick={scrollToGallery}
-                className="rounded-full hover:bg-accent px-2 py-2 transition-all duration-300 hover:scale-105"
-                title="חזרה למעלה"
+                className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 justify-start"
               >
                 <ArrowUp className="h-4 w-4" />
+                <span>למעלה</span>
               </Button>
             )}
           </div>
         )}
+
+        {/* Collapsed/Close button - always at bottom */}
+        <Button
+          variant="ghost"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="h-14 w-14 rounded-full bg-white/90 hover:bg-white shadow-lg border border-gray-200 p-0 transition-all duration-300 hover:scale-105"
+        >
+          {isExpanded ? (
+            <ChevronDown className="w-6 h-6 text-gray-700" />
+          ) : (
+            <ChevronUp className="w-6 h-6 text-gray-700" />
+          )}
+        </Button>
       </div>
 
       <FAQSupportDialog

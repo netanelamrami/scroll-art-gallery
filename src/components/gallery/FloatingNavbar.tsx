@@ -208,14 +208,14 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
         
         {/* Expanded state - full navbar */}
         {isExpanded && (
-          <div className={`absolute bottom-16 left-0 bg-background/95 backdrop-blur-sm border shadow-lg rounded-2xl px-4 py-4 flex flex-col gap-3 animate-fade-in transition-all duration-500 transform origin-bottom min-w-[200px]`}>
+          <div className={`absolute bottom-16 left-0 bg-background/95 backdrop-blur-sm border shadow-lg rounded-2xl px-3 py-3 flex flex-col gap-2 animate-fade-in transition-all duration-500 transform origin-bottom min-w-[160px]`}>
             
             {/* Gallery Toggle */}
             <Button
               variant="outline"
               size="sm"
               onClick={onToggleGalleryType}
-              className="rounded-full px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
+              className="rounded-full px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <Images className="h-4 w-4" />
               <span>
@@ -228,7 +228,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={onDownloadAll}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
+              className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <Download className="h-4 w-4" />
               <span>הורד הכל</span>
@@ -239,7 +239,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={onToggleSelectionMode}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
+              className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <CheckSquare className="h-4 w-4" />
               <span>בחר תמונות</span>
@@ -252,7 +252,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                   variant="ghost"
                   size="sm"
                   onClick={generateQRCode}
-                  className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
+                  className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
                 >
                   <Share2 className="h-4 w-4" />
                   <span>שתף אירוע</span>
@@ -294,24 +294,11 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               variant="ghost"
               size="sm"
               onClick={() => setIsSupportOpen(true)}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
+              className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <MessageCircle className="h-4 w-4" />
               <span>תמיכה</span>
             </Button>
-
-            {/* Back to Top Button - Only show when scrolled down */}
-            {showBackToTop && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={scrollToGallery}
-                className="rounded-full hover:bg-accent px-4 py-2 text-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 justify-start w-full"
-              >
-                <ArrowUp className="h-4 w-4" />
-                <span>למעלה</span>
-              </Button>
-            )}
           </div>
         )}
 
@@ -328,6 +315,21 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
           )}
         </Button>
       </div>
+
+      {/* Back to Top Button - Fixed separate button on the right */}
+      {showBackToTop && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={scrollToGallery}
+            className="h-12 w-12 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+            title="חזרה למעלה"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
       <FAQSupportDialog
         isOpen={isSupportOpen}

@@ -80,30 +80,34 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
           </Popover>
         </div>
 
-        {event && (
-          <AuthModal 
-            isOpen={showAuthModal}
-            onClose={() => setShowAuthModal(false)}
-            event={event}
-            onComplete={(authData) => {
-              const newUser = addUser({
-                name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
-                phone: authData.contact.includes('@') ? '' : authData.contact,
-                email: authData.contact.includes('@') ? authData.contact : '',
-                selfieImage: authData.selfieData
-              });
-              
-              console.log('New user added in UserAvatarStack:', newUser);
-              setShowAuthModal(false);
-              onAuthComplete?.(authData);
-              
-              // Force immediate re-render
-              setForceUpdate(prev => prev + 1);
-              
-              // Dispatch custom event for other components
-              window.dispatchEvent(new CustomEvent('userAdded', { detail: newUser }));
-            }}
-          />
+        {event && showAuthModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+            <div className="w-full max-w-md mx-4">
+              <AuthModal 
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                event={event}
+                onComplete={(authData) => {
+                  const newUser = addUser({
+                    name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
+                    phone: authData.contact.includes('@') ? '' : authData.contact,
+                    email: authData.contact.includes('@') ? authData.contact : '',
+                    selfieImage: authData.selfieData
+                  });
+                  
+                  console.log('New user added in UserAvatarStack:', newUser);
+                  setShowAuthModal(false);
+                  onAuthComplete?.(authData);
+                  
+                  // Force immediate re-render
+                  setForceUpdate(prev => prev + 1);
+                  
+                  // Dispatch custom event for other components
+                  window.dispatchEvent(new CustomEvent('userAdded', { detail: newUser }));
+                }}
+              />
+            </div>
+          </div>
         )}
       </>
     );

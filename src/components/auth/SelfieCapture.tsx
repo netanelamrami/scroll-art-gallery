@@ -133,7 +133,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       </div>
 
       {/* Camera/Image display */}
-      <div className="relative bg-muted rounded-lg overflow-hidden aspect-[4/3] flex items-center justify-center">
+      <div className="relative bg-muted rounded-lg overflow-hidden aspect-[4/3] flex items-center justify-center min-h-[300px]">
         {!isCapturing && !capturedImage && (
           <div className="text-center">
             <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -168,7 +168,8 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
             autoPlay
             playsInline
             muted
-            className="w-full h-full object-cover scale-x-[-1]"
+            className="w-full h-full object-cover scale-x-[-1] absolute inset-0"
+            style={{ minHeight: '300px' }}
           />
         )}
 

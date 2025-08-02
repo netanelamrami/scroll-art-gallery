@@ -13,10 +13,12 @@ export const AuthModal = ({ isOpen, onClose, event, onComplete }: AuthModalProps
   if (!isOpen) return null;
 
   return (
-    <AuthFlow 
-      event={event}
-      onComplete={onComplete}
-      onCancel={onClose}
-    />
+    <div className="bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
+      <AuthFlow 
+        event={event}
+        onComplete={onComplete}
+        onCancel={onClose}
+      />
+    </div>
   );
 };

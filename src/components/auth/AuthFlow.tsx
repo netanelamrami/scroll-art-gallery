@@ -124,7 +124,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
       if (event.needDetect) {
         // משתמש חדש - משתמשים בטלפון/אימייל כid
         formData.append('id', contactInfo || "selfie-only");
-        formData.append('fullname', ''); // אין שם מלא במערכת שלנו כרגע
+        formData.append('fullname', 'Anonymous'); // אין שם מלא במערכת שלנו כרגע
         formData.append('sendNotification', notifications.toString());
         formData.append('email', isEmailMode ? contactInfo : '');
         formData.append('AuthenticateBy', isEmailMode ? 'Email' : 'PhoneNumber');

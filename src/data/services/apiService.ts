@@ -83,7 +83,8 @@ export const apiService = {
 
   async authenticateUser(userPhoneOrEmail: string, eventId: number, authenticateBy: "PhoneNumber" | "Email"): Promise<any> {
     try {
-      const url = `${BASE_URL}/User/authenticateUser?userPhone=${userPhoneOrEmail}&&eventId=${eventId}&&authenticateBy=${authenticateBy}`;
+      const encodedUserPhoneOrEmail = encodeURIComponent(userPhoneOrEmail);
+      const url = `${BASE_URL}/User/authenticateUser?userPhone=${encodedUserPhoneOrEmail}&&eventId=${eventId}&&authenticateBy=${authenticateBy}`;
       const res = await fetch(url);
       
       if (!res.ok) {

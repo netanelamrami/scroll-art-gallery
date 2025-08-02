@@ -35,6 +35,9 @@ export const useMultiUserAuth = () => {
   useEffect(() => {
     console.log('useMultiUserAuth - saving to localStorage:', authState);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
+    
+    // Dispatch event for any listening components
+    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: authState }));
   }, [authState]);
 
   // Force re-read from localStorage on component mount

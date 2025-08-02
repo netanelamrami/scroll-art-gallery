@@ -28,7 +28,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const isMobile = useIsMobile();
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(!isMobile);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Track scroll to show/hide back to top button
   useEffect(() => {

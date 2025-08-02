@@ -25,18 +25,29 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
 
   // Force update when users change
   React.useEffect(() => {
+    console.log('UserAvatarStack - users changed:', users.length, 'current user:', currentUser?.id);
     setForceUpdate(prev => prev + 1);
   }, [users.length, currentUser?.id]);
 
-  // Listen for user added events
+  // Listen for user added events and auth state changes
   React.useEffect(() => {
     const handleUserAdded = () => {
       console.log('UserAvatarStack - user added event received');
       setForceUpdate(prev => prev + 1);
     };
+
+    const handleAuthStateChanged = (event: CustomEvent) => {
+      console.log('UserAvatarStack - auth state changed event received:', event.detail);
+      setForceUpdate(prev => prev + 1);
+    };
     
     window.addEventListener('userAdded', handleUserAdded);
-    return () => window.removeEventListener('userAdded', handleUserAdded);
+    window.addEventListener('authStateChanged', handleAuthStateChanged);
+    
+    return () => {
+      window.removeEventListener('userAdded', handleUserAdded);
+      window.removeEventListener('authStateChanged', handleAuthStateChanged);
+    };
   }, []);
 
   if (!isAuthenticated || !currentUser) {

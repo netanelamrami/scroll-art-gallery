@@ -2,19 +2,23 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useToast } from "@/hooks/use-toast";
+import { apiService } from "@/data/services/apiService";
 
 interface OTPVerificationProps {
   phoneNumber: string;
   onSubmit: (otp: string) => void;
   onBack: () => void;
+  isEmailMode?: boolean;
 }
 
-export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificationProps) => {
+export const OTPVerification = ({ phoneNumber, onSubmit, onBack, isEmailMode = false }: OTPVerificationProps) => {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const { t } = useLanguage();
+  const { toast } = useToast();
 
   // טיימר לשליחה חוזרת
   useEffect(() => {
@@ -46,7 +50,34 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack }: OTPVerificati
     setTimeLeft(60);
     setOtp("");
     
-    console.log("Resending SMS to:", phoneNumber);
+    try {
+      const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
+      
+      if (isEmailMode) {
+        await apiService.sendOTPEmail(phoneNumber, verificationMessage);
+        toast({
+          title: "אימייל נשלח מחדש",
+          description: "קוד האימות נשלח לכתובת המייל שלך",
+          variant: "default",
+        });
+      } else {
+        await apiService.sendSMS(phoneNumber, verificationMessage, true);
+        toast({
+          title: "SMS נשלח מחדש",
+          description: "קוד האימות נשלח למספר הטלפון שלך",
+          variant: "default",
+        });
+      }
+    } catch (error) {
+      console.error('Error resending OTP:', error);
+      toast({
+        title: "שגיאה",
+        description: `שליחת ה${isEmailMode ? 'אימייל' : 'SMS'} מחדש נכשלה. אנא נסה שוב.`,
+        variant: "destructive",
+      });
+      setCanResend(true);
+      setTimeLeft(0);
+    }
   };
 
   const maskedPhone = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, "$1***$3");

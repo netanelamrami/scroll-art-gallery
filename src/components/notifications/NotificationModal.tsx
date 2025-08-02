@@ -4,6 +4,8 @@ import { PhoneCountryInput } from "@/components/auth/PhoneCountryInput";
 import { EmailInput } from "@/components/auth/EmailInput";
 import { OTPVerification } from "@/components/auth/OTPVerification";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useToast } from "@/hooks/use-toast";
+import { apiService } from "@/data/services/apiService";
 import { event } from "@/types/event";
 import { Bell, X } from "lucide-react";
 
@@ -17,17 +19,45 @@ interface NotificationModalProps {
 
 export const NotificationModal = ({ event, onSubscribe, onClose }: NotificationModalProps) => {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<NotificationStep>("contact");
   const [contactInfo, setContactInfo] = useState("");
   const [notifications, setNotifications] = useState(true);
   
   const isEmailMode = event?.registerBy === "Email";
 
-  const handleContactSubmit = (contact: string, notificationPreference: boolean) => {
+  const handleContactSubmit = async (contact: string, notificationPreference: boolean) => {
     setContactInfo(contact);
     setNotifications(notificationPreference);
-    setCurrentStep("otp");
-    console.log(`${isEmailMode ? 'Email' : 'SMS'} sent to:`, contact);
+    
+    try {
+      const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
+      
+      if (isEmailMode) {
+        await apiService.sendOTPEmail(contact, verificationMessage);
+        toast({
+          title: "אימייל נשלח",
+          description: "קוד האימות נשלח לכתובת המייל שלך",
+          variant: "default",
+        });
+      } else {
+        await apiService.sendSMS(contact, verificationMessage, true);
+        toast({
+          title: "SMS נשלח", 
+          description: "קוד האימות נשלח למספר הטלפון שלך",
+          variant: "default",
+        });
+      }
+      
+      setCurrentStep("otp");
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      toast({
+        title: "שגיאה",
+        description: `שליחת ה${isEmailMode ? 'אימייל' : 'SMS'} נכשלה. אנא נסה שוב.`,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleOTPSubmit = (otp: string) => {
@@ -112,6 +142,7 @@ export const NotificationModal = ({ event, onSubscribe, onClose }: NotificationM
               phoneNumber={contactInfo}
               onSubmit={handleOTPSubmit}
               onBack={() => setCurrentStep("contact")}
+              isEmailMode={isEmailMode}
             />
           )}
 

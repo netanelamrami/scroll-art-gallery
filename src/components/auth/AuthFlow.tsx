@@ -5,6 +5,8 @@ import { EmailInput } from "./EmailInput";
 import { OTPVerification } from "./OTPVerification";
 import { SelfieCapture } from "./SelfieCapture";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useToast } from "@/hooks/use-toast";
+import { apiService } from "@/data/services/apiService";
 import { event } from "@/types/event";
 
 type AuthStep = "contact" | "otp" | "selfie" | "complete";
@@ -25,15 +27,44 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
   const [otpCode, setOtpCode] = useState("");
   const [selfieData, setSelfieData] = useState("");
   const { t } = useLanguage();
+  const { toast } = useToast();
 
   const isEmailMode = event?.registerBy === "Email";
 
-  const handleContactSubmit = (contact: string, notificationPreference: boolean) => {
+  const handleContactSubmit = async (contact: string, notificationPreference: boolean) => {
     setContactInfo(contact);
     setNotifications(notificationPreference);
-    setCurrentStep("otp");
-    // כאן נשלח SMS/Email במציאות
-    console.log(`${isEmailMode ? 'Email' : 'SMS'} sent to:`, contact);
+    
+    try {
+      const verificationMessage = isEmailMode 
+        ? "קוד האימות שלך מ Pixshare, ברוכים הבאים" 
+        : "קוד האימות שלך מ Pixshare, ברוכים הבאים";
+      
+      if (isEmailMode) {
+        await apiService.sendOTPEmail(contact, verificationMessage);
+        toast({
+          title: "אימייל נשלח",
+          description: "קוד האימות נשלח לכתובת המייל שלך",
+          variant: "default",
+        });
+      } else {
+        await apiService.sendSMS(contact, verificationMessage, true);
+        toast({
+          title: "SMS נשלח",
+          description: "קוד האימות נשלח למספר הטלפון שלך",
+          variant: "default",
+        });
+      }
+      
+      setCurrentStep("otp");
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      toast({
+        title: "שגיאה",
+        description: `שליחת ה${isEmailMode ? 'אימייל' : 'SMS'} נכשלה. אנא נסה שוב.`,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleOTPSubmit = (otp: string) => {
@@ -119,6 +150,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
               phoneNumber={contactInfo}
               onSubmit={handleOTPSubmit}
               onBack={() => setCurrentStep("contact")}
+              isEmailMode={isEmailMode}
             />
           )}
           

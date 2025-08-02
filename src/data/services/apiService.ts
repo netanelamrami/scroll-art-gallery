@@ -1,6 +1,60 @@
 const BASE_URL = "https://api.pixshare.live/PixApi/api";
 
 export const apiService = {
+  async sendSMS(phoneNumber: string, message: string, otp: boolean = true) {
+    try {
+      const smsData = {
+        phoneNumber,
+        message,
+        otp
+      };
+      
+      const res = await fetch(`${BASE_URL}/api/Photographer/sendSMS`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(smsData)
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to send SMS");
+      }
+      
+      return await res.json();
+    } catch (error) {
+      console.error('SMS API Error:', error);
+      throw error;
+    }
+  },
+
+  async sendOTPEmail(email: string, message: string) {
+    try {
+      const emailData = {
+        email,
+        message,
+        otp: true
+      };
+      
+      const res = await fetch(`${BASE_URL}/api/Photographer/sendEmail`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData)
+      });
+      
+      if (!res.ok) {
+        throw new Error("Failed to send email");
+      }
+      
+      return await res.json();
+    } catch (error) {
+      console.error('Email API Error:', error);
+      throw error;
+    }
+  },
+
   async getEvent(eventLink: string) {
     try {
       // דמה לאירוע נמחק - לבדיקה בלבד

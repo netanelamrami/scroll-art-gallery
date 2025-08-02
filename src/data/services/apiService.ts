@@ -21,7 +21,9 @@ export const apiService = {
         throw new Error("Failed to send SMS");
       }
       
-      return await res.json();
+      // אם התגובה ריקה, נחזיר אובייקט פשוט
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : { success: true };
     } catch (error) {
       console.error('SMS API Error:', error);
       throw error;
@@ -48,7 +50,9 @@ export const apiService = {
         throw new Error("Failed to send email");
       }
       
-      return await res.json();
+      // אם התגובה ריקה, נחזיר אובייקט פשוט
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : { success: true };
     } catch (error) {
       console.error('Email API Error:', error);
       throw error;

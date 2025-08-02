@@ -29,8 +29,15 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
   // Handle My Photos button click
   const handleMyPhotosClick = () => {
     if (isAuthenticated && currentUser) {
-      // User is already authenticated, go directly to their photos
-      onViewMyPhotos();
+      // User is already authenticated, scroll to gallery and set to 'my' type
+      setTimeout(() => {
+        document.getElementById('gallery')?.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }, 100);
+      
+      // Dispatch event to switch to my photos
+      window.dispatchEvent(new CustomEvent('switchToMyPhotos'));
     } else {
       // User needs to authenticate first
       onViewMyPhotos(); // This will trigger the auth flow

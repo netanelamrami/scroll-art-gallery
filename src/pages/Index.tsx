@@ -352,16 +352,33 @@ const Index = () => {
     setSelectedImages(new Set());
   };
 
-  // Listen for exit selection mode event
+  // Listen for exit selection mode event and gallery type toggle
   useEffect(() => {
     const handleExitSelectionMode = () => {
       setSelectionMode(false);
       setSelectedImages(new Set());
     };
 
+    const handleToggleGalleryTypeEvent = () => {
+      handleToggleGalleryType();
+    };
+
+    const handleSwitchToMyPhotos = async () => {
+      if (isAuthenticated) {
+        await handleToggleMyPhotos();
+      }
+    };
+
     window.addEventListener('exitSelectionMode', handleExitSelectionMode);
-    return () => window.removeEventListener('exitSelectionMode', handleExitSelectionMode);
-  }, []);
+    window.addEventListener('toggleGalleryType', handleToggleGalleryTypeEvent);
+    window.addEventListener('switchToMyPhotos', handleSwitchToMyPhotos);
+    
+    return () => {
+      window.removeEventListener('exitSelectionMode', handleExitSelectionMode);
+      window.removeEventListener('toggleGalleryType', handleToggleGalleryTypeEvent);
+      window.removeEventListener('switchToMyPhotos', handleSwitchToMyPhotos);
+    };
+  }, [isAuthenticated]);
 
   const handleColumnsChange = (newColumns: number) => {
     setColumns(newColumns);

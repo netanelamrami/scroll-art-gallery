@@ -322,12 +322,19 @@ export const Gallery = ({
 
       <FloatingNavbar
         event={event}
-        galleryType={localGalleryType}
+        galleryType={galleryType || localGalleryType}
         onToggleGalleryType={() => {
-          if (localGalleryType === 'all') {
-            setLocalGalleryType('my');
+          // אם יש callback חיצוני (מה-Index), נשתמש בו
+          if (onAlbumClick) {
+            // קריאה לפונקציה שמעדכנת את הגלרייה ב-Index
+            window.dispatchEvent(new CustomEvent('toggleGalleryType'));
           } else {
-            setLocalGalleryType('all');
+            // אחרת נשתמש ב-state מקומי
+            if (localGalleryType === 'all') {
+              setLocalGalleryType('my');
+            } else {
+              setLocalGalleryType('all');
+            }
           }
         }}
         onDownloadAll={handleDownloadAll}

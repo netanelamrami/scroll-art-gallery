@@ -16,9 +16,8 @@ interface AuthFlowProps {
 }
 
 export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
-  // עכשיו נאלץ משתמשים לעבור תהליך רישום מלא (תמיד true)
-  const needsFullAuth = true; // event?.needDetect !== false;
-  console.log('AuthFlow - event:', event);
+  const needsFullAuth = event?.needDetect !== false;
+  console.log('AuthFlow - event.needDetect:', event?.needDetect);
   console.log('AuthFlow - needsFullAuth:', needsFullAuth);
   const [currentStep, setCurrentStep] = useState<AuthStep>(needsFullAuth ? "contact" : "selfie");
   const [contactInfo, setContactInfo] = useState("");

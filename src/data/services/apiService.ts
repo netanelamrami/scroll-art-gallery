@@ -100,7 +100,7 @@ export const apiService = {
 
   async registerUser(formData: FormData): Promise<any> {
     try {
-      const res = await fetch(`${BASE_URL}/User`, {
+      const res = await fetch(`http://localhost:5050/api/User`, {
         method: 'POST',
         body: formData
       });
@@ -119,7 +119,7 @@ export const apiService = {
 
   async registerUserByPhoto(formData: FormData): Promise<any> {
     try {
-      const res = await fetch(`${BASE_URL}/User/registerByPhoto`, {
+      const res = await fetch(`http://localhost:5050/api/User/registerByPhoto`, {
         method: 'POST', 
         body: formData
       });

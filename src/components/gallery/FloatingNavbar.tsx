@@ -28,6 +28,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const isMobile = useIsMobile();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!isMobile);
 
   // Track scroll to show/hide back to top button
   useEffect(() => {
@@ -39,6 +40,22 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Close navbar when clicking outside (mobile only)
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      const navbar = target.closest('[data-floating-navbar]');
+      if (!navbar && isExpanded) {
+        setIsExpanded(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isMobile, isExpanded]);
 
   const questions = faqData[language] || faqData.he;
   
@@ -79,7 +96,6 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
     }
   };
 
-  const [isExpanded, setIsExpanded] = useState(!isMobile);
 
   // Desktop version - always expanded with text
   if (!isMobile) {
@@ -203,7 +219,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
 
   // Mobile version - collapsible vertically
   return (
-    <div className={`fixed bottom-6 left-6 z-50 ${className}`}>
+    <div className={`fixed bottom-6 left-6 z-50 ${className}`} data-floating-navbar>
       <div className="relative">
         
         {/* Expanded state - full navbar */}
@@ -214,7 +230,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             <Button
               variant="outline"
               size="sm"
-              onClick={onToggleGalleryType}
+              onClick={() => {
+                onToggleGalleryType();
+                setIsExpanded(false);
+              }}
               className="rounded-full px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <Images className="h-4 w-4" />
@@ -227,7 +246,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             <Button
               variant="ghost"
               size="sm"
-              onClick={onDownloadAll}
+              onClick={() => {
+                onDownloadAll?.();
+                setIsExpanded(false);
+              }}
               className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <Download className="h-4 w-4" />
@@ -238,7 +260,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             <Button
               variant="ghost"
               size="sm"
-              onClick={onToggleSelectionMode}
+              onClick={() => {
+                onToggleSelectionMode?.();
+                setIsExpanded(false);
+              }}
               className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <CheckSquare className="h-4 w-4" />
@@ -251,7 +276,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={generateQRCode}
+                  onClick={() => {
+                    generateQRCode();
+                    setIsExpanded(false);
+                  }}
                   className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
                 >
                   <Share2 className="h-4 w-4" />
@@ -293,7 +321,10 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsSupportOpen(true)}
+              onClick={() => {
+                setIsSupportOpen(true);
+                setIsExpanded(false);
+              }}
               className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
             >
               <MessageCircle className="h-4 w-4" />

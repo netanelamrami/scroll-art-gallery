@@ -7,6 +7,7 @@ import { GalleryHeader } from "./GalleryHeader";
 import { AlbumSection } from "./AlbumSection";
 import { DownloadModal } from "./DownloadModal";
 import { BottomActionBar } from "./BottomActionBar";
+import { FloatingNavbar } from "./FloatingNavbar";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
@@ -27,6 +28,7 @@ interface GalleryProps {
   selectedImages?: Set<string>;
   onImageSelect?: (imageId: string) => void;
   columns?: number;
+  onAuthComplete?: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
 }
 
 export const Gallery = ({ 
@@ -40,7 +42,8 @@ export const Gallery = ({
   selectionMode,
   selectedImages: externalSelectedImages,
   onImageSelect,
-  columns: externalColumns
+  columns: externalColumns,
+  onAuthComplete
 }: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -52,6 +55,7 @@ export const Gallery = ({
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isFAQOpen, setIsFAQOpen] = useState(false);
+  const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -313,6 +317,19 @@ export const Gallery = ({
         onShare={handleShare}
         isSelectionMode={isSelectionMode}
         selectedCount={selectedImages.size}
+        onAuthComplete={onAuthComplete}
+      />
+
+      <FloatingNavbar
+        event={event}
+        galleryType={localGalleryType}
+        onToggleGalleryType={() => {
+          if (localGalleryType === 'all') {
+            setLocalGalleryType('my');
+          } else {
+            setLocalGalleryType('all');
+          }
+        }}
       />
 
       {/* Albums Section - Only show albums that have images for this user */}

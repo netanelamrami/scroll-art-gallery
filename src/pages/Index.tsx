@@ -395,6 +395,7 @@ const Index = () => {
             selectedAlbum={selectedAlbum}
             selectionMode={selectionMode}
             selectedImages={selectedImages}
+            onAuthComplete={handleAuthComplete}
             onImageSelect={(imageId) => {
               const newSelected = new Set(selectedImages);
               if (newSelected.has(imageId)) {

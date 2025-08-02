@@ -88,81 +88,216 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
     }
   };
 
-  const NavContent = () => (
-    <div className="space-y-4">
-      {/* All Photos */}
-      <Button
-        variant="outline"
-        size="lg"
-        onClick={() => {
-          onToggleGalleryType();
-          if (isMobile) setIsSheetOpen(false);
-        }}
-        className="w-full justify-start gap-3 h-14"
-      >
-        <Images className="h-5 w-5" />
-        <span className="text-base">
-          {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : (useLanguage().language === 'he' ? 'נבחרות' : 'Favorites')}
-        </span>
-      </Button>
+  const [isVisible, setIsVisible] = useState(true);
 
-      {/* Share Event */}
-      <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            size="lg"
-            onClick={generateQRCode}
-            className="w-full justify-start gap-3 h-14 hover:bg-accent"
-          >
-            <Share2 className="h-5 w-5" />
-            <span className="text-base">{t('navbar.shareEvent')}</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center">{t('share.title')}</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col items-center space-y-4 py-4">
-            {qrCode && (
-              <div className="bg-white p-4 rounded-lg">
-                <img src={qrCode} alt="QR Code" className="w-48 h-48" />
-              </div>
-            )}
-            <p className="text-sm text-muted-foreground text-center">
-              {t('share.description')}
-            </p>
+  if (isMobile) {
+    return (
+      <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`}>
+        <div className={`bg-background/95 backdrop-blur-sm border shadow-lg rounded-full transition-all duration-300 ${
+          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+        }`}>
+          <div className="px-3 py-3 flex items-center gap-2 overflow-x-auto sm:px-6 sm:gap-3">
+            {/* Toggle visibility button */}
             <Button
-              variant="outline"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                toast({
-                  title: t('toast.linkCopied.title'),
-                  description: t('toast.linkCopied.description'),
-                });
-              }}
-              className="w-full"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsVisible(!isVisible)}
+              className="rounded-full px-2 py-2 shrink-0"
+            >
+              {isVisible ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </Button>
+
+            {isVisible && (
+              <>
+                {/* Gallery Toggle */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onToggleGalleryType}
+                  className="rounded-full min-w-[60px] px-1 py-1 text-sm sm:px-4 sm:py-2"
+                >
+                  <Images className="h-4 w-4 ml-2" />
+                  <span className="hidden sm:inline">
+                    {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : (useLanguage().language === 'he' ? 'נבחרות' : 'Favorites')}
+                  </span>
+                  <span className="sm:hidden">
+                    {galleryType === 'all' ? 'הכל' : galleryType === 'my' ? 'שלי' : (useLanguage().language === 'he' ? 'נבחרות' : 'Favorites')}
+                  </span>
+                </Button>
+
+                {/* Share Event */}
+                <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={generateQRCode}
+                      className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-4 sm:py-2"
+                    >
+                      <Share2 className="h-4 w-4 ml-2" />
+                      <span className="hidden sm:inline">{t('navbar.shareEvent')}</span>
+                      <span className="sm:hidden">{t('navbar.shareEventMobile')}</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle className="text-center">{t('share.title')}</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col items-center space-y-4 py-4">
+                      {qrCode && (
+                        <div className="bg-white p-4 rounded-lg">
+                          <img src={qrCode} alt="QR Code" className="w-48 h-48" />
+                        </div>
+                      )}
+                      <p className="text-sm text-muted-foreground text-center">
+                        {t('share.description')}
+                      </p>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.href);
+                          toast({
+                            title: t('toast.linkCopied.title'),
+                            description: t('toast.linkCopied.description'),
+                          });
+                        }}
+                        className="w-full"
+                      >
+                        <Share2 className="h-4 w-4 ml-2" />
+                        {t('share.copyLink')}
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                {/* Support */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsSupportOpen(true)}
+                  className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-4 sm:py-2"
+                >
+                  <MessageCircle className="h-4 w-4 ml-2" />
+                  <span className="hidden sm:inline">{t('navbar.support')}</span>
+                  <span className="sm:hidden">תמיכה</span>
+                </Button>
+
+                {/* Back to Top Button - Only show when scrolled down */}
+                {showBackToTop && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={scrollToGallery}
+                    className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-3 sm:py-2 transition-all duration-300"
+                    title="חזרה למעלה"
+                  >
+                    <ArrowUp className="h-4 w-4" />
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
+        <FAQSupportDialog
+          isOpen={isSupportOpen}
+          setIsOpen={setIsSupportOpen}
+          questions={questions}
+          event={event}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`}>
+      <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-3 flex items-center gap-2 overflow-x-auto sm:px-6 sm:gap-3">
+        {/* Gallery Toggle */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onToggleGalleryType}
+          className="rounded-full min-w-[60px] px-1 py-1 text-sm sm:px-4 sm:py-2"
+        >
+          <Images className="h-4 w-4 ml-2" />
+          <span className="hidden sm:inline">
+            {galleryType === 'all' ? t('navbar.allPhotos') : galleryType === 'my' ? t('navbar.myPhotos') : (useLanguage().language === 'he' ? 'נבחרות' : 'Favorites')}
+          </span>
+          <span className="sm:hidden">
+            {galleryType === 'all' ? 'הכל' : galleryType === 'my' ? 'שלי' : (useLanguage().language === 'he' ? 'נבחרות' : 'Favorites')}
+          </span>
+        </Button>
+
+        {/* Share Event */}
+        <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={generateQRCode}
+              className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-4 sm:py-2"
             >
               <Share2 className="h-4 w-4 ml-2" />
-              {t('share.copyLink')}
+              <span className="hidden sm:inline">{t('navbar.shareEvent')}</span>
+              <span className="sm:hidden">{t('navbar.shareEventMobile')}</span>
             </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-center">{t('share.title')}</DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col items-center space-y-4 py-4">
+              {qrCode && (
+                <div className="bg-white p-4 rounded-lg">
+                  <img src={qrCode} alt="QR Code" className="w-48 h-48" />
+                </div>
+              )}
+              <p className="text-sm text-muted-foreground text-center">
+                {t('share.description')}
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast({
+                    title: t('toast.linkCopied.title'),
+                    description: t('toast.linkCopied.description'),
+                  });
+                }}
+                className="w-full"
+              >
+                <Share2 className="h-4 w-4 ml-2" />
+                {t('share.copyLink')}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-      {/* Support */}
-      <Button
-        variant="ghost"
-        size="lg"
-        onClick={() => {
-          setIsSupportOpen(true);
-          if (isMobile) setIsSheetOpen(false);
-        }}
-        className="w-full justify-start gap-3 h-14 hover:bg-accent"
-      >
-        <MessageCircle className="h-5 w-5" />
-        <span className="text-base">{t('navbar.support')}</span>
-      </Button>
+        {/* Support */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsSupportOpen(true)}
+          className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-4 sm:py-2"
+        >
+          <MessageCircle className="h-4 w-4 ml-2" />
+          <span className="hidden sm:inline">{t('navbar.support')}</span>
+          <span className="sm:hidden">תמיכה</span>
+        </Button>
+
+        {/* Back to Top Button */}
+        {showBackToTop && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={scrollToGallery}
+            className="rounded-full hover:bg-accent px-1 py-1 text-sm sm:px-3 sm:py-2 transition-all duration-300"
+            title="חזרה למעלה"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
 
       <FAQSupportDialog
         isOpen={isSupportOpen}
@@ -170,79 +305,6 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, classN
         questions={questions}
         event={event}
       />
-    </div>
-  );
-
-  if (isMobile) {
-    return (
-      <>
-        <div className={`fixed bottom-6 right-6 z-40 ${className}`}>
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="default"
-                size="lg"
-                className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-scale-in"
-              >
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent 
-              side="bottom" 
-              className="h-[50vh] rounded-t-3xl border-t-2 p-6 animate-slide-in-right"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold">{event.name}</h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsSheetOpen(false)}
-                  className="h-8 w-8 rounded-full"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <NavContent />
-            </SheetContent>
-          </Sheet>
-        </div>
-
-        {/* Back to Top Button - Only show when scrolled down and sheet is closed */}
-        {showBackToTop && !isSheetOpen && (
-          <div className="fixed bottom-24 right-6 z-30">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={scrollToGallery}
-              className="h-12 w-12 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
-              title="חזרה למעלה"
-            >
-              <ArrowUp className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
-      </>
-    );
-  }
-
-  return (
-    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`}>
-      <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-6 py-3 flex items-center gap-3">
-        <NavContent />
-
-        {/* Back to Top Button - Only show when scrolled down */}
-        {showBackToTop && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={scrollToGallery}
-            className="rounded-full hover:bg-accent px-3 py-2 transition-all duration-300"
-            title="חזרה למעלה"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
     </div>
   );
 };

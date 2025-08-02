@@ -47,10 +47,23 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play();
-          setIsCapturing(true);
-        };
+        
+        // Wait for video to be ready
+        await new Promise((resolve) => {
+          if (videoRef.current) {
+            videoRef.current.onloadedmetadata = () => {
+              if (videoRef.current) {
+                videoRef.current.play().then(() => {
+                  console.log('Video playing successfully');
+                  setIsCapturing(true);
+                  resolve(true);
+                }).catch((err) => {
+                  console.error('Error playing video:', err);
+                });
+              }
+            };
+          }
+        });
       }
     } catch (error) {
       console.error("Error accessing camera:", error);

@@ -81,6 +81,23 @@ export const apiService = {
     }
   },
 
+  async authenticateUser(userPhoneOrEmail: string, eventId: number, authenticateBy: "PhoneNumber" | "Email"): Promise<any> {
+    try {
+      const url = `${BASE_URL}/User/authenticateUser?userPhone=${userPhoneOrEmail}&&eventId=${eventId}&&authenticateBy=${authenticateBy}`;
+      const res = await fetch(url);
+      
+      if (!res.ok) {
+        throw new Error("Failed to authenticate user");
+      }
+      
+      const responseText = await res.text();
+      return responseText ? JSON.parse(responseText) : null;
+    } catch (error) {
+      console.error('User Authentication API Error:', error);
+      return null;
+    }
+  },
+
   async getEvent(eventLink: string) {
     try {
       // דמה לאירוע נמחק - לבדיקה בלבד

@@ -68,7 +68,35 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
     const isVerified = await apiService.verifyOTP(contactInfo, otp);
     if (isVerified) {
       setOtpCode(otp);
-      setCurrentStep("selfie");
+      
+      // בדיקה האם המשתמש כבר רשום
+      try {
+        const authenticateBy = isEmailMode ? "Email" : "PhoneNumber";
+        const userAuth = await apiService.authenticateUser(contactInfo, event.id, authenticateBy);
+        
+        if (userAuth && userAuth.isAuthenticated) {
+          // המשתמש כבר רשום - מסיימים את התהליך ללא selfie
+          setCurrentStep("complete");
+          onComplete({
+            contact: contactInfo,
+            otp: otp,
+            selfieData: "existing-user", // ציון שזה משתמש קיים
+            notifications: notifications
+          });
+          toast({
+            title: "ברוכים השובים!",
+            description: "זוהית כמשתמש רשום. נכנסת לגלריה!",
+            variant: "default",
+          });
+        } else {
+          // משתמש חדש - ממשיכים לשלב selfie
+          setCurrentStep("selfie");
+        }
+      } catch (error) {
+        // אם יש שגיאה באימות, ממשיכים לשלב selfie
+        console.error('Error authenticating existing user:', error);
+        setCurrentStep("selfie");
+      }
     } else {
       toast({
         title: "שגיאה",

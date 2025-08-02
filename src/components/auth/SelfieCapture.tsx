@@ -47,23 +47,10 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        
-        // Wait for video to be ready
-        await new Promise((resolve) => {
-          if (videoRef.current) {
-            videoRef.current.onloadedmetadata = () => {
-              if (videoRef.current) {
-                videoRef.current.play().then(() => {
-                  console.log('Video playing successfully');
-                  setIsCapturing(true);
-                  resolve(true);
-                }).catch((err) => {
-                  console.error('Error playing video:', err);
-                });
-              }
-            };
-          }
-        });
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play();
+          setIsCapturing(true);
+        };
       }
     } catch (error) {
       console.error("Error accessing camera:", error);
@@ -146,7 +133,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       </div>
 
       {/* Camera/Image display */}
-      <div className="relative bg-muted rounded-lg overflow-hidden aspect-[4/3] flex items-center justify-center min-h-[300px]">
+      <div className="relative bg-muted rounded-lg overflow-hidden aspect-[4/3] flex items-center justify-center">
         {!isCapturing && !capturedImage && (
           <div className="text-center">
             <Camera className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
@@ -181,8 +168,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
             autoPlay
             playsInline
             muted
-            className="w-full h-full object-cover scale-x-[-1] absolute inset-0"
-            style={{ minHeight: '300px' }}
+            className="w-full h-full object-cover scale-x-[-1]"
           />
         )}
 

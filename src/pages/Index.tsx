@@ -408,14 +408,6 @@ const Index = () => {
             columns={columns}
           />
 
-          {/* FloatingNavbar temporarily hidden */}
-          {false && showFloatingNavbar && !isLightboxOpen && (
-            <FloatingNavbar 
-              event={event}
-              galleryType={galleryType}
-              onToggleGalleryType={handleToggleGalleryType}
-            />
-          )}
         </div>
       )}
       
@@ -446,20 +438,7 @@ const Index = () => {
         />
       )}
       
-      {/* Bottom Menu - Only show when gallery is visible and not in selection mode */}
-      {showGallery && (
-        <BottomMenu 
-          onViewAllPhotos={handleViewAllPhotos}
-          onShareEvent={handleShareEvent}
-          onDownloadAll={handleDownloadAll}
-          onToggleSelectionMode={handleToggleSelectionMode}
-          onColumnsChange={handleColumnsChange}
-          columns={columns}
-          event={event}
-          onAuthComplete={handleAuthComplete}
-          isSelectionMode={selectionMode}
-        />
-      )}
+      {/* FloatingNavbar replaces BottomMenu */}
 
       {/* QR Code Dialog */}
       <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>

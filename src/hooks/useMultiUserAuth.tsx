@@ -5,12 +5,14 @@ const AUTH_STORAGE_KEY = 'pixshare_auth_state';
 
 export const useMultiUserAuth = () => {
   const [authState, setAuthState] = useState<AuthState>(() => {
-    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-    console.log('useMultiUserAuth initialization - stored data:', stored);
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+      console.log('useMultiUserAuth initialization - stored data:', stored);
+      
+      if (stored) {
         const parsed = JSON.parse(stored);
         console.log('useMultiUserAuth initialization - parsed data:', JSON.stringify(parsed, null, 2));
+        
         const initialState = {
           ...parsed,
           users: parsed.users?.map((user: any) => ({
@@ -18,15 +20,17 @@ export const useMultiUserAuth = () => {
             createdAt: new Date(user.createdAt)
           })) || []
         };
+        
         console.log('useMultiUserAuth initialization - initial state:', JSON.stringify(initialState, null, 2));
         return initialState;
-      } catch (e) {
-        console.log('useMultiUserAuth initialization - parse error:', e);
+      } else {
+        console.log('useMultiUserAuth initialization - no stored data, creating empty state');
         return { isAuthenticated: false, currentUser: null, users: [] };
       }
+    } catch (e) {
+      console.error('useMultiUserAuth initialization - parse error:', e);
+      return { isAuthenticated: false, currentUser: null, users: [] };
     }
-    console.log('useMultiUserAuth initialization - no stored data');
-    return { isAuthenticated: false, currentUser: null, users: [] };
   });
 
   console.log('useMultiUserAuth current state:', JSON.stringify(authState, null, 2));
@@ -34,10 +38,24 @@ export const useMultiUserAuth = () => {
   // Save to localStorage whenever state changes
   useEffect(() => {
     console.log('useMultiUserAuth - saving to localStorage:', authState);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState));
-    
-    // Dispatch event for any listening components
-    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: authState }));
+    try {
+      const dataToSave = JSON.stringify(authState);
+      console.log('useMultiUserAuth - data to save (length):', dataToSave.length);
+      localStorage.setItem(AUTH_STORAGE_KEY, dataToSave);
+      
+      // Verify it was saved
+      const saved = localStorage.getItem(AUTH_STORAGE_KEY);
+      if (saved) {
+        console.log('useMultiUserAuth - verification: data saved successfully');
+      } else {
+        console.error('useMultiUserAuth - ERROR: data was not saved to localStorage!');
+      }
+      
+      // Dispatch event for any listening components
+      window.dispatchEvent(new CustomEvent('authStateChanged', { detail: authState }));
+    } catch (error) {
+      console.error('useMultiUserAuth - ERROR saving to localStorage:', error);
+    }
   }, [authState]);
 
   // Force re-read from localStorage on component mount
@@ -79,7 +97,9 @@ export const useMultiUserAuth = () => {
       users: [...authState.users.map(u => ({ ...u, isActive: false })), newUser]
     };
     
-    console.log('New auth state:', JSON.stringify(newState, null, 2));
+    console.log('New auth state to set:', JSON.stringify(newState, null, 2));
+    console.log('Current localStorage before update:', localStorage.getItem(AUTH_STORAGE_KEY));
+    
     setAuthState(newState);
 
     return newUser;
@@ -99,16 +119,22 @@ export const useMultiUserAuth = () => {
 
   const logout = () => {
     console.log('logout called - clearing all data');
-    // מחק את כל הנתונים מ-localStorage
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    localStorage.clear(); // מוחק הכל לבטח
+    console.log('Current authState before logout:', JSON.stringify(authState, null, 2));
+    
     const clearedState = {
       isAuthenticated: false,
       currentUser: null,
       users: []
     };
+    
     console.log('Setting cleared state:', clearedState);
     setAuthState(clearedState);
+    
+    // Also clear localStorage directly as backup
+    setTimeout(() => {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      console.log('localStorage cleared directly');
+    }, 100);
   };
 
   const deleteUser = (userId: string) => {

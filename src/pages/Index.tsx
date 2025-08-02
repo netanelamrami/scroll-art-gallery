@@ -45,6 +45,7 @@ const Index = () => {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
+  const [userImages, setUserImages] = useState([]); // תמונות של המשתמש הנוכחי
   
   // Use multi-user auth system
   const { isAuthenticated, addUser } = useMultiUserAuth();
@@ -152,11 +153,40 @@ const Index = () => {
     }, 1000 + Math.random() * 500);
   };
 
-  const handleToggleMyPhotos = () => {
-    // אם המשתמש כבר מחובר, עבור ישירות לגלרייה
+  const handleToggleMyPhotos = async () => {
+    // אם המשתמש כבר מחובר, טען את התמונות שלו
     if (isAuthenticated) {
+      setIsLoadingMyPhotos(true);
+      try {
+        const userId = parseInt(sessionStorage.getItem('userid') || '0');
+        const eventId = event?.id;
+        
+        if (userId && eventId) {
+          const userImagesData = await apiService.getImages(userId, eventId);
+          
+          // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
+          const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
+            id: imageData.name || `user-image-${index}`,
+            src: imageData.smallUrl,
+            mediumSrc: imageData.medUrl,
+            largeSrc: imageData.largeUrl,
+            alt: `User image ${index + 1}`,
+            size: 'medium' as const,
+            width: 400,
+            height: 300,
+            albumId: imageData.albomId?.toString() || 'main'
+          })) || [];
+          
+          setUserImages(formattedUserImages);
+        }
+      } catch (error) {
+        console.error('Error loading user images:', error);
+        setUserImages([]); // אם יש שגיאה, נציג רשימה ריקה
+      }
+      
       setGalleryType('my');
       setShowGallery(true);
+      setIsLoadingMyPhotos(false);
       return;
     }
     
@@ -190,7 +220,7 @@ const Index = () => {
     }
   };
 
-  const handleToggleGalleryType = () => {
+  const handleToggleGalleryType = async () => {
     // אם המשתמש מנסה לעבור ל"התמונות שלי" בלי להיות מחובר
     if (galleryType === 'all' && !isAuthenticated) {
       handleToggleMyPhotos(); // שימוש בפונקציה הקיימת שמטפלת נכון במקרה הזה
@@ -198,7 +228,8 @@ const Index = () => {
     }
     
     if (galleryType === 'all') {
-      setGalleryType('my');
+      // מעבר לתמונות שלי - טוען אותן מהשרת
+      await handleToggleMyPhotos();
     } else if (galleryType === 'my') {
       setGalleryType('favorites');
     } else {
@@ -217,7 +248,7 @@ const Index = () => {
     localStorage.setItem('favoriteImages', JSON.stringify(Array.from(newFavorites)));
   };
 
-  const handleAuthComplete = (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
+  const handleAuthComplete = async (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
     console.log('handleAuthComplete called with:', authData);
     setUserData(authData);
     setShowAuthFlow(false);
@@ -242,6 +273,34 @@ const Index = () => {
     
     // Force immediate re-render
     forceUpdate({});
+    
+    // טוען את התמונות של המשתמש
+    try {
+      const userId = parseInt(sessionStorage.getItem('userid') || '0');
+      const eventId = event?.id;
+      
+      if (userId && eventId) {
+        const userImagesData = await apiService.getImages(userId, eventId);
+        
+        // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
+        const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
+          id: imageData.name || `user-image-${index}`,
+          src: imageData.smallUrl,
+          mediumSrc: imageData.medUrl,
+          largeSrc: imageData.largeUrl,
+          alt: `User image ${index + 1}`,
+          size: 'medium' as const,
+          width: 400,
+          height: 300,
+          albumId: imageData.albomId?.toString() || 'main'
+        })) || [];
+        
+        setUserImages(formattedUserImages);
+      }
+    } catch (error) {
+      console.error('Error loading user images after auth:', error);
+      setUserImages([]);
+    }
     
     // Set gallery state immediately
     setGalleryType('my');
@@ -353,7 +412,7 @@ const Index = () => {
     if (galleryType === 'favorites') {
       baseImages = galleryImages.filter(img => favoriteImages.has(img.id));
     } else if (galleryType === 'my' && isAuthenticated) {
-      baseImages = galleryImages.filter(img => img.id.includes('couple'));
+      baseImages = userImages; // שימוש בתמונות המשתמש שנטענו מהשרת
     }
     
     // For now, all albums show all images (you can customize this later)

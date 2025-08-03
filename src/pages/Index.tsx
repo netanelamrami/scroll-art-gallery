@@ -152,44 +152,55 @@ const Index = () => {
   };
 
   const handleToggleMyPhotos = async () => {
-    // אם המשתמש כבר מחובר, טען את התמונות שלו
+    // בדיקה אם המשתמש מחובר
     if (isAuthenticated) {
-      setIsLoadingMyPhotos(true);
-      try {
-        const userId = parseInt(sessionStorage.getItem('userid') || '0');
-        const eventId = event?.id;
-        
-        if (userId && eventId) {
-          const userImagesData = await apiService.getImages(userId, eventId);
-          
-          // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
-          const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
-            id: imageData.name || `user-image-${index}`,
-            src: imageData.smallUrl,
-            mediumSrc: imageData.medUrl,
-            largeSrc: imageData.largeUrl,
-            alt: `User image ${index + 1}`,
-            size: 'medium' as const,
-            width: 400,
-            height: 300,
-            albumId: imageData.albomId?.toString() || 'main'
-          })) || [];
-          
-          setUserImages(formattedUserImages);
-        }
-      } catch (error) {
-        console.error('Error loading user images:', error);
-        setUserImages([]); // אם יש שגיאה, נציג רשימה ריקה
-      }
-      
+      await loadUserImages();
       setGalleryType('my');
       setShowGallery(true);
-      setIsLoadingMyPhotos(false);
+      
+      // גלילה לגלריה
+      setTimeout(() => {
+        document.getElementById('gallery')?.scrollIntoView({
+          behavior: 'smooth'
+        });
+      }, 100);
       return;
     }
     
     // אם המשתמש לא מחובר, נציג את תהליך ההרשמה
     setShowAuthFlow(true);
+  };
+
+  // פונקציה נפרדת לטעינת תמונות המשתמש
+  const loadUserImages = async () => {
+    setIsLoadingMyPhotos(true);
+    try {
+      const userId = parseInt(sessionStorage.getItem('userid') || '0');
+      const eventId = event?.id;
+      
+      if (userId && eventId) {
+        const userImagesData = await apiService.getImages(userId, eventId);
+        
+        // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
+        const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
+          id: imageData.name || `user-image-${index}`,
+          src: imageData.smallUrl,
+          mediumSrc: imageData.medUrl,
+          largeSrc: imageData.largeUrl,
+          alt: `User image ${index + 1}`,
+          size: 'medium' as const,
+          width: 400,
+          height: 300,
+          albumId: imageData.albomId?.toString() || 'main'
+        })) || [];
+        
+        setUserImages(formattedUserImages);
+      }
+    } catch (error) {
+      console.error('Error loading user images:', error);
+      setUserImages([]);
+    }
+    setIsLoadingMyPhotos(false);
   };
   const handleViewFavorites = () => {
     setGalleryType('favorites');
@@ -249,7 +260,6 @@ const Index = () => {
   const handleAuthComplete = async (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
     setUserData(authData);
     setShowAuthFlow(false);
-    setIsLoadingMyPhotos(true);
     
     // רק אם זה לא משתמש קיים, נוסיף אותו לרשימת המשתמשים
     if (authData.selfieData !== "existing-user") {
@@ -266,46 +276,17 @@ const Index = () => {
       console.log('Existing user - not adding to multi-user system');
     }
     
-    console.log('Current isAuthenticated state:', isAuthenticated);
-    
     // Force immediate re-render
     forceUpdate({});
     
     // טוען את התמונות של המשתמש
-    try {
-      const userId = parseInt(sessionStorage.getItem('userid') || '0');
-      const eventId = event?.id;
-      if (userId && eventId) {
-        const userImagesData = await apiService.getImages(userId, eventId);
-        // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
-        const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
-          id: imageData.name || `user-image-${index}`,
-          src: imageData.smallUrl,
-          mediumSrc: imageData.medUrl,
-          largeSrc: imageData.largeUrl,
-          alt: `User image ${index + 1}`,
-          size: 'medium' as const,
-          width: 400,
-          height: 300,
-          albumId: imageData.albomId?.toString() || 'main'
-        })) || [];
-        
-        setUserImages(formattedUserImages);
-      }
-    } catch (error) {
-      console.error('Error loading user images after auth:', error);
-      setUserImages([]);
-    }
+    await loadUserImages();
     
-    // Set gallery state immediately
+    // Set gallery state
     setGalleryType('my');
     setShowGallery(true);
-    setIsLoadingMyPhotos(false);
     
     // Show notification subscription for selfie-only users
-    console.log('AuthComplete - event.needDetect:', event?.needDetect);
-    console.log('AuthComplete - authData.contact:', authData.contact);
-
     if (authData.contact === "selfie-only") {
       setTimeout(() => {
         setShowNotificationSubscription(true);
@@ -368,7 +349,9 @@ const Index = () => {
 
     const handleSwitchToMyPhotos = async () => {
       if (isAuthenticated) {
-        await handleToggleMyPhotos();
+        await loadUserImages();
+        setGalleryType('my');
+        setShowGallery(true);
       }
     };
 

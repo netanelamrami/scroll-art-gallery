@@ -190,6 +190,8 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                       onClick={() => {
                         switchUser(user.id);
                         setIsOpen(false);
+                        // Trigger user photos reload
+                        window.dispatchEvent(new CustomEvent('switchToMyPhotos'));
                       }}
                     >
                       <Avatar className="w-5 h-5 mr-2">

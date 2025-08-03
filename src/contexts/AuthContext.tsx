@@ -122,14 +122,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const switchUser = (userId: string) => {
+    console.log('AuthContext switchUser called with userId:', userId);
     const user = authState.users.find(u => u.id === userId);
+    console.log('Found user:', user);
     if (user) {
+      console.log('Switching to user:', user.id, user.name);
+      
+      // Update sessionStorage with the new user's ID
+      sessionStorage.setItem('userid', user.id);
+      console.log('Updated sessionStorage userid to:', user.id);
+      
       setAuthState(prev => ({
         ...prev,
         users: prev.users.map(u => ({ ...u, isActive: u.id === userId })),
         currentUser: user,
         isAuthenticated: true
       }));
+    } else {
+      console.log('User not found with id:', userId);
     }
   };
 

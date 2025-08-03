@@ -188,9 +188,11 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                       variant="ghost"
                       className="w-full h-auto p-2 justify-start hover:bg-muted/50"
                       onClick={() => {
+                        console.log('UserAvatarStack - switching to user:', user.id, user.name);
                         switchUser(user.id);
                         setIsOpen(false);
                         // Trigger user photos reload
+                        console.log('UserAvatarStack - dispatching switchToMyPhotos event');
                         window.dispatchEvent(new CustomEvent('switchToMyPhotos'));
                       }}
                     >

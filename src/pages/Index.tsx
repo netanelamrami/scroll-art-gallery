@@ -173,13 +173,18 @@ const Index = () => {
 
   // פונקציה נפרדת לטעינת תמונות המשתמש
   const loadUserImages = async () => {
+    console.log('loadUserImages called');
     setIsLoadingMyPhotos(true);
     try {
       const userId = parseInt(sessionStorage.getItem('userid') || '0');
       const eventId = event?.id;
       
+      console.log('loadUserImages - userId:', userId, 'eventId:', eventId);
+      
       if (userId && eventId) {
+        console.log('Making API call to getImages...');
         const userImagesData = await apiService.getImages(userId, eventId);
+        console.log('API response:', userImagesData);
         
         // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
         const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
@@ -194,7 +199,11 @@ const Index = () => {
           albumId: imageData.albomId?.toString() || 'main'
         })) || [];
         
+        console.log('Formatted user images:', formattedUserImages);
+        console.log('Setting userImages to:', formattedUserImages.length, 'images');
         setUserImages(formattedUserImages);
+      } else {
+        console.log('Missing userId or eventId - userId:', userId, 'eventId:', eventId);
       }
     } catch (error) {
       console.error('Error loading user images:', error);
@@ -351,10 +360,15 @@ const Index = () => {
     };
 
     const handleSwitchToMyPhotos = async () => {
+      console.log('handleSwitchToMyPhotos called - isAuthenticated:', isAuthenticated);
       if (isAuthenticated) {
+        console.log('User is authenticated, loading user images...');
         await loadUserImages();
+        console.log('Images loaded, setting gallery type to my');
         setGalleryType('my');
         setShowGallery(true);
+      } else {
+        console.log('User not authenticated');
       }
     };
 
@@ -424,12 +438,17 @@ const Index = () => {
   // Filter images based on gallery type and selected album
   const filteredImages = (() => {
     let baseImages = galleryImages;
+    console.log('Filtering images - galleryType:', galleryType, 'isAuthenticated:', isAuthenticated);
+    console.log('Available images - galleryImages:', galleryImages.length, 'userImages:', userImages.length);
+    
     if (galleryType === 'favorites') {
       baseImages = galleryImages.filter(img => favoriteImages.has(img.id));
     } else if (galleryType === 'my' && isAuthenticated) {
+      console.log('Using userImages for my photos');
       baseImages = userImages; // שימוש בתמונות המשתמש שנטענו מהשרת
     }
     
+    console.log('Final filtered images:', baseImages.length);
     // For now, all albums show all images (you can customize this later)
     return baseImages;
   })();

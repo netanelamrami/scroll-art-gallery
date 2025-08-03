@@ -82,6 +82,8 @@ export const UserSwitcher = () => {
                         onClick={() => {
                           switchUser(user.id);
                           setIsOpen(false);
+                          // Dispatch event to trigger user photos reload
+                          window.dispatchEvent(new CustomEvent('switchToMyPhotos'));
                         }}
                       >
                         <Avatar className="w-6 h-6 mr-2">

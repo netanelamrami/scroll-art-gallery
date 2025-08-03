@@ -230,20 +230,18 @@ const Index = () => {
   };
 
   const handleToggleGalleryType = async () => {
-    // אם המשתמש מנסה לעבור ל"התמונות שלי" בלי להיות מחובר
-    if (galleryType === 'all' && !isAuthenticated) {
-      handleToggleMyPhotos(); // שימוש בפונקציה הקיימת שמטפלת נכון במקרה הזה
-      return;
-    }
     if (galleryType === 'all') {
-      // מעבר לתמונות שלי - טוען אותן מהשרת
-      await handleToggleMyPhotos();
-            //setGalleryType('my');
-
-    } else if (galleryType === 'my') {
-      // setGalleryType('favorites');
-      //setGalleryType('all');
-    } 
+      // מעבר לתמונות שלי
+      if (!isAuthenticated) {
+        setShowAuthFlow(true);
+        return;
+      }
+      await loadUserImages();
+      setGalleryType('my');
+    } else {
+      // מעבר לכל התמונות
+      setGalleryType('all');
+    }
   };
 
   const handleToggleFavorite = (imageId: string) => {
@@ -338,13 +336,18 @@ const Index = () => {
     };
 
     const handleToggleGalleryTypeEvent = (event) => {
-     const value = event.detail.type;
-      if(value == 'my') {
-        setGalleryType('my');
+      const value = event.detail.type;
+      if (value === 'my') {
+        if (!isAuthenticated) {
+          setShowAuthFlow(true);
+          return;
+        }
+        loadUserImages().then(() => {
+          setGalleryType('my');
+        });
       } else {
         setGalleryType('all');
       }
-      handleToggleGalleryType();
     };
 
     const handleSwitchToMyPhotos = async () => {
@@ -355,14 +358,24 @@ const Index = () => {
       }
     };
 
+    // Listen for user switch events
+    const handleAuthStateChanged = async () => {
+      // אם המשתמש החליף משתמש והגלריה פתוחה ב"התמונות שלי"
+      if (isAuthenticated && galleryType === 'my') {
+        await loadUserImages();
+      }
+    };
+
     window.addEventListener('exitSelectionMode', handleExitSelectionMode);
     window.addEventListener('toggleGalleryType', handleToggleGalleryTypeEvent);
     window.addEventListener('switchToMyPhotos', handleSwitchToMyPhotos);
+    window.addEventListener('authStateChanged', handleAuthStateChanged);
     
     return () => {
       window.removeEventListener('exitSelectionMode', handleExitSelectionMode);
       window.removeEventListener('toggleGalleryType', handleToggleGalleryTypeEvent);
       window.removeEventListener('switchToMyPhotos', handleSwitchToMyPhotos);
+      window.removeEventListener('authStateChanged', handleAuthStateChanged);
     };
   }, [isAuthenticated]);
 

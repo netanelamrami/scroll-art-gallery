@@ -240,7 +240,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             >
               <Images className="h-4 w-4" />
               <span>
-                {galleryType === 'all' ? 'כל התמונות' : galleryType === 'my' ? 'התמונות שלי' : 'נבחרות'}
+                {galleryType === 'all' ? 'התמונות שלי'  :  'כל התמונות'}
               </span>
             </Button>
 

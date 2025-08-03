@@ -28,6 +28,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
 
   // Handle My Photos button click
   const handleMyPhotosClick = () => {
+    console.log(isAuthenticated)
     if (isAuthenticated && currentUser) {
       // User is already authenticated, scroll to gallery and set to 'my' type
       setTimeout(() => {
@@ -60,7 +61,6 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
     );
   }
 
-  console.log(event)
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Settings Menu */}

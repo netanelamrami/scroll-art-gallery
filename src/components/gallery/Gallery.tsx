@@ -325,17 +325,16 @@ export const Gallery = ({
         galleryType={galleryType || localGalleryType}
         onToggleGalleryType={() => {
           // אם יש callback חיצוני (מה-Index), נשתמש בו
+          console.log(localGalleryType)
+          if (localGalleryType === 'all') {
+            setLocalGalleryType('my');
+          } else {
+            setLocalGalleryType('all');
+          }
           if (onAlbumClick) {
             // קריאה לפונקציה שמעדכנת את הגלרייה ב-Index
-            window.dispatchEvent(new CustomEvent('toggleGalleryType'));
-          } else {
-            // אחרת נשתמש ב-state מקומי
-            if (localGalleryType === 'all') {
-              setLocalGalleryType('my');
-            } else {
-              setLocalGalleryType('all');
-            }
-          }
+          window.dispatchEvent(new CustomEvent('toggleGalleryType', { detail: { type: localGalleryType } }));
+          } 
         }}
         onDownloadAll={handleDownloadAll}
         onToggleSelectionMode={handleToggleSelection}

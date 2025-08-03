@@ -32,7 +32,7 @@ export function SettingsMenu({ event }: SettingsMenuProps) {
       <DropdownMenuContent align={language === 'he' ? 'start' : 'end'} className="w-56 bg-background z-50">
 
         {/* Notifications */}
-        <DropdownMenuItem asChild className="flex justify-between">
+        {/* <DropdownMenuItem asChild className="flex justify-between">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
@@ -40,9 +40,9 @@ export function SettingsMenu({ event }: SettingsMenuProps) {
             </div>
             {event && <NotificationBell event={event} />}
           </div>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
 
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
 
         {/* Settings */}
         <DropdownMenuItem asChild className="flex justify-between">

@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Save to localStorage whenever state changes
   useEffect(() => {
+    authState.isAuthenticated = true
     console.log('AuthProvider - saving to localStorage:', authState);
     try {
       const dataToSave = JSON.stringify(authState);
@@ -112,7 +113,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       users: [...authState.users.map(u => ({ ...u, isActive: false })), newUser]
     };
     
-    console.log('AuthProvider New auth state to set:', JSON.stringify(newState, null, 2));
+    console.log('AuthProvider New auth state to set111111111111111:', JSON.stringify(newState, null, 2));
     console.log('AuthProvider Current localStorage before update:', localStorage.getItem(AUTH_STORAGE_KEY));
     
     setAuthState(newState);

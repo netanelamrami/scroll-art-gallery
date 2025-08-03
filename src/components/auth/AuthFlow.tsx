@@ -19,8 +19,7 @@ interface AuthFlowProps {
 
 export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
   const needsFullAuth = event?.needDetect !== false;
-  console.log('AuthFlow - event.needDetect:', event?.needDetect);
-  console.log('AuthFlow - needsFullAuth:', needsFullAuth);
+
   const [currentStep, setCurrentStep] = useState<AuthStep>(needsFullAuth ? "contact" : "selfie");
   const [contactInfo, setContactInfo] = useState("");
   const [notifications, setNotifications] = useState(true);
@@ -64,13 +63,13 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
       
       // טעינת נתוני המשתמש
       const loginResponse = await apiService.loginUser(userId);
-      
       if (loginResponse && loginResponse.user) {
         setLoadingMessage("טוען תמונות...");
         
         // טעינת תמונות המשתמש
         try {
           const imagesResponse = await apiService.getImages(userId, event.id);
+
           console.log('User images loaded:', imagesResponse);
         } catch (error) {
           console.log('No images found for user or error loading images:', error);

@@ -59,9 +59,7 @@ const Index = () => {
     
     // תחילה ננסה לקבל את האירוע
     apiService.getEvent(currentEventLink)
-      .then(eventData => {
-        console.log('Event data:', eventData);
-        
+      .then(eventData => {        
         // אם האירוע לא נמצא בכלל
         if (!eventData) {
           navigate('/event-not-found/' + currentEventLink);
@@ -150,7 +148,7 @@ const Index = () => {
     setTimeout(() => {
       setShowAuthFlow(true);
       setIsLoadingMyPhotos(false);
-    }, 1000 + Math.random() * 500);
+    }, 300);
   };
 
   const handleToggleMyPhotos = async () => {
@@ -226,15 +224,15 @@ const Index = () => {
       handleToggleMyPhotos(); // שימוש בפונקציה הקיימת שמטפלת נכון במקרה הזה
       return;
     }
-    
     if (galleryType === 'all') {
       // מעבר לתמונות שלי - טוען אותן מהשרת
       await handleToggleMyPhotos();
+            //setGalleryType('my');
+
     } else if (galleryType === 'my') {
-      setGalleryType('favorites');
-    } else {
-      setGalleryType('all');
-    }
+      // setGalleryType('favorites');
+      //setGalleryType('all');
+    } 
   };
 
   const handleToggleFavorite = (imageId: string) => {
@@ -249,7 +247,6 @@ const Index = () => {
   };
 
   const handleAuthComplete = async (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
-    console.log('handleAuthComplete called with:', authData);
     setUserData(authData);
     setShowAuthFlow(false);
     setIsLoadingMyPhotos(true);
@@ -278,10 +275,8 @@ const Index = () => {
     try {
       const userId = parseInt(sessionStorage.getItem('userid') || '0');
       const eventId = event?.id;
-      
       if (userId && eventId) {
         const userImagesData = await apiService.getImages(userId, eventId);
-        
         // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
         const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
           id: imageData.name || `user-image-${index}`,
@@ -310,6 +305,7 @@ const Index = () => {
     // Show notification subscription for selfie-only users
     console.log('AuthComplete - event.needDetect:', event?.needDetect);
     console.log('AuthComplete - authData.contact:', authData.contact);
+
     if (authData.contact === "selfie-only") {
       setTimeout(() => {
         setShowNotificationSubscription(true);
@@ -352,6 +348,7 @@ const Index = () => {
     setSelectedImages(new Set());
   };
 
+
   // Listen for exit selection mode event and gallery type toggle
   useEffect(() => {
     const handleExitSelectionMode = () => {
@@ -359,7 +356,13 @@ const Index = () => {
       setSelectedImages(new Set());
     };
 
-    const handleToggleGalleryTypeEvent = () => {
+    const handleToggleGalleryTypeEvent = (event) => {
+     const value = event.detail.type;
+      if(value == 'my') {
+        setGalleryType('my');
+      } else {
+        setGalleryType('all');
+      }
       handleToggleGalleryType();
     };
 
@@ -425,7 +428,6 @@ const Index = () => {
   // Filter images based on gallery type and selected album
   const filteredImages = (() => {
     let baseImages = galleryImages;
-    
     if (galleryType === 'favorites') {
       baseImages = galleryImages.filter(img => favoriteImages.has(img.id));
     } else if (galleryType === 'my' && isAuthenticated) {
@@ -495,8 +497,6 @@ const Index = () => {
       {/* Auth Flow Modal */}
       {showAuthFlow && event && (
         <>
-          {console.log('Index - Showing AuthFlow with event:', event)}
-          {console.log('Index - event.needDetect:', event.needDetect)}
           <AuthFlow 
             event={event}
             onComplete={handleAuthComplete}

@@ -6,6 +6,7 @@ export interface User {
   selfieImage: string; // base64 or blob URL
   createdAt: Date;
   isActive: boolean;
+  photoUrl?: string; // Optional, can be used instead of selfieImage
 }
 
 export interface AuthState {

@@ -7,15 +7,19 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function Toaster() {
   const { toasts } = useToast()
+  const { t, language } = useLanguage();
 
   return (
-    <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
+    <div   dir={language === 'he' ? 'rtl' : 'ltr'}>
+
+    <ToastProvider >
+      {toasts.map(function ({ id, title, description, action,open, ...props }) {
         return (
-          <Toast key={id} {...props}>
+          <Toast key={id} open={open ?? true} {...props}>
             <div className="grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
@@ -29,5 +33,6 @@ export function Toaster() {
       })}
       <ToastViewport />
     </ToastProvider>
+      </div>
   )
 }

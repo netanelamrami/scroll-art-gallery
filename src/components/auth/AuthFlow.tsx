@@ -15,9 +15,10 @@ interface AuthFlowProps {
   event: event;
   onComplete: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
   onCancel: () => void;
+ setUsers: (users: any[]) => void;
 }
 
-export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
+export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProps) => {
   const needsFullAuth = event?.needDetect !== false;
 
   const [currentStep, setCurrentStep] = useState<AuthStep>(needsFullAuth ? "contact" : "selfie");
@@ -53,22 +54,23 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
   };
 
   // פונקציה לטעינת נתוני המשתמש אחרי רישום
-  const setUserData = async (userId: number) => {
+  const setUserData = async (user: any) => {
     try {
       setLoadingMessage("טוען נתוני משתמש...");
-      
+      console.log('User data loaded:', user); 
       // שמירת מזהה המשתמש ב-sessionStorage
-      sessionStorage.setItem('userid', userId.toString());
-      sessionStorage.setItem('userFullName', 'Anonymous');
+      sessionStorage.setItem('userid', user.id.toString());
+      sessionStorage.setItem('photourl', user.photoUrl);
+      //sessionStorage.setItem('userFullName', 'Anonymous');
       
       // טעינת נתוני המשתמש
-      const loginResponse = await apiService.loginUser(userId);
+      const loginResponse = await apiService.loginUser(user.id);
       if (loginResponse && loginResponse.user) {
         setLoadingMessage("טוען תמונות...");
         
         // טעינת תמונות המשתמש
         try {
-          const imagesResponse = await apiService.getImages(userId, event.id);
+          const imagesResponse = await apiService.getImages( user.id, event.id);
 
           console.log('User images loaded:', imagesResponse);
         } catch (error) {
@@ -79,7 +81,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
         
         // טעינת משתמשים קשורים
         try {
-          const usersResponse = await apiService.getUserForUser(userId);
+          const usersResponse = await apiService.getUserForUser(user.id);
           console.log('Related users loaded:', usersResponse);
         } catch (error) {
           console.log('No related users found or error loading users:', error);
@@ -98,6 +100,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
         description: "אירעה שגיאה בטעינת הנתונים, אבל הרישום הצליח",
         variant: "default",
       });
+      
     }
   };
 
@@ -164,16 +167,15 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
             sessionStorage.setItem("isRegister", "true");
             
             // טעינת נתוני המשתמש
-            await setUserData(userAuth.user.id);
+            await setUserData(userAuth.user);
             
             setCurrentStep("complete");
             onComplete({
               contact: contactInfo,
               otp: otp,
-              selfieData: "existing-user", // ציון שזה משתמש קיים - זה לא יוסיף משתמש חדש
+              selfieData: userAuth.user.photoUrl, // ציון שזה משתמש קיים - זה לא יוסיף משתמש חדש
               notifications: notifications
-            });
-            
+            });            
             toast({
               title: "ברוכים השובים!",
               description: "זוהית כמשתמש רשום. נכנסת לגלריה!",
@@ -264,7 +266,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
           
           // טעינת נתוני המשתמש (תמונות, משתמשים קשורים)
           if (registrationResponse.user?.id) {
-            await setUserData(registrationResponse.user.id);
+            await setUserData(registrationResponse.user);
           }
           
           setCurrentStep("complete");
@@ -295,7 +297,7 @@ export const AuthFlow = ({ event, onComplete, onCancel }: AuthFlowProps) => {
           
           // טעינת נתוני המשתמש (תמונות, משתמשים קשורים)
           if (registrationResponse.user?.id) {
-            await setUserData(registrationResponse.user.id);
+            await setUserData(registrationResponse.user);
           }
           
           setCurrentStep("complete");

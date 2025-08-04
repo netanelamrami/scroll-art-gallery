@@ -173,7 +173,6 @@ const Index = () => {
 
   // פונקציה נפרדת לטעינת תמונות המשתמש
   const loadUserImages = async () => {
-    console.log('loadUserImages called');
     setIsLoadingMyPhotos(true);
     try {
       const userId = parseInt(sessionStorage.getItem('userid') || '0');
@@ -187,7 +186,7 @@ const Index = () => {
         console.log('API response:', userImagesData);
         
         // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
-        const formattedUserImages = userImagesData.images?.map((imageData: any, index: number) => ({
+        const formattedUserImages = userImagesData?.map((imageData: any, index: number) => ({
           id: imageData.name || `user-image-${index}`,
           src: imageData.smallUrl,
           mediumSrc: imageData.medUrl,
@@ -228,7 +227,7 @@ const Index = () => {
       handleViewFavorites();
     } else {
       // For other albums, show all images for now
-      setGalleryType('all');
+      //setGalleryType('all');
       setShowGallery(true);
       setTimeout(() => {
         document.getElementById('gallery')?.scrollIntoView({
@@ -267,7 +266,6 @@ const Index = () => {
   const handleAuthComplete = async (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
     setUserData(authData);
     setShowAuthFlow(false);
-    
     // רק אם זה לא משתמש קיים, נוסיף אותו לרשימת המשתמשים
     if (authData.selfieData !== "existing-user") {
       console.log('Adding new user to multi-user system...');
@@ -375,7 +373,7 @@ const Index = () => {
     // Listen for user switch events
     const handleAuthStateChanged = async () => {
       // אם המשתמש החליף משתמש והגלריה פתוחה ב"התמונות שלי"
-      if (isAuthenticated && galleryType === 'my') {
+      if (isAuthenticated && galleryType === 'my') {        
         await loadUserImages();
       }
     };
@@ -437,18 +435,11 @@ const Index = () => {
 
   // Filter images based on gallery type and selected album
   const filteredImages = (() => {
-    let baseImages = galleryImages;
-    console.log('Filtering images - galleryType:', galleryType, 'isAuthenticated:', isAuthenticated);
-    console.log('Available images - galleryImages:', galleryImages.length, 'userImages:', userImages.length);
-    
-    if (galleryType === 'favorites') {
-      baseImages = galleryImages.filter(img => favoriteImages.has(img.id));
-    } else if (galleryType === 'my' && isAuthenticated) {
-      console.log('Using userImages for my photos');
+    let baseImages = galleryImages;    
+    if (galleryType === 'my' && isAuthenticated) {
       baseImages = userImages; // שימוש בתמונות המשתמש שנטענו מהשרת
     }
     
-    console.log('Final filtered images:', baseImages.length);
     // For now, all albums show all images (you can customize this later)
     return baseImages;
   })();

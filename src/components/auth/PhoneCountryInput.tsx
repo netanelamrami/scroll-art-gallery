@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
+import { log } from "node:console";
 
 interface PhoneCountryInputProps {
   onSubmit: (phone: string, notifications: boolean) => void;
@@ -105,7 +106,7 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
     }
 
     const cleanPhoneNumber = phoneNumber.replace(/^0/, '').replace(/[\s-]/g, '');
-    
+
     if (!validatePhoneNumber(phoneNumber, countryCode)) {
       toast({
         title: t('toast.error.title'),

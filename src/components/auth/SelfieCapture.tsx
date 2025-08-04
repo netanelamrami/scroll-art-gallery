@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Camera, RotateCcw, Check, Upload } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import React from "react";
 
 interface SelfieCaptureProps {
   onCapture: (imageData: string) => void;
@@ -44,14 +45,23 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       console.log('Camera stream obtained successfully');
       
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.onloadedmetadata = () => {
-          videoRef.current?.play();
-          setIsCapturing(true);
-        };
-      }
+streamRef.current = stream;
+
+setIsCapturing(true);
+setTimeout(() => {
+  if (videoRef.current) {
+    videoRef.current.srcObject = stream;
+    videoRef.current.play().catch(error => {
+      console.error("Error playing video:", error);
+    });
+    console.log('Video element source set to stream');
+  } else {
+    console.warn('videoRef.current עדיין null אחרי ההשהייה');
+  }
+}, 350);
+
+
+
     } catch (error) {
       console.error("Error accessing camera:", error);
       // טיפול בשגיאות ספציפיות

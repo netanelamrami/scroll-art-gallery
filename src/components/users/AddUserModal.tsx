@@ -7,13 +7,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Camera, Upload, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { event } from '@/types/event';
+import { apiService } from '@/data/services/apiService';
 
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
+  event?: event; // Assuming event is passed for context
 }
 
-export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
+export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
   const { addUser } = useMultiUserAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -24,6 +27,7 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isEmailMode = event?.registerBy === "Email";
 
   const handleInfoSubmit = () => {
     // Skip info validation - only name is optional now
@@ -80,8 +84,26 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
       reader.readAsDataURL(file);
     }
   };
+  const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.7): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const img = new Image();
+      
+      img.onload = () => {
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(resolve, 'image/jpeg', quality);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
 
-  const handleCreateUser = () => {
+  const handleCreateUser = async() => {
     if (!selfieImage) {
       toast({
         title: t('auth.error') || 'שגיאה',
@@ -91,12 +113,49 @@ export const AddUserModal = ({ isOpen, onClose }: AddUserModalProps) => {
       return;
     }
 
+
+
+
+
+
+       const formData = new FormData();
+      
+      // המרת base64 לblob ואז לfile
+      const response = await fetch(selfieImage);
+      const blob = await response.blob();
+      const originalFile = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
+      
+      // מזעור התמונה
+      const compressedBlob = await compressImage(originalFile, 800, 0.7);
+      const compressedFile = new File([compressedBlob], 'selfie_compressed.jpg', { type: 'image/jpeg' });
+      
+      formData.append('image', compressedFile);
+      formData.append('eventid', event.id.toString());
+
+      const randomNumber = Math.floor(1000 + Math.random() * 9000);
+      const userid = parseInt(sessionStorage.getItem('userid') || '0')
+      const id = `${userid}-${randomNumber}`;
+      formData.append('id', id);
+      formData.append('relatedToUserId',userid.toString());
+        // משתמש חדש - משתמשים בטלפון/אימייל כid
+        formData.append('fullname', userInfo.name ? userInfo.name : 'Anonymous');
+         formData.append('AuthenticateBy', isEmailMode ? 'Email' : 'PhoneNumber');
+      console.log(id)
+        const registrationResponse = await apiService.registerUser(formData);
+
+      console.log(registrationResponse)
+
+
+
+
+
     const newUser = addUser({
       name: userInfo.name || `משתמש ${Date.now()}`,
       phone: '',
       email: '',
       selfieImage
     });
+    console.log(newUser)
 
     console.log('New user added from AddUserModal:', newUser);
     setStep('complete');

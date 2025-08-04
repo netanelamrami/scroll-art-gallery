@@ -57,7 +57,6 @@ export const GalleryHeader = ({
         { value: 4, icon: LayoutGrid, label: "עמודות 4" },
         { value: 5, icon: Grid3x3, label: "עמודות 5" },
       ];
-
   return (
     <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full">
       <div className="w-full px-4 py-2 pb-1">

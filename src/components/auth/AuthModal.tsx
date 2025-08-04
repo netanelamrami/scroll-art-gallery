@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AuthFlow } from './AuthFlow';
 import { event } from '@/types/event';
 
@@ -10,6 +10,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal = ({ isOpen, onClose, event, onComplete }: AuthModalProps) => {
+  const [users, setUsers] = useState([]);
   if (!isOpen) return null;
 
   return (
@@ -17,6 +18,7 @@ export const AuthModal = ({ isOpen, onClose, event, onComplete }: AuthModalProps
       event={event}
       onComplete={onComplete}
       onCancel={onClose}
+      setUsers={setUsers}
     />
   );
 };

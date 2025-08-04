@@ -16,7 +16,7 @@ interface UserAvatarStackProps {
 }
 
 export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatarStackProps) => {
-  const { users, currentUser, isAuthenticated, switchUser, logout, addUser } = useMultiUserAuth();
+  const {users, currentUser, isAuthenticated, switchUser, logout, addUser } = useMultiUserAuth();
   const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
@@ -32,12 +32,10 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
   // Listen for user added events and auth state changes
   React.useEffect(() => {
     const handleUserAdded = () => {
-      console.log('UserAvatarStack - user added event received');
       setForceUpdate(prev => prev + 1);
     };
 
     const handleAuthStateChanged = (event: CustomEvent) => {
-      console.log('UserAvatarStack - auth state changed event received:', event.detail);
       setForceUpdate(prev => prev + 1);
     };
     
@@ -80,7 +78,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
           </Popover>
         </div>
 
-        {event && (
+        {/* {event && (
           <AuthModal 
             isOpen={showAuthModal}
             onClose={() => setShowAuthModal(false)}
@@ -104,7 +102,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
               window.dispatchEvent(new CustomEvent('userAdded', { detail: newUser }));
             }}
           />
-        )}
+        )} */}
       </>
     );
   }
@@ -125,7 +123,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
               <div className="relative">
                 {/* Main user avatar */}
                 <Avatar className="h-8 w-8 border-2 border-background shadow-sm">
-                  <AvatarImage src={currentUser.selfieImage} alt={currentUser.name || 'User'} />
+                  <AvatarImage src={currentUser.photoUrl || currentUser?.selfieImage} alt={currentUser.name || 'User'} />
                   <AvatarFallback>
                     <UserCircle className="h-4 w-4" />
                   </AvatarFallback>
@@ -136,7 +134,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                   <div className="absolute -right-1 -top-1">
                     <Avatar className="h-5 w-5 border-2 border-background shadow-sm">
                       <AvatarImage 
-                        src={otherUsers[0]?.selfieImage} 
+                        src={otherUsers[0]?.photoUrl || otherUsers[0]?.selfieImage} 
                         alt={otherUsers[0]?.name || 'User'} 
                       />
                       <AvatarFallback className="text-xs">
@@ -145,11 +143,11 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                     </Avatar>
                     
                     {/* Additional users indicator */}
-                    {otherUsers.length > 1 && (
+                    {/* {otherUsers.length > 1 && (
                       <div className="absolute -right-1 -bottom-1 h-3 w-3 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">
                         +{otherUsers.length - 1}
                       </div>
-                    )}
+                    )} */}
                   </div>
                 )}
               </div>
@@ -165,7 +163,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                 </p>
                 <div className="flex items-center gap-2">
                   <Avatar className="w-6 h-6">
-                    <AvatarImage src={currentUser.selfieImage} alt={currentUser.name || 'User'} />
+                    <AvatarImage src={currentUser.photoUrl || currentUser.selfieImage} alt={currentUser.name || 'User'} />
                     <AvatarFallback>
                       <UserCircle className="w-4 h-4" />
                     </AvatarFallback>
@@ -197,7 +195,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                       }}
                     >
                       <Avatar className="w-5 h-5 mr-2">
-                        <AvatarImage src={user.selfieImage} alt={user.name || 'User'} />
+                        <AvatarImage src={user.photoUrl} alt={user.name || 'User'} />
                         <AvatarFallback>
                           <UserCircle className="w-3 h-3" />
                         </AvatarFallback>
@@ -251,6 +249,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
       <AddUserModal 
         isOpen={showAddUser}
         onClose={() => setShowAddUser(false)}
+        event={event}
       />
     </>
   );

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState } from '@/types/auth';
+import { apiService } from '@/data/services/apiService';
 
 const AUTH_STORAGE_KEY = 'pixshare_auth_state';
 
@@ -19,54 +20,43 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [authState, setAuthState] = useState<AuthState>(() => {
-    try {
-      const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-      console.log('AuthProvider initialization - stored data:', stored);
-      
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        console.log('AuthProvider initialization - parsed data:', JSON.stringify(parsed, null, 2));
-        
-        const initialState = {
-          ...parsed,
-          users: parsed.users?.map((user: any) => ({
-            ...user,
-            createdAt: new Date(user.createdAt)
-          })) || []
-        };
-        
-        console.log('AuthProvider initialization - initial state:', JSON.stringify(initialState, null, 2));
-        return initialState;
-      } else {
-        console.log('AuthProvider initialization - no stored data, creating empty state');
-        return { isAuthenticated: false, currentUser: null, users: [] };
-      }
-    } catch (e) {
-      console.error('AuthProvider initialization - parse error:', e);
-      return { isAuthenticated: false, currentUser: null, users: [] };
-    }
+  const [authState, setAuthState] = useState<AuthState>({
+    isAuthenticated: false,
+    currentUser: null,
+    users: []
   });
 
-  console.log('AuthProvider current state:', JSON.stringify(authState, null, 2));
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const userid = parseInt(sessionStorage.getItem('userid') || '0');
+        const users = await apiService.getUserForUser(userid);
+        const initialState = {
+          isAuthenticated: users.length > 0,
+          currentUser: users.length > 0 ? users[0] : null,
+          users: users
+        };
+        console.log(users)
+
+        console.log('AuthProvider initialization - initial state:', JSON.stringify(initialState, null, 2));
+        setAuthState(initialState);
+      } catch (e) {
+        console.error('AuthProvider initialization - parse error:', e);
+        setAuthState({ isAuthenticated: false, currentUser: null, users: [] });
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
 
   // Save to localStorage whenever state changes
   useEffect(() => {
     authState.isAuthenticated = true
-    console.log('AuthProvider - saving to localStorage:', authState);
     try {
       const dataToSave = JSON.stringify(authState);
-      console.log('AuthProvider - data to save (length):', dataToSave.length);
-      localStorage.setItem(AUTH_STORAGE_KEY, dataToSave);
-      
-      // Verify it was saved
-      const saved = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (saved) {
-        console.log('AuthProvider - verification: data saved successfully');
-      } else {
-        console.error('AuthProvider - ERROR: data was not saved to localStorage!');
-      }
-      
+      // localStorage.setItem(AUTH_STORAGE_KEY, dataToSave);
+
       // Dispatch event for any listening components
       window.dispatchEvent(new CustomEvent('authStateChanged', { detail: authState }));
     } catch (error) {
@@ -112,10 +102,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       currentUser: newUser,
       users: [...authState.users.map(u => ({ ...u, isActive: false })), newUser]
     };
-    
-    console.log('AuthProvider New auth state to set111111111111111:', JSON.stringify(newState, null, 2));
-    console.log('AuthProvider Current localStorage before update:', localStorage.getItem(AUTH_STORAGE_KEY));
-    
+        
     setAuthState(newState);
 
     return newUser;
@@ -129,7 +116,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log('Switching to user:', user.id, user.name);
       
       // Update sessionStorage with the new user's ID
-      sessionStorage.setItem('userid', user.id);
+            sessionStorage.setItem('userid', user.id.toString());
+
+      // sessionStorage.setItem('userid', user.id);
       console.log('Updated sessionStorage userid to:', user.id);
       
       setAuthState(prev => ({

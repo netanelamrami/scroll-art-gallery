@@ -336,6 +336,8 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
         )}
 
         {/* Control button - always stays in place */}
+       {showBackToTop && (
+
         <Button
           variant="ghost"
           onClick={() => setIsExpanded(!isExpanded)}
@@ -347,7 +349,9 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             }`} 
           />
         </Button>
+           )}
       </div>
+   
 
       {/* Back to Top Button - Mobile (Fixed separate button on the right) */}
       {showBackToTop && (

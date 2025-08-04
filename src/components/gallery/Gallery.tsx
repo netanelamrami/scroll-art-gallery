@@ -325,7 +325,6 @@ export const Gallery = ({
         galleryType={galleryType || localGalleryType}
         onToggleGalleryType={() => {
           // אם יש callback חיצוני (מה-Index), נשתמש בו
-          console.log(localGalleryType)
           if (localGalleryType === 'all') {
             setLocalGalleryType('my');
           } else {

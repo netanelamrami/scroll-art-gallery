@@ -27,7 +27,7 @@ export const BottomActionBar = ({
             <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-xl px-3 py-2 backdrop-blur-sm">
               <CheckSquare className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium text-primary">
-                {selectedCount} נבחרו
+                {selectedCount} {t('common.selected')}
               </span>
             </div>
 
@@ -41,7 +41,7 @@ export const BottomActionBar = ({
                 className="gap-2 hover:bg-yellow-50 hover:border-yellow-300 hover:text-yellow-700 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 rounded-xl"
               >
                 <Heart className="h-4 w-4" />
-                <span className="hidden xs:inline">מועדפים</span>
+                <span className="hidden xs:inline">{t('common.favorites')}</span>
               </Button>
               
               <Button
@@ -52,7 +52,7 @@ export const BottomActionBar = ({
                 className="gap-2 bg-primary hover:bg-primary/90 shadow-lg transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 rounded-xl"
               >
                 <Download className="h-4 w-4" />
-                <span className="hidden xs:inline">הורדה</span>
+                <span className="hidden xs:inline">{t('common.download')}</span>
               </Button>
               
               <Button
@@ -62,7 +62,7 @@ export const BottomActionBar = ({
                 className="gap-2 border-red-200 hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition-all duration-200 text-xs sm:text-sm px-2 sm:px-3 rounded-xl"
               >
                 <X className="h-4 w-4" />
-                <span className="hidden xs:inline">ביטול</span>
+                <span className="hidden xs:inline">{t('common.cancel')}</span>
               </Button>
             </div>
           </div>

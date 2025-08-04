@@ -56,7 +56,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   // פונקציה לטעינת נתוני המשתמש אחרי רישום
   const setUserData = async (user: any) => {
     try {
-      setLoadingMessage("טוען נתוני משתמש...");
+      setLoadingMessage(t('auth.loadingUserData'));
       console.log('User data loaded:', user); 
       // שמירת מזהה המשתמש ב-sessionStorage
       sessionStorage.setItem('userid', user.id.toString());
@@ -66,7 +66,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
       // טעינת נתוני המשתמש
       const loginResponse = await apiService.loginUser(user.id);
       if (loginResponse && loginResponse.user) {
-        setLoadingMessage("טוען תמונות...");
+        setLoadingMessage(t('auth.loadingImages'));
         
         // טעינת תמונות המשתמש
         try {
@@ -77,7 +77,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           console.log('No images found for user or error loading images:', error);
         }
         
-        setLoadingMessage("טוען משתמשים קשורים...");
+        setLoadingMessage(t('auth.loadingRelatedUsers'));
         
         // טעינת משתמשים קשורים
         try {
@@ -88,16 +88,16 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
         }
         
         toast({
-          title: "מוכן!",
-          description: "הגלריה האישית שלך נטענה בהצלחה",
+          title: t('toast.downloadComplete.title'),
+          description: t('auth.registrationComplete'),
           variant: "default",
         });
       }
     } catch (error) {
       console.error('Error loading user data:', error);
       toast({
-        title: "התראה",
-        description: "אירעה שגיאה בטעינת הנתונים, אבל הרישום הצליח",
+        title: t('auth.alert'),
+        description: t('auth.dataError'),
         variant: "default",
       });
       
@@ -108,22 +108,22 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
     setContactInfo(contact);
     setNotifications(notificationPreference);
     setIsLoading(true);
-    setLoadingMessage(isEmailMode ? "שולח אימייל..." : "שולח SMS...");
+    setLoadingMessage(isEmailMode ? t('auth.sendingEmail') : t('auth.sendingSMS'));
     
     try {
       if (isEmailMode) {
         await apiService.sendOTPEmail(contact);
         toast({
-          title: "אימייל נשלח",
-          description: "קוד האימות נשלח לכתובת המייל שלך",
+          title: t('auth.emailSent'),
+          description: t('auth.emailSentDesc'),
           variant: "default",
         });
       } else {
         const verificationMessage = "קוד האימות שלך מ Pixshare, ברוכים הבאים";
         await apiService.sendSMS(contact, verificationMessage, true);
         toast({
-          title: "SMS נשלח",
-          description: "קוד האימות נשלח למספר הטלפון שלך",
+          title: t('auth.smsSent'),
+          description: t('auth.smsSentDesc'),
           variant: "default",
         });
       }
@@ -132,8 +132,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
     } catch (error) {
       console.error('Error sending OTP:', error);
       toast({
-        title: "שגיאה",
-        description: `שליחת ה${isEmailMode ? 'אימייל' : 'SMS'} נכשלה. אנא נסה שוב.`,
+        title: t('auth.sendError'),
+        description: t('auth.sendErrorDesc').replace('{type}', isEmailMode ? 'אימייל' : 'SMS'),
         variant: "destructive",
       });
     } finally {
@@ -144,7 +144,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
 
   const handleOTPSubmit = async (otp: string) => {
     setIsLoading(true);
-    setLoadingMessage("מאמת קוד...");
+    setLoadingMessage(t('auth.verifyingCode'));
     
     try {
       const isVerified = await apiService.verifyOTP(contactInfo, otp);
@@ -152,14 +152,14 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
         setOtpCode(otp);
         
         // בדיקה האם המשתמש כבר רשום
-        setLoadingMessage("בודק משתמש קיים...");
+        setLoadingMessage(t('auth.checkingExistingUser'));
         try {
           const authenticateBy = isEmailMode ? "Email" : "PhoneNumber";
           const userAuth = await apiService.authenticateUser(contactInfo, event.id, authenticateBy);
           
           if (userAuth && userAuth.user && userAuth.user.id) {
             // המשתמש כבר רשום - טוען את נתוני המשתמש ומעבר ישירות לגלריה
-            setLoadingMessage("משתמש קיים נמצא, טוען נתונים...");
+            setLoadingMessage(t('auth.existingUserFound'));
             
             // שמירת מזהה המשתמש ב-sessionStorage
             sessionStorage.setItem('userid', userAuth.user.id.toString());
@@ -177,8 +177,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
               notifications: notifications
             });            
             toast({
-              title: "ברוכים השובים!",
-              description: "זוהית כמשתמש רשום. נכנסת לגלריה!",
+              title: t('auth.welcomeBack'),
+              description: t('auth.existingUserDesc'),
               variant: "default",
             });
           } else {
@@ -192,16 +192,16 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
         }
       } else {
         toast({
-          title: "שגיאה",
-          description: "קוד האימות שגוי. אנא נסה שוב.",
+          title: t('toast.error.title'),
+          description: t('auth.otpError'),
           variant: "destructive",
         });
       }
     } catch (error) {
       console.error('Error in OTP verification:', error);
       toast({
-        title: "שגיאה",
-        description: "אירעה שגיאה באימות הקוד. אנא נסה שוב.",
+        title: t('toast.error.title'),
+        description: t('auth.otpSystemError'),
         variant: "destructive",
       });
     } finally {
@@ -213,7 +213,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   const handleSelfieCapture = async (imageData: string) => {
     setSelfieData(imageData);
     setIsLoading(true);
-    setLoadingMessage("מעבד תמונה...");
+    setLoadingMessage(t('auth.processingImage'));
     
     try {
       // יצירת FormData לרישום המשתמש
@@ -225,7 +225,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
       const originalFile = new File([blob], 'selfie.jpg', { type: 'image/jpeg' });
       
       // מזעור התמונה
-      setLoadingMessage("מקטין תמונה...");
+      setLoadingMessage(t('auth.resizingImage'));
       const compressedBlob = await compressImage(originalFile, 800, 0.7);
       const compressedFile = new File([compressedBlob], 'selfie_compressed.jpg', { type: 'image/jpeg' });
       
@@ -233,7 +233,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
       formData.append('eventid', event.id.toString());
       
       if (event.needDetect) {
-        setLoadingMessage("רושם משתמש חדש...");
+        setLoadingMessage(t('auth.registeringNewUser'));
         
         // משתמש חדש - משתמשים בטלפון/אימייל כid
         formData.append('id', contactInfo || "selfie-only");
@@ -252,13 +252,13 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           // שליחת SMS עם קישור לגלריה (רק לטלפון)
           if (!isEmailMode && registrationResponse.user?.id) {
             try {
-              setLoadingMessage("שולח קישור לגלריה...");
+              setLoadingMessage(t('auth.sendingGalleryLink'));
               await apiService.sendWelcomeSMS(contactInfo, event.eventLink, registrationResponse.user.id);
             } catch (smsError) {
               console.error('Failed to send welcome SMS:', smsError);
               toast({
-                title: "התראה",
-                description: "הרישום הצליח אבל שליחת SMS נכשלה. תוכל לגשת לגלריה דרך הקישור באתר.",
+                title: t('auth.alert'),
+                description: t('auth.smsWarning'),
                 variant: "default",
               });
             }
@@ -278,15 +278,15 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           });
           
           toast({
-            title: "רישום הושלם בהצלחה!",
-            description: isEmailMode ? "נרשמת בהצלחה!" : "נרשמת בהצלחה! SMS נשלח עם קישור לגלריה שלך",
+            title: t('auth.registrationSuccess'),
+            description: isEmailMode ? t('auth.registrationSuccessDesc') : t('auth.registrationSuccessWithSMS'),
             variant: "default",
           });
         } else {
           throw new Error("Registration failed - no token received");
         }
       } else {
-        setLoadingMessage("רושם משתמש...");
+        setLoadingMessage(t('auth.registeringUser'));
         
         // לאירועים ללא זיהוי פנים
         const registrationResponse = await apiService.registerUserByPhoto(formData);
@@ -309,8 +309,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           });
           
           toast({
-            title: "רישום הושלם!",
-            description: "נרשמת בהצלחה לאירוע!",
+            title: t('auth.eventRegistrationSuccess'),
+            description: t('auth.eventRegistrationDesc'),
             variant: "default",
           });
         } else {
@@ -320,8 +320,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
     } catch (error) {
       console.error('Registration error:', error);
       toast({
-        title: "שגיאה ברישום",
-        description: "אירעה שגיאה ברישום. אנא נסה שוב.",
+        title: t('auth.registrationError'),
+        description: t('auth.registrationErrorDesc'),
         variant: "destructive",
       });
     } finally {

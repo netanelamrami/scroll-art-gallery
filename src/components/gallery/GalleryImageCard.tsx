@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Download, Link, Copy, Star } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface GalleryImageCardProps {
   image: GalleryImage;
@@ -31,6 +32,7 @@ export const GalleryImageCard = ({
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -62,16 +64,16 @@ export const GalleryImageCard = ({
     link.click();
     document.body.removeChild(link);
     toast({
-      title: "הורדת תמונה",
-      description: "התמונה הורדה בהצלחה",
+      title: t('toast.downloadImageComplete.title'),
+      description: t('toast.downloadImageComplete.description'),
     });
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(image.src);
     toast({
-      title: "קישור הועתק",
-      description: "קישור התמונה הועתק ללוח",
+      title: t('toast.linkCopied.title'),
+      description: t('toast.linkCopied.description'),
     });
   };
 
@@ -101,7 +103,7 @@ export const GalleryImageCard = ({
           className="w-full bg-muted flex items-center justify-center text-muted-foreground rounded-none "
           style={{ height: `${image.height}px` }}
         >
-          <span>שגיאה בטעינת התמונה</span>
+          <span>{t('toast.error.title')}</span>
         </div>
       ) : (
         <img

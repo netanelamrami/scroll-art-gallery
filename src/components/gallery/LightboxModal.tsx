@@ -5,6 +5,7 @@ import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star } from "l
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface LightboxModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export const LightboxModal = ({
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const { t } = useLanguage();
 
   const currentImage = images[currentIndex];
 
@@ -113,13 +115,13 @@ export const LightboxModal = ({
     
     if (success) {
       toast({
-        title: "הורדה הושלמה!",
-        description: "התמונה הורדה בהצלחה למכשיר שלכם",
+        title: t('toast.downloadComplete.title'),
+        description: t('toast.downloadImageComplete.description'),
       });
     } else {
       toast({
-        title: "שגיאה",
-        description: "אירעה שגיאה בהורדת התמונה, נסו שוב",
+        title: t('toast.error.title'),
+        description: t('downloadModal.downloadError'),
         variant: "destructive"
       });
     }
@@ -132,7 +134,7 @@ export const LightboxModal = ({
         <div className="flex items-center justify-between">
           <div className="text-foreground">
             <span className="text-sm opacity-80">
-              {currentIndex + 1} מתוך {images.length}
+              {currentIndex + 1} {t('common.of')} {images.length}
             </span>
           </div>
           
@@ -242,7 +244,7 @@ export const LightboxModal = ({
       <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
         <div className="text-center text-foreground">
           <p className="text-sm opacity-80">
-            {currentImage.alt} • גודל: {currentImage.size}
+            {currentImage.alt} • {t('common.imageSize')}: {currentImage.size}
           </p>
         </div>
       </div>

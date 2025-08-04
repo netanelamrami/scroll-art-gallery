@@ -175,14 +175,14 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
           toast({
             title: t('downloadModal.requestSent'),
             description: galleryType === 'all' 
-              ? 'בקשת הורדה נשלחה עבור כל תמונות האירוע'
-              : 'בקשת הורדה נשלחה עבור התמונות שלך',
+              ? t('toast.downloadRequestSent.all')
+              : t('toast.downloadRequestSent.my'),
           });
         } catch (error) {
           console.error('Download API Error:', error);
           toast({
             title: t('toast.error.title'),
-            description: 'שגיאה בשליחת בקשת ההורדה. אנא נסה שוב.',
+            description: t('toast.downloadRequestError'),
             variant: "destructive"
           });
           return;

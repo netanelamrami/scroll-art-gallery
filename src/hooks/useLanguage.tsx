@@ -13,13 +13,13 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const translations = {
   he: {
-    // Hero Section
+    // Hero Section - סקטור גיבור
     'hero.title': 'גלריית תמונות החתונה',
     'hero.subtitle': 'כל הזכרונות הקסומים מהיום הכי מיוחד שלכם',
     'hero.allPhotos': 'כל התמונות',
     'hero.myPhotos': 'התמונות שלי',
     
-    // Gallery Header
+    // Gallery Header - כותרת גלריה
     'gallery.title': 'גלריית תמונות',
     'gallery.totalImages': 'סך התמונות',
     'gallery.columns': 'עמודות',
@@ -30,19 +30,19 @@ const translations = {
     'gallery.cancelSelection': 'ביטול בחירה',
     'gallery.selectedImages': 'תמונות נבחרות',
     
-    // Floating Navbar
+    // Floating Navbar - תפריט נופף
     'navbar.support': 'תמיכה',
     'navbar.allPhotos': 'כל התמונות',
     'navbar.myPhotos': 'התמונות שלי',
     'navbar.shareEvent': 'שתף אירוע',
     'navbar.shareEventMobile': 'שתף',
     
-    // Share Dialog
+    // Share Dialog - דיאלוג שיתוף
     'share.title': 'שתף את הגלריה',
     'share.description': 'סרוק את הקוד או שתף את הקישור',
     'share.copyLink': 'העתק קישור',
     
-    // Toasts
+    // Toasts - הודעות טוסט
     'toast.downloadAll.title': 'הורדת תמונות',
     'toast.downloadAll.description': 'התחלת הורדת כל התמונות...',
     'toast.downloadSelected.title': 'הורדת תמונות נבחרות',
@@ -58,7 +58,7 @@ const translations = {
     'toast.error.title': 'שגיאה',
     'toast.qrError.description': 'לא ניתן ליצור QR קוד',
     
-    // Download Modal
+    // Download Modal - מודל הורדה
     'downloadModal.contactRequired': 'אנא הזינו טלפון או מייל',
     'downloadModal.downloadComplete': 'הורדה הושלמה!',
     'downloadModal.photosDownloaded': 'תמונות הורדו בהצלחה',
@@ -90,7 +90,7 @@ const translations = {
     'downloadModal.processingStarted': 'תהליך הכנת התמונות החל.',
     'downloadModal.linkSoon': 'נשלח לכם קישור להורדה תוך מספר דקות.',
     
-    // Auth
+    // Auth - אימות
     'auth.phoneEntry': 'הזנת מספר טלפון',
     'auth.emailEntry': 'הזנת כתובת מייל',
     'auth.otpVerification': 'אימות קוד',
@@ -122,8 +122,9 @@ const translations = {
     'auth.selectImageOrCamera': 'בחר תמונה או צלם',
     'auth.notifyNewPhotos': 'עדכן אותי בעת מציאת תמונות חדשות',
     'auth.otpInstruction': 'הזן את הקוד בן 4 הספרות שנשלח אליך',
+    'auth.logout': 'התנתק',
     
-    // Leads
+    // Leads - לידים
     'leads.thanksFeedback': 'תודה על המשוב!',
     'leads.futureHelp': 'נשמח לשמוע מכם בעתיד ולעזור בכל שאלה',
     'leads.thankYou': 'תודה רבה!',
@@ -142,7 +143,7 @@ const translations = {
     'leads.eventTypePlaceholder': 'חתונה, בר/בת מצווה, יום הולדת, אירוע עסקי...',
     'leads.sendOffer': 'שלח וקבל הצעה 🎯',
     
-    // Support
+    // Support - תמיכה
     'support.guestSupport': 'תמיכת אורח',
     'support.faqAndQuickHelp': 'שאלות נפוצות ועזרה מהירה',
     'support.whatsappMessage': 'היי,%20אני%20צריך%20עזרה%20עם%20האירוע',
@@ -154,15 +155,22 @@ const translations = {
     'support.terms': 'תקנון',
     'support.privacy': 'מדיניות פרטיות',
     
+    // Privacy - פרטיות
     'privacy.agreement.prefix': 'על ידי שימוש באתר אני מאשר/ת את',
     'privacy.agreement.and': 'ו',
     'privacy.terms': 'תנאי השימוש',
     'privacy.policy': 'מדיניות הפרטיות',
 
-    // Common
+    // Common - כללי
     'common.back': 'חזור',
+    'common.optional': 'אופציונלי',
+    'common.cancel': 'ביטול',
+    'common.delete': 'מחק',
+    'common.close': 'סגור',
+    'common.next': 'הבא',
+    'common.activeUser': 'משתמש פעיל',
     
-    // Notifications
+    // Notifications - התראות
     'notifications.title': 'התראות על תמונות חדשות',
     'notifications.subtitle': 'קבל התראה כשמתווספות תמונות',
     'notifications.subscribe': 'הרשמה',
@@ -181,17 +189,17 @@ const translations = {
     'notifications.enableNotifications': 'אפשר התראות',
     'notifications.close': 'סגור',
 
-    // Gallery
+    // Gallery - גלריה
     'gallery.language': 'שפה',
     'gallery.theme': 'ערכת נושא',
 
-    // Empty states
+    // Empty states - מצבים ריקים
     'empty.allPhotos.title': 'אין תמונות זמינות עדיין',
     'empty.allPhotos.description': 'התמונות נטענות ומעובדות. חזרו בקרוב לראות את כל התמונות מהאירוע!',
     'empty.myPhotos.title': 'לא נמצאו תמונות שלכם',
     'empty.myPhotos.description': 'אולי התמונות שלכם עדיין לא הועלו, או שהן בתהליך זיהוי. נסו שוב מאוחר יותר!',
 
-    // Users
+    // Users - משתמשים
     'users.addUser': 'הוסף משתמש',
     'users.manageUsers': 'ניהול משתמשים',
     'users.switchUser': 'החלף משתמש',
@@ -205,18 +213,7 @@ const translations = {
     'users.email': 'מייל',
     'users.namePlaceholder': 'הזן שם',
     'users.phonePlaceholder': 'הזן מספר טלפון',
-    'users.emailPlaceholder': 'הזן כתובת מייל',
-
-    // Auth
-    'auth.logout': 'התנתק',
-
-    // Common
-    'common.optional': 'אופציונלי',
-    'common.cancel': 'ביטול',
-    'common.delete': 'מחק',
-    'common.close': 'סגור',
-    'common.next': 'הבא',
-    'common.activeUser': 'משתמש פעיל'
+    'users.emailPlaceholder': 'הזן כתובת מייל'
   },
   en: {
     // Hero Section
@@ -328,6 +325,7 @@ const translations = {
     'auth.selectImageOrCamera': 'Select image or take photo',
     'auth.notifyNewPhotos': 'Notify me when new photos are found',
     'auth.otpInstruction': 'Enter the 4-digit code sent to you',
+    'auth.logout': 'Logout',
     
     // Leads
     'leads.thanksFeedback': 'Thanks for the feedback!',
@@ -360,13 +358,20 @@ const translations = {
     'support.terms': 'Terms',
     'support.privacy': 'Privacy',
     
-    // Common
-    'common.back': 'Back',
-    
+    // Privacy
     'privacy.agreement.prefix': 'By using this site, I agree to the',
     'privacy.agreement.and': 'and',
     'privacy.terms': 'Terms of Use',
     'privacy.policy': 'Privacy Policy',
+    
+    // Common
+    'common.back': 'Back',
+    'common.optional': 'Optional',
+    'common.cancel': 'Cancel',
+    'common.delete': 'Delete',
+    'common.close': 'Close',
+    'common.next': 'Next',
+    'common.activeUser': 'Active User',
     
     // Notifications
     'notifications.title': 'New photo alerts',
@@ -411,18 +416,7 @@ const translations = {
     'users.email': 'Email',
     'users.namePlaceholder': 'Enter name',
     'users.phonePlaceholder': 'Enter phone number',
-    'users.emailPlaceholder': 'Enter email address',
-
-    // Auth
-    'auth.logout': 'Logout',
-
-    // Common
-    'common.optional': 'Optional',
-    'common.cancel': 'Cancel',
-    'common.delete': 'Delete',
-    'common.close': 'Close',
-    'common.next': 'Next',
-    'common.activeUser': 'Active User'
+    'users.emailPlaceholder': 'Enter email address'
   }
 };
 

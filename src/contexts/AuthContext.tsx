@@ -11,6 +11,7 @@ interface AuthContextType extends AuthState {
   deleteUser: (userId: string) => void;
   getCurrentUserImages: () => any[];
   hasMultipleUsers: boolean;
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -170,6 +171,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return [];
   };
 
+  const setUsers = (users: React.SetStateAction<User[]>) => {
+    setAuthState(prev => ({
+      ...prev,
+      users: typeof users === 'function' ? users(prev.users) : users
+    }));
+  };
+
   const value: AuthContextType = {
     ...authState,
     addUser,
@@ -177,7 +185,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     deleteUser,
     getCurrentUserImages,
-    hasMultipleUsers: authState.users.length > 1
+    hasMultipleUsers: authState.users.length > 1,
+    setUsers
   };
 
   return (

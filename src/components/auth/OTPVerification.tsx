@@ -17,7 +17,7 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack, isEmailMode = f
   const [isLoading, setIsLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
 
   // טיימר לשליחה חוזרת
@@ -134,9 +134,9 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack, isEmailMode = f
           disabled={otp.length !== 4 || isLoading}
         >
           {isLoading ? (
-            <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2 ${language === 'he' ? 'flex-row-reverse' : 'flex-row'}`}>
+              <span>{t('auth.verifying')}</span>
               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              {t('auth.verifying')}
             </div>
           ) : (
             t('auth.continue')

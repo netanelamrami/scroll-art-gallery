@@ -58,7 +58,7 @@ export const Gallery = ({
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Use albums hook
   const { albums, getImagesByAlbum } = useAlbums(event.id.toString(), images);
@@ -392,10 +392,10 @@ export const Gallery = ({
             {displayedImagesCount < filteredImages.length && (
               <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
                 {isLoadingMore ? (
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-black"></div>
-                    <div className="text-center text-muted-foreground">
-                      {t('auth.loading')}
+                  <div className="flex items-center justify-center">
+                    <div className={`flex items-center gap-3 ${language === 'he' ? 'flex-row-reverse' : 'flex-row'}`}>
+                      <span className="text-muted-foreground text-lg">{t('auth.loading')}</span>
+                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-black"></div>
                     </div>
                   </div>
                 ) : (

@@ -378,11 +378,13 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
         <div className="p-6">
           {/* Loading indicator */}
           {isLoading && (
-            <div className="flex flex-col items-center justify-center py-8">
-              <div className={`w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4 ${language === 'he' ? 'ml-auto mr-auto' : ''}`} />
-              <p className={`text-muted-foreground text-sm ${language === 'he' ? 'text-center' : 'text-center'}`}>
-                {loadingMessage}
-              </p>
+            <div className="flex items-center justify-center py-8">
+              <div className={`flex items-center gap-3 ${language === 'he' ? 'flex-row-reverse' : 'flex-row'}`}>
+                <p className="text-muted-foreground text-sm">
+                  {loadingMessage}
+                </p>
+                <div className="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              </div>
             </div>
           )}
           

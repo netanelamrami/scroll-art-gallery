@@ -48,7 +48,7 @@ const Index = () => {
   const [userImages, setUserImages] = useState([]); // תמונות של המשתמש הנוכחי
   
   // Use multi-user auth system
-  const { isAuthenticated, addUser } = useMultiUserAuth();
+  const { isAuthenticated, addUser, users, setUsers } = useMultiUserAuth();
   
   // Force re-render when authentication state changes
   const [, forceUpdate] = useState({});
@@ -507,6 +507,7 @@ const Index = () => {
             event={event}
             onComplete={handleAuthComplete}
             onCancel={handleAuthCancel}
+            setUsers={setUsers}
           />
         </>
       )}

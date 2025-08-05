@@ -58,7 +58,7 @@ export const Gallery = ({
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Use albums hook
   const { albums, getImagesByAlbum } = useAlbums(event.id.toString(), images);
@@ -217,8 +217,8 @@ export const Gallery = ({
     const selectedImagesArray = filteredImages.filter(img => selectedImages.has(img.id));
     
     toast({
-      title: "מתחיל הורדה...",
-      description: `מוריד ${selectedImages.size} תמונות`,
+      title: t('toast.downloadStarting.title'),
+      description: t('toast.downloadStarting.description').replace('{count}', selectedImages.size.toString()),
     });
 
     const success = await downloadMultipleImages(
@@ -227,13 +227,13 @@ export const Gallery = ({
 
     if (success) {
       toast({
-        title: "הורדה הושלמה!",
-        description: `${selectedImages.size} תמונות הורדו בהצלחה`,
+        title: t('toast.downloadComplete.title'),
+        description: t('toast.downloadComplete.description').replace('{count}', selectedImages.size.toString()),
       });
     } else {
       toast({
-        title: "שגיאה חלקית",
-        description: "חלק מהתמונות לא הורדו, נסו שוב",
+        title: t('downloadModal.partialError'),
+        description: t('downloadModal.partialErrorDesc'),
         variant: "destructive"
       });
     }
@@ -289,14 +289,14 @@ export const Gallery = ({
     } else if (albumId === 'favorites') {
       // Fallback handling
       toast({
-        title: "אלבום נבחר",
-        description: "הצגת התמונות הנבחרות שלכם",
+        title: t('toast.error.title'),
+        description: t('common.favorites'),
       });
     } else {
       setLocalSelectedAlbum(albumId);
       toast({
-        title: "אלבום נבחר",
-        description: `נבחר אלבום: ${albumId}`,
+        title: t('toast.error.title'),
+        description: `${t('common.selected')}: ${albumId}`,
       });
     }
   };
@@ -392,10 +392,10 @@ export const Gallery = ({
             {displayedImagesCount < filteredImages.length && (
               <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
                 {isLoadingMore ? (
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-black"></div>
-                    <div className="text-center text-muted-foreground">
-                      טוען עוד תמונות...
+                  <div className="flex items-center justify-center">
+                    <div className={`flex items-center gap-3 ${language === 'he' ? 'flex-row-reverse' : 'flex-row'}`}>
+                      <span className="text-muted-foreground text-lg">{t('auth.loading')}</span>
+                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-black"></div>
                     </div>
                   </div>
                 ) : (

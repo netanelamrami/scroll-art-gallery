@@ -175,14 +175,14 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
           toast({
             title: t('downloadModal.requestSent'),
             description: galleryType === 'all' 
-              ? 'בקשת הורדה נשלחה עבור כל תמונות האירוע'
-              : 'בקשת הורדה נשלחה עבור התמונות שלך',
+              ? t('toast.downloadRequestSent.all')
+              : t('toast.downloadRequestSent.my'),
           });
         } catch (error) {
           console.error('Download API Error:', error);
           toast({
             title: t('toast.error.title'),
-            description: 'שגיאה בשליחת בקשת ההורדה. אנא נסה שוב.',
+            description: t('toast.downloadRequestError'),
             variant: "destructive"
           });
           return;
@@ -344,13 +344,18 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                 </RadioGroup>
                 
                  <div className="flex gap-3 pt-2">
-                 <Button onClick={handleQualitySubmit} className="flex-1">
-                   {imageCount <= 20 ? t('downloadModal.downloadNow') : t('downloadModal.sendRequest')}
-                 </Button>
+                   {/* Main action button - positioned right in LTR, left in RTL */}
+                   <Button 
+                     onClick={handleQualitySubmit} 
+                     className={`flex-1 ${language === 'he' ? 'order-1' : 'order-2'}`}
+                   >
+                     {imageCount <= 20 ? t('downloadModal.downloadNow') : t('downloadModal.sendRequest')}
+                   </Button>
+                   {/* Back button - positioned left in LTR, right in RTL */}
                    <Button 
                      variant="outline" 
                      onClick={() => setStep('contact')}
-                     className="flex-1"
+                     className={`flex-1 ${language === 'he' ? 'order-2' : 'order-1'}`}
                    >
                      {t('common.back')}
                    </Button>

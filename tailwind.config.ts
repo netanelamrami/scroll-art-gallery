@@ -69,6 +69,15 @@ export default {
 					hover: 'hsl(var(--gallery-hover))',
 					primary: 'hsl(var(--gallery-primary))',
 					secondary: 'hsl(var(--gallery-secondary))'
+				},
+				toast: {
+					bg: 'hsl(var(--toast-bg))',
+					border: 'hsl(var(--toast-border))',
+					foreground: 'hsl(var(--toast-foreground))',
+					success: 'hsl(var(--toast-success))',
+					error: 'hsl(var(--toast-error))',
+					warning: 'hsl(var(--toast-warning))',
+					info: 'hsl(var(--toast-info))'
 				}
 			},
 			backgroundImage: {
@@ -77,7 +86,9 @@ export default {
 			},
 			boxShadow: {
 				'gallery': 'var(--shadow-gallery)',
-				'card': 'var(--shadow-card)'
+				'card': 'var(--shadow-card)',
+				'toast': 'var(--toast-shadow)',
+				'toast-colored': 'var(--toast-shadow-colored)'
 			},
 			transitionProperty: {
 				'gallery': 'var(--transition-gallery)',

@@ -111,11 +111,29 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
             disabled={isLoadingMyPhotos}
             className="border-white bg-white/10 text-white hover:bg-white/20 backdrop-blur-md px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px] disabled:opacity-50"
           >
-            {isLoadingMyPhotos && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {language === 'en'
-              ? (event?.btFaceRecognitionTextEN || t('auth.takeSelfie'))
-              : (event?.btFaceRecognitionText || t('auth.takeSelfie'))}
-            {!isLoadingMyPhotos && <Users className="w-5 h-5 mr-2" />}
+            {language === 'he' ? (
+              <>
+                <span>
+                  {event?.btFaceRecognitionText || t('auth.takeSelfie')}
+                </span>
+                {isLoadingMyPhotos ? (
+                  <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                ) : (
+                  <Users className="w-5 h-5 ml-2" />
+                )}
+              </>
+            ) : (
+              <>
+                {isLoadingMyPhotos ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Users className="w-5 h-5 mr-2" />
+                )}
+                <span>
+                  {event?.btFaceRecognitionTextEN || t('auth.takeSelfie')}
+                </span>
+              </>
+            )}
           </Button>
 
           {/* Show All Photos button only if withPhotos is true */}
@@ -126,9 +144,25 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
               disabled={isLoadingAllPhotos}
               className="bg-white text-black hover:bg-white/90 px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px] disabled:opacity-50"
             >
-              {isLoadingAllPhotos && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              {t('hero.allPhotos')}
-              {!isLoadingAllPhotos && <Camera className="w-5 h-5 mr-2" />}
+              {language === 'he' ? (
+                <>
+                  <span>{t('hero.allPhotos')}</span>
+                  {isLoadingAllPhotos ? (
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                  ) : (
+                    <Camera className="w-5 h-5 ml-2" />
+                  )}
+                </>
+              ) : (
+                <>
+                  {isLoadingAllPhotos ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Camera className="w-5 h-5 mr-2" />
+                  )}
+                  <span>{t('hero.allPhotos')}</span>
+                </>
+              )}
             </Button>
           )}
         </div>

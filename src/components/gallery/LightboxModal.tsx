@@ -33,7 +33,7 @@ export const LightboxModal = ({
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const currentImage = images[currentIndex];
 
@@ -128,7 +128,7 @@ export const LightboxModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-background/95 dark:bg-black/90 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[9999] bg-background/95 dark:bg-black/90 backdrop-blur-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 p-4">
         <div className="flex items-center justify-between">
@@ -183,15 +183,15 @@ export const LightboxModal = ({
         </div>
       </div>
 
-      {/* Navigation Buttons */}
+      {/* Navigation Buttons - positioned based on language direction */}
       {currentIndex > 0 && (
         <Button
           variant="ghost"
           size="icon"
           onClick={onPrevious}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 text-foreground hover:bg-accent/80 w-12 h-12 bg-black/20 backdrop-blur-sm"
+          className={`absolute ${language === 'he' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 z-20 text-foreground hover:bg-accent/80 w-12 h-12 bg-black/20 backdrop-blur-sm`}
         >
-          <ChevronLeft className="h-6 w-6" />
+          {language === 'he' ? <ChevronRight className="h-6 w-6" /> : <ChevronLeft className="h-6 w-6" />}
         </Button>
       )}
 
@@ -200,9 +200,9 @@ export const LightboxModal = ({
           variant="ghost"
           size="icon"
           onClick={onNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 text-foreground hover:bg-accent/80 w-12 h-12 bg-black/20 backdrop-blur-sm"
+          className={`absolute ${language === 'he' ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 z-20 text-foreground hover:bg-accent/80 w-12 h-12 bg-black/20 backdrop-blur-sm`}
         >
-          <ChevronRight className="h-6 w-6" />
+          {language === 'he' ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
         </Button>
       )}
 
@@ -242,7 +242,7 @@ export const LightboxModal = ({
 
       {/* Bottom Info */}
       <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
-        <div className="text-center text-foreground">
+        <div className={`text-foreground ${language === 'he' ? 'text-center' : 'text-center'}`}>
           <p className="text-sm opacity-80">
             {currentImage.alt} • {t('common.imageSize')}: {currentImage.size}
           </p>

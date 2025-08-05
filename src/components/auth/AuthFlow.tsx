@@ -28,7 +28,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   const [selfieData, setSelfieData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
 
   const isEmailMode = event?.registerBy === "Email";
@@ -338,7 +338,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir="rtl">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir={language === 'he' ? 'rtl' : 'ltr'}>
       <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-border">
@@ -379,8 +379,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           {/* Loading indicator */}
           {isLoading && (
             <div className="flex flex-col items-center justify-center py-8">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-              <p className="text-muted-foreground text-sm text-center">
+              <div className={`w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4 ${language === 'he' ? 'ml-auto mr-auto' : ''}`} />
+              <p className={`text-muted-foreground text-sm ${language === 'he' ? 'text-center' : 'text-center'}`}>
                 {loadingMessage}
               </p>
             </div>

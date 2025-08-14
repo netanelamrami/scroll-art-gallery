@@ -306,31 +306,21 @@ export const Gallery = ({
 
   const handleImageDropdown = (imageId: string, position: { x: number; y: number }) => {
     setDropdownImage({ id: imageId, position });
-<<<<<<< HEAD
       document.body.style.overflow = "hidden";
 
-=======
->>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
   };
 
   const handleDropdownClose = () => {
     setDropdownImage(null);
-<<<<<<< HEAD
     document.body.style.overflow = "auto"; 
     console.log('Dropdown closed');
   };
 
   const  handleImageDownload = async() => {
-=======
-  };
-
-  const handleImageDownload = () => {
->>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
     if (!dropdownImage) return;
     
     const image = images.find(img => img.id === dropdownImage.id);
     if (!image) return;
-<<<<<<< HEAD
       toast({
         title: t('downloadModal.downloadStarted'),
         description: t('downloadModal.downloadStarted'),
@@ -349,22 +339,7 @@ export const Gallery = ({
           variant: "destructive"
         });
       }
-=======
-    
-    const link = document.createElement("a");
-    link.href = image.largeSrc || image.src;
-    link.download = `image-${image.id}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: t('toast.downloadImageComplete.title'),
-      description: t('toast.downloadImageComplete.description'),
-    });
-    
-    handleDropdownClose();
->>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
+
   };
 
   const handleImageCopyLink = () => {
@@ -382,10 +357,8 @@ export const Gallery = ({
     handleDropdownClose();
   };
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
+
   const displayedImages = filteredImages.slice(0, displayedImagesCount);
 
   return (
@@ -531,11 +504,8 @@ export const Gallery = ({
         eventId={event.id}
       />
 
-<<<<<<< HEAD
      {/* Global Image Dropdown */}
-=======
-      {/* Global Image Dropdown */}
->>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
+
       {dropdownImage && (
         <>
           <div 
@@ -581,10 +551,6 @@ export const Gallery = ({
           </div>
         </>
       )}
-<<<<<<< HEAD
-
-=======
->>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
     </div>
   );
 };

@@ -11,6 +11,8 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { getDownloadFormData, saveDownloadFormData, downloadMultipleImages } from "@/utils/downloadUtils";
 import { GalleryImage } from "@/types/gallery";
 import { apiService } from "@/data/services/apiService";
+import { log } from "console";
+import countries from "@/types/contries";
 
 interface DownloadModalProps {
   isOpen: boolean;
@@ -33,68 +35,6 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
     quality: "high" // "high" or "web"
   });
 
-  const countries = [
-    { 
-      code: "+972", 
-      name: { he: "ישראל", en: "Israel" }, 
-      flag: "🇮🇱",
-      pattern: /^5[0-9]{8}$/
-    },
-    { 
-      code: "+1", 
-      name: { he: "ארה״ב", en: "United States" }, 
-      flag: "🇺🇸",
-      pattern: /^[2-9][0-9]{9}$/
-    },
-    { 
-      code: "+44", 
-      name: { he: "בריטניה", en: "United Kingdom" }, 
-      flag: "🇬🇧",
-      pattern: /^7[0-9]{9}$/
-    },
-    { 
-      code: "+33", 
-      name: { he: "צרפת", en: "France" }, 
-      flag: "🇫🇷",
-      pattern: /^[67][0-9]{8}$/
-    },
-    { 
-      code: "+49", 
-      name: { he: "גרמניה", en: "Germany" }, 
-      flag: "🇩🇪",
-      pattern: /^1[5-7][0-9]{8,9}$/
-    },
-    { 
-      code: "+39", 
-      name: { he: "איטליה", en: "Italy" }, 
-      flag: "🇮🇹",
-      pattern: /^3[0-9]{8,9}$/
-    },
-    { 
-      code: "+34", 
-      name: { he: "ספרד", en: "Spain" }, 
-      flag: "🇪🇸",
-      pattern: /^[67][0-9]{8}$/
-    },
-    { 
-      code: "+31", 
-      name: { he: "הולנד", en: "Netherlands" }, 
-      flag: "🇳🇱",
-      pattern: /^6[0-9]{8}$/
-    },
-    { 
-      code: "+41", 
-      name: { he: "שוויץ", en: "Switzerland" }, 
-      flag: "🇨🇭",
-      pattern: /^7[0-9]{8}$/
-    },
-    { 
-      code: "+43", 
-      name: { he: "אוסטריה", en: "Austria" }, 
-      flag: "🇦🇹",
-      pattern: /^6[0-9]{8,10}$/
-    },
-  ];
   
   // Load saved data on mount
   useEffect(() => {
@@ -122,7 +62,7 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
     }
     
     // Save form data for future use
-    const phoneData = formData.phone ? `${formData.countryCode}${formData.phone.replace(/^0/, '')}` : '';
+    const phoneData = formData.phone; //? `${formData.countryCode}${formData.phone.replace(/^0/, '')}` : '';
     saveDownloadFormData({
       email: formData.email,
       phone: phoneData
@@ -136,9 +76,8 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
       if (imageCount <= 20 && images.length > 0) {
         // Direct download for small albums
         setStep('success');
-        
         const success = await downloadMultipleImages(
-          images.map(img => ({ src: img.src, id: img.id }))
+          images.map(img => ({ src: formData.quality == 'high' ? img.largeSrc : img.mediumSrc  , id: img.id }))
         );
         
         if (success) {
@@ -157,17 +96,15 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
         // For large albums - API request
         const userId = parseInt(sessionStorage.getItem('userid') || '0');
         const phoneData = formData.phone ? `${formData.countryCode}${formData.phone.replace(/^0/, '')}` : '';
-        
         const downloadRequest = {
           UserId: userId,
           EventId: eventId,
           Email: formData.email,
           Phone: phoneData,
-          Quality: formData.quality, // "high" or "web"
+          Quality: formData.quality == 'high' ? true : false, // "high" or "web"
           DownloadAllPhotos: galleryType === 'all' // true אם זה כל התמונות, false אם זה התמונות שלי
         };
         
-        console.log('Sending download request:', downloadRequest);
         
         try {
           await apiService.downloadUserImg(downloadRequest);
@@ -220,12 +157,6 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                 <DialogTitle className="text-xl">
                   {albumName ? `${t('downloadModal.albumDownload')} ${albumName}` : t('downloadModal.allPhotosDownload')}
                 </DialogTitle>
-                <button 
-                  onClick={handleClose}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ✕
-                </button>
               </div>
               <DialogDescription className="text-base text-center mt-4">
                 {imageCount} {t('downloadModal.photosWaiting')}
@@ -242,15 +173,20 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                      <Mail className="h-4 w-4" />
                      {t('downloadModal.emailOptional')}
                    </Label>
-                   <Input
-                     id="email"
-                     type="email"
-                     value={formData.email}
-                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                     placeholder="example@email.com"
-                     className={language === 'he' ? 'text-right' : 'text-left'}
-                     dir="ltr"
-                   />
+                    <div className="relative">
+                      <Input
+                        type="email"
+                        placeholder="name@example.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        className="w-full pr-10 pr-4 py-3  border border-gray-300 
+                                  bg-gray-50 placeholder-gray-400 text-sm"
+                        required
+                        dir="ltr"
+                      />
+                      {/* <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" /> */}
+
+                   </div>
                  </div>
                  
                  <div className="space-y-2">
@@ -305,12 +241,7 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
             <>
               <div className="flex items-center justify-between">
                 <DialogTitle className="text-xl">{t('downloadModal.qualityTitle')}</DialogTitle>
-                <button 
-                  onClick={handleClose}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ✕
-                </button>
+         
               </div>
               <DialogDescription className="text-base text-center mt-4">
                 {t('downloadModal.qualityQuestion')}
@@ -370,12 +301,6 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                 <DialogTitle className="text-xl">
                   {imageCount <= 20 ? t('downloadModal.downloadStarted') : t('downloadModal.requestSent')}
                 </DialogTitle>
-                <button 
-                  onClick={handleClose}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  ✕
-                </button>
               </div>
               <DialogDescription className="text-base text-center mt-4">
                 {imageCount <= 20 ? (

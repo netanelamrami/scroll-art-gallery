@@ -135,7 +135,7 @@ const translations = {
     'downloadModal.linkSoon': 'נשלח לכם קישור להורדה תוך מספר דקות.',
     
     // Auth - אימות
-    'auth.phoneEntry': 'הזנת מספר טלפון',
+    'auth.phoneEntry': 'הרשמה',
     'auth.emailEntry': 'הזנת כתובת מייל',
     'auth.otpVerification': 'אימות קוד',
     'auth.selfieCapture': 'צילום סלפי',
@@ -143,21 +143,23 @@ const translations = {
     'auth.phoneInstruction': 'נשלח לך קוד אימות בהודעת SMS',
     'auth.emailInstruction': 'נשלח לך קוד אימות למייל',
     'auth.phoneExample': 'המספר יוזן ללא הקידומת 0. לדוגמה: 50-123-4567',
-    'auth.enterPhone': 'הזן מספר טלפון',
+    'auth.enterPhone': 'מספר טלפון',
     'auth.enterEmail': 'הזן כתובת מייל',
+    'auth.orUsePhone': 'או השתמש בטלפון',
+    'auth.orUseEmail': 'או השתמש במייל',
     'auth.sendCode': 'שלח קוד',
     'auth.resendIn': 'שלח שוב בעוד {seconds} שניות',
     'auth.resendCode': 'שלח קוד שוב',
     'auth.verifying': 'מאמת...',
     'auth.continue': 'המשך',
-    'auth.selfieInstruction': 'צלם סלפי כדי לזהות את התמונות שלך בגלרייה',
+    'auth.selfieInstruction': 'צלם סלפי כדי לאתר את התמונות שלך ',
     'auth.takeSelfie': 'צלם סלפי',
     'auth.selectFile': 'בחר קובץ',
     'auth.camera': 'מצלמה',
     'auth.loading': 'טוען עוד תמונות...',
     'auth.takePhoto': 'צלם',
     'auth.confirm': 'אישור',
-    'auth.retake': 'צלם שוב',
+    'auth.retake': 'חזור',
     'auth.cameraError': 'שגיאה בגישה למצלמה. אנא וודא שהמצלמה מחוברת ונתת הרשאה.',
     'auth.invalidPhone': 'מספר הטלפון לא תקין עבור המדינה שנבחרה',
     'auth.invalidEmail': 'כתובת המייל לא תקינה',
@@ -200,7 +202,7 @@ const translations = {
     'support.privacy': 'מדיניות פרטיות',
     
     // Privacy - פרטיות
-    'privacy.agreement.prefix': 'על ידי שימוש באתר אני מאשר/ת את',
+    'privacy.agreement.prefix': 'בהעלאת סלפי אני מאשר את',
     'privacy.agreement.and': 'ו',
     'privacy.terms': 'תנאי השימוש',
     'privacy.policy': 'מדיניות הפרטיות',
@@ -217,7 +219,8 @@ const translations = {
     'common.of': 'מתוך',
     'common.imageSize': 'גודל',
     'common.activeUser': 'משתמש פעיל',
-    
+    'common.optional': 'אופציונלי',
+
     // Notifications - התראות
     'notifications.title': 'התראות על תמונות חדשות',
     'notifications.subtitle': 'קבל התראה כשמתווספות תמונות',
@@ -240,13 +243,17 @@ const translations = {
     // Gallery - גלריה
     'gallery.language': 'שפה',
     'gallery.theme': 'ערכת נושא',
+    'gallery.dark': 'כהה',
+    'gallery.light': 'בהיר',
 
     // Empty states - מצבים ריקים
     'empty.allPhotos.title': 'אין תמונות זמינות עדיין',
     'empty.allPhotos.description': 'התמונות נטענות ומעובדות. חזרו בקרוב לראות את כל התמונות מהאירוע!',
     'empty.myPhotos.title': 'לא נמצאו תמונות שלכם',
     'empty.myPhotos.description': 'אולי התמונות שלכם עדיין לא הועלו, או שהן בתהליך זיהוי. נסו שוב מאוחר יותר!',
-
+    'empty.allPhotos.clock':'בקרוב יהיו כאן תמונות מהאירוע',
+    'empty.myPhotos.clock': 'בקרוב יהיו כאן התמונות שלכם',
+    
     // Users - משתמשים
     'users.addUser': 'הוסף משתמש',
     'users.manageUsers': 'ניהול משתמשים',
@@ -339,9 +346,9 @@ const translations = {
     'auth.smsSent': 'SMS Sent',
     'auth.smsSentDesc': 'Verification code sent to your phone number',
     'auth.sendError': 'Error',
-    'auth.sendErrorDesc': 'Failed to send {type}. Please try again.',
-    'auth.otpError': 'Invalid verification code. Please try again.',
-    'auth.otpSystemError': 'An error occurred during code verification. Please try again.',
+    'auth.sendErrorDesc': 'Failed to send {type}. try again.',
+    'auth.otpError': 'Invalid verification code. try again.',
+    'auth.otpSystemError': 'An error occurred during code verification. try again.',
     'auth.welcomeBack': 'Welcome back!',
     'auth.existingUserDesc': 'You have been identified as a registered user. Entering gallery!',
     'auth.registrationSuccess': 'Registration Completed Successfully!',
@@ -386,7 +393,7 @@ const translations = {
     'downloadModal.linkSoon': 'We\'ll send you a download link within minutes.',
     
     // Auth
-    'auth.phoneEntry': 'Phone Number Entry',
+    'auth.phoneEntry': 'Sign Up',
     'auth.emailEntry': 'Email Address Entry',
     'auth.otpVerification': 'Code Verification',
     'auth.selfieCapture': 'Selfie Capture',
@@ -396,6 +403,8 @@ const translations = {
     'auth.phoneExample': 'Enter number without leading 0. Example: 50-123-4567',
     'auth.enterPhone': 'Enter phone number',
     'auth.enterEmail': 'Enter email address',
+    'auth.orUsePhone': 'or use phone',
+    'auth.orUseEmail': 'or use email',
     'auth.sendCode': 'Send Code',
     'auth.resendIn': 'Resend in {seconds} seconds',
     'auth.resendCode': 'Send Code Again',
@@ -451,9 +460,9 @@ const translations = {
     'support.privacy': 'Privacy',
     
     // Privacy
-    'privacy.agreement.prefix': 'By using this site, I agree to the',
+    'privacy.agreement.prefix': 'By uploud a selfie you agree to',
     'privacy.agreement.and': 'and',
-    'privacy.terms': 'Terms of Use',
+    'privacy.terms': 'Terms',
     'privacy.policy': 'Privacy Policy',
     
     // Common
@@ -468,7 +477,8 @@ const translations = {
     'common.of': 'of',
     'common.imageSize': 'Size',
     'common.activeUser': 'Active User',
-    
+    'common.optional': 'Optional',
+
     // Notifications
     'notifications.title': 'New photo alerts',
     'notifications.subtitle': 'Get notified when new photos are added',
@@ -491,13 +501,17 @@ const translations = {
     // Gallery
     'gallery.language': 'Language',
     'gallery.theme': 'Theme',
+    'gallery.dark': 'Dark',
+    'gallery.light': 'Light',
 
     // Empty states
     'empty.allPhotos.title': 'No Photos Available Yet',
     'empty.allPhotos.description': 'Photos are being uploaded and processed. Check back soon to see all photos from the event!',
     'empty.myPhotos.title': 'No Photos Found for You',
     'empty.myPhotos.description': 'Your photos might not be uploaded yet, or they\'re still being processed. Try again later!',
-
+    'empty.allPhotos.clock':'Photos from the event will be here soon',
+    'empty.myPhotos.clock': 'Your photos will be here soon',
+    
     // Users
     'users.addUser': 'Add User',
     'users.manageUsers': 'Manage Users',

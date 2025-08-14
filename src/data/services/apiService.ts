@@ -1,3 +1,5 @@
+import { User } from "@/types/auth";
+
 const BASE_URL = "https://api.pixshare.live/PixApi/api";
 
 export const apiService = {
@@ -101,7 +103,7 @@ export const apiService = {
 
   async registerUser(formData: FormData): Promise<any> {
     try {
-      const res = await fetch(`http://localhost:5050/api/User`, {
+      const res = await fetch(`${BASE_URL}/User`, {
         method: 'POST',
         body: formData
       });
@@ -120,7 +122,7 @@ export const apiService = {
 
   async registerUserByPhoto(formData: FormData): Promise<any> {
     try {
-      const res = await fetch(`http://localhost:5050/api/User/registerByPhoto`, {
+      const res = await fetch(`${BASE_URL}/User/registerByPhoto`, {
         method: 'POST', 
         body: formData
       });
@@ -292,4 +294,26 @@ export const apiService = {
     if (!res.ok) throw new Error("Failed fetching albums");
     return res.json();
   },
-};
+
+  async updateUser(user: User) {
+    const url = `${BASE_URL}/User/update-user`;
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed updating user');
+    }
+
+    const data = await res.json();
+    return data; 
+  }
+
+  
+}
+

@@ -6,15 +6,7 @@ import { Grid, LayoutGrid, Grid3x3, MoreVertical, Download, CheckSquare, Share2,
 import { cn } from "@/lib/utils";
 import { event } from "@/types/event";
 import { UserAvatarStack } from "@/components/ui/UserAvatarStack";
-
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+import { NotificationBell } from "../notifications/NotificationBell";
 
 interface GalleryHeaderProps {
   event: event;
@@ -41,7 +33,7 @@ export const GalleryHeader = ({
   onShare,
   isSelectionMode,
   selectedCount,
-  onAuthComplete
+  onAuthComplete,
 }: GalleryHeaderProps) => {
   const { t, language } = useLanguage();
   // Check if mobile for different column options
@@ -58,22 +50,29 @@ export const GalleryHeader = ({
         { value: 5, icon: Grid3x3, label: "עמודות 5" },
       ];
   return (
-    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full">
-      <div className="w-full px-4 py-2 pb-1">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <h1 className="text-lg font-bold text-foreground">
+    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full left-0 flex" dir="ltr" >
+      <div className="w-full px-2 py-2 pb-1 left-0">
+        <div className="flex items-center justify-between left-0">
+          <div className="flex ">
+            <h1 className="text-lg font-bold text-foreground left-0" dir="ltr">
               {event.name} 
             </h1>
           </div>
-          
+          <div className="flex items-center gap-1">
+
+             {/* Notification Bell */}
+            {!isSelectionMode && (
+              <NotificationBell event={event}/>
+            )}
+
           {/* User Management */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center ">
             <UserAvatarStack 
               event={event}
               onAuthComplete={onAuthComplete}
               className="ml-2"
-            />
+              />
+              </div>
           </div>
         </div>
       </div>

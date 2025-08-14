@@ -18,7 +18,7 @@ interface AddUserModalProps {
 
 export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
   const { addUser } = useMultiUserAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { toast } = useToast();
   const [step, setStep] = useState<'info' | 'selfie' | 'complete'>('info');
   const [userInfo, setUserInfo] = useState({ name: '', phone: '', email: '' });
@@ -137,19 +137,18 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
       const id = `${userid}-${randomNumber}`;
       formData.append('id', id);
       formData.append('relatedToUserId',userid.toString());
-        // משתמש חדש - משתמשים בטלפון/אימייל כid
+        // משתמש חדש - משתמשים בטלפו/אימייל כid
         formData.append('fullname', userInfo.name ? userInfo.name : 'Anonymous');
          formData.append('AuthenticateBy', isEmailMode ? 'Email' : 'PhoneNumber');
-      console.log(id)
         const registrationResponse = await apiService.registerUser(formData);
 
-      console.log(registrationResponse)
 
 
 
 
 
     const newUser = addUser({
+      id:registrationResponse.id,
       name: userInfo.name || `משתמש ${Date.now()}`,
       phone: '',
       email: '',
@@ -189,8 +188,10 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+    <div dir={language === 'he' ? 'rtl' : 'ltr'}>
+
+    <Dialog open={isOpen} onOpenChange={handleClose} >
+      <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-center">
             {step === 'info' && (t('users.addUser') || 'הוסף משתמש')}
@@ -201,16 +202,16 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
 
         {step === 'info' && (
           <div className="space-y-4">
-            <div>
+            <div dir={language === 'he' ? 'rtl' : 'ltr'}>
               <Label htmlFor="name">{t('users.name') || 'שם'} ({t('common.optional') || 'אופציונלי'})</Label>
               <Input
                 id="name"
                 value={userInfo.name}
                 onChange={(e) => setUserInfo(prev => ({ ...prev, name: e.target.value }))}
                 placeholder={t('users.namePlaceholder') || 'הזן שם (אופציונלי)'}
-              />
+                />
             </div>
-            <div className="flex gap-2 justify-end">
+            <div className="flex gap-2 justify-end" dir={language === 'he' ? 'rtl' : 'ltr'}>
               <Button variant="outline" onClick={handleClose}>
                 {t('common.cancel') || 'ביטול'}
               </Button>
@@ -222,17 +223,17 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
         )}
 
         {step === 'selfie' && (
-          <div className="space-y-4">
+          <div className="space-y-4" dir={language === 'he' ? 'rtl' : 'ltr'}>
             {!selfieImage && !isCapturing && (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground text-center">
                   {t('auth.selfieInstruction') || 'צלם סלפי כדי לזהות את התמונות שלך בגלרייה'}
                 </p>
-                <div className="flex gap-2">
-                  <Button onClick={startCamera} className="flex-1">
+                <div className="flex gap-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
+                  {/* <Button onClick={startCamera} className="flex-1">
                     <Camera className="w-4 h-4 mr-2" />
                     {t('auth.camera') || 'מצלמה'}
-                  </Button>
+                  </Button> */}
                   <Button
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
@@ -252,7 +253,7 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
                   autoPlay
                   playsInline
                   className="w-full h-64 object-cover rounded-lg bg-muted"
-                />
+                  />
                 <div className="flex gap-2">
                   <Button onClick={takeSelfie} className="flex-1">
                     {t('auth.takePhoto') || 'צלם'}
@@ -266,7 +267,7 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
                       }
                       setIsCapturing(false);
                     }}
-                  >
+                    >
                     {t('common.cancel') || 'ביטול'}
                   </Button>
                 </div>
@@ -279,15 +280,16 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
                   src={selfieImage}
                   alt="Selfie preview"
                   className="w-full h-64 object-cover rounded-lg"
-                />
-                <div className="flex gap-2">
+                  />
+                <div className="flex gap-2" dir={language === 'he' ? 'rtl' : 'ltr'}>
                   <Button onClick={handleCreateUser} className="flex-1">
                     {t('auth.confirm') || 'אישור'}
                   </Button>
                   <Button
+                    className="flex-1"
                     variant="outline"
                     onClick={() => setSelfieImage(null)}
-                  >
+                    >
                     {t('auth.retake') || 'צלם שוב'}
                   </Button>
                 </div>
@@ -300,7 +302,7 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
               accept="image/*"
               onChange={handleFileUpload}
               className="hidden"
-            />
+              />
 
             <canvas ref={canvasRef} className="hidden" />
           </div>
@@ -321,5 +323,6 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
         )}
       </DialogContent>
     </Dialog>
+     </div>
   );
 };

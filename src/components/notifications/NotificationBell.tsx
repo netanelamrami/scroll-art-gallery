@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NotificationModal } from "./NotificationModal";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
 import { event } from "@/types/event";
+import { useMultiUserAuth } from "@/contexts/AuthContext";
 
 interface NotificationBellProps {
   event: event;
@@ -13,77 +13,90 @@ interface NotificationBellProps {
 export const NotificationBell = ({ event }: NotificationBellProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [userContact, setUserContact] = useState<string | null>(null);
+  const [userRegister, setUserReister] = useState(false);
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { currentUser, setSendNotification } = useMultiUserAuth();
 
-  // בדיקה אם המשתמש כבר רשום - נבדוק את הלוקל סטורג'
-  useEffect(() => {
-    const savedContact = localStorage.getItem('userContact');
-    const savedSubscription = localStorage.getItem('notificationSubscription');
-    
-    if (savedContact && savedSubscription === 'true') {
+useEffect(() => {
+  const loadData = async () => {
+    if (!currentUser){
+      return;
+    } 
+    setUserReister(true);
+    if (currentUser.sendNotification == true) {
       setIsSubscribed(true);
-      setUserContact(savedContact);
+      // setUserContact(savedContact);
     }
-  }, []);
-
-  const handleSubscribe = (contact: string, notifications: boolean) => {
-    console.log('Subscribed:', { contact, notifications });
-    
-    // שמירה ברלוקל סטורג'
-    localStorage.setItem('userContact', contact);
-    localStorage.setItem('notificationSubscription', notifications.toString());
-    
-    setIsSubscribed(notifications);
-    setUserContact(contact);
-    setIsModalOpen(false);
-    
-    toast({
-      title: notifications ? t('notifications.subscribeSuccess') : t('notifications.notificationsDisabled'),
-      description: notifications ? t('notifications.notificationsEnabled') : t('notifications.notificationsDisabled'),
-    });
   };
 
+  loadData();
+}, [currentUser]);
+
   const toggleSubscription = () => {
-    if (isSubscribed && userContact) {
+    console.log(currentUser)
+    if (currentUser.sendNotification == true) {
       // כבה התראות
       localStorage.setItem('notificationSubscription', 'false');
       setIsSubscribed(false);
-      
+      setSendNotification(currentUser.id, false,'',true);
       toast({
         title: t('notifications.notificationsDisabled'),
         description: t('notifications.notificationsDisabled'),
       });
-    } else {
+    } else if(currentUser.sendNotification == false){
+      // הפעל התראות
+      // localStorage.setItem('notificationSubscription', 'true');
+      // setIsSubscribed(true);
+      // setSendNotification(currentUser.id, true);
+
+      // toast({
+      //   title: t('notifications.subscribeSuccess'),
+      //   description: t('notifications.notificationsEnabled'),
+      // });
+        window.dispatchEvent(
+          new CustomEvent('notificationOpen', {
+            detail: "contact" // כאן אתה שולח את הערך
+          })
+);
+
+    }else{
       // פתח מודל להרשמה או הפעלת התראות
-      setIsModalOpen(true);
+        window.dispatchEvent(new CustomEvent('notificationOpen'));
+
     }
   };
+return (
+  <>
+    {userRegister && (
+      <>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleSubscription}
+          className="relative"
+          title={isSubscribed ? t('notifications.notificationsDisabled') : t('notifications.subscribeTo')}
+        >
+          {isSubscribed ? (
+            <Bell className="h-4 w-4 text-primary" />
+          ) : (
+            <BellOff className="h-4 w-4" />
+          )}
+        </Button>
 
-  return (
-    <>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={toggleSubscription}
-        className="relative"
-        title={isSubscribed ? t('notifications.notificationsDisabled') : t('notifications.subscribeTo')}
-      >
-        {isSubscribed ? (
-          <Bell className="h-4 w-4 text-primary" />
-        ) : (
-          <BellOff className="h-4 w-4" />
-        )}
-      </Button>
-
-      {isModalOpen && (
-        <NotificationModal
-          event={event}
-          onSubscribe={handleSubscribe}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
-    </>
-  );
-};
+        {/* 
+        {isModalOpen && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50 }}>
+            <NotificationSubscription
+              event={event}
+              onSubscribe={handleSubscribe}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </div>
+        )} 
+        */}
+      </>
+    )}
+  </>
+);
+}

@@ -31,18 +31,23 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack, isEmailMode = f
   }, [timeLeft]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setIsLoading(true);
     e.preventDefault();
     
     if (otp.length !== 4) return;
-    
-    setIsLoading(true);
-    
-    // דמיית אימות הקוד
-    setTimeout(() => {
+     const isVerified = await apiService.verifyOTP(phoneNumber,otp)
+    if (!isVerified) {
+      toast({
+        title: t('auth.sendError'),
+        description: t('auth.otpError'),
+        variant: "destructive",
+      });
       setIsLoading(false);
-      // במציאות נבדק את הקוד מול השרת
-      onSubmit(otp);
-    }, 1000);
+      return;
+    }
+    onSubmit(otp);
+    setIsLoading(false);
+  
   };
 
   const handleResend = async () => {
@@ -127,8 +132,18 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack, isEmailMode = f
         )}
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3" dir={language === 'he' ? 'rtl' : 'ltr'}>
+       
         <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          className="flex-1"
+          disabled={isLoading}
+        >
+          {t('common.back')}
+        </Button>
+         <Button
           type="submit"
           className="flex-1"
           disabled={otp.length !== 4 || isLoading}
@@ -141,15 +156,6 @@ export const OTPVerification = ({ phoneNumber, onSubmit, onBack, isEmailMode = f
           ) : (
             t('auth.continue')
           )}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onBack}
-          className="flex-1"
-          disabled={isLoading}
-        >
-          {t('common.back')}
         </Button>
       </div>
       </form>

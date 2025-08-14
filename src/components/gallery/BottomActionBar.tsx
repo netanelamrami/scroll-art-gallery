@@ -22,9 +22,9 @@ export const BottomActionBar = ({
     <div className="fixed bottom-6 left-4 right-4 z-50 flex justify-center animate-slide-in-from-bottom" dir={language === 'he' ? 'rtl' : 'ltr'}>
       <div className="bg-background/95 backdrop-blur-md border border-border shadow-xl rounded-2xl max-w-screen-sm w-full">
         <div className="safe-area-bottom px-4 py-3 sm:py-4">
-          <div className={`flex items-center ${language === 'he' ? 'justify-between' : 'justify-between'}`}>
+          <div className={`flex items-center justify-between`}>
             {/* Selected count indicator - positioned based on language */}
-            <div className={`${language === 'he' ? 'order-1' : 'order-1'} flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-xl px-3 py-2 backdrop-blur-sm`}>
+            <div className={`order-1 flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-xl px-3 py-2 backdrop-blur-sm`}>
               <CheckSquare className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium text-primary">
                 {selectedCount} {t('common.selected')}
@@ -32,7 +32,7 @@ export const BottomActionBar = ({
             </div>
 
             {/* Action buttons - ordered based on language */}
-            <div className={`${language === 'he' ? 'order-2' : 'order-2'} flex items-center gap-2`}>
+            <div className="order-2 flex items-center gap-2"  dir={language === 'he' ? 'rtl' : 'ltr'}>
               {/* Cancel button - non-action button on left in LTR, right in RTL */}
               <Button
                 variant="outline"

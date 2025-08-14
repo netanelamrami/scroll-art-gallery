@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PhoneCountryInput } from "@/components/auth/PhoneCountryInput";
 import { EmailInput } from "@/components/auth/EmailInput";
@@ -25,6 +25,22 @@ export const NotificationModal = ({ event, onSubscribe, onClose }: NotificationM
   const [notifications, setNotifications] = useState(true);
   
   const isEmailMode = event?.registerBy === "Email";
+useEffect(() => {
+  const scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.overflow = 'hidden';
+  document.body.style.width = '100%';
+
+  return () => {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.overflow = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollY); // מחזיר את המשתמש לאותו מקום
+  };
+}, []);
+
 
   const handleContactSubmit = async (contact: string, notificationPreference: boolean) => {
     setContactInfo(contact);
@@ -82,7 +98,7 @@ export const NotificationModal = ({ event, onSubscribe, onClose }: NotificationM
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
       <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md relative"
-           style={{ maxHeight: '90vh', overflow: 'auto' }}>
+           style={{ maxHeight: '90vh', overflow: 'auto', }}>
         {/* Header */}
         <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">

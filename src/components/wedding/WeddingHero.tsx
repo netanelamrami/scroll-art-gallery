@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useMultiUserAuth } from "@/contexts/AuthContext";
 import { SettingsMenu } from "@/components/ui/settings-menu";
-import { Heart, Camera, Users, Loader2 } from "lucide-react";
+import { Heart, Camera, Users, Loader2, Images } from "lucide-react";
 import { event } from "@/types/event";
 
 interface WeddingHeroProps {
@@ -17,6 +17,7 @@ interface WeddingHeroProps {
 export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false }: WeddingHeroProps) => {
   const { t, setDefaultLanguage, language } = useLanguage();
   const { isAuthenticated, currentUser } = useMultiUserAuth();
+  const [loaded, setLoaded] = useState(false);
 
   // Set default language based on event language
   useEffect(() => {
@@ -44,6 +45,18 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
     }
   };
 
+  // useEffect(() => {
+  //   if (event?.eventPhoto) {
+  //     const img = new Image();
+  //     img.src = event.eventPhoto;
+  //     img.onload = () => {
+  //       setLoaded(true);
+  //     };
+  //     img.onerror = () => {
+  //       setLoaded(false);
+  //     };
+  //   }
+  // }, [event]);
   // Return loading skeleton if event data is not yet loaded
   if (!event) {
     return (
@@ -75,7 +88,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
         }}
       >
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-black/25 backdrop-blur-[0px]" />
       </div>
 
       {/* Content */}
@@ -87,7 +100,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
 
         {/* Names */}
         <div className="mb-4">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 tracking-wide">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 tracking-wide">
             {event?.name || 'Loading...'}
           </h1>
           {/* <p className="text-xl md:text-2xl text-white/90 font-light">
@@ -103,13 +116,13 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
         </p> */}
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
+        <div className="flex flex-row sm:flex-row gap-4 w-full max-w-md mx-auto justify-center">
           <Button
             onClick={handleMyPhotosClick}
             variant="outline"
             size="lg"
             disabled={isLoadingMyPhotos}
-            className="border-white bg-white/10 text-white hover:bg-white/20 backdrop-blur-md px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px] disabled:opacity-50"
+            className="border-white bg-white/10 text-white hover:bg-white/20 backdrop-blur-md px-6 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px] disabled:opacity-50"
           >
             {language === 'he' ? (
               <>
@@ -119,7 +132,8 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
                 {isLoadingMyPhotos ? (
                   <Loader2 className="w-4 h-4 ml-2 animate-spin" />
                 ) : (
-                  <Users className="w-5 h-5 ml-2" />
+                  <img src="/public/faceRecognitiomIcon.png" className="w-5" alt="" />
+                  // <Users className="w-5 h-5 ml-2" />
                 )}
               </>
             ) : (
@@ -127,7 +141,8 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
                 {isLoadingMyPhotos ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                  <Users className="w-5 h-5 mr-2" />
+                  <img src="/public/faceRecognitiomIcon.png" className="w-5" alt="" />
+                  // <Users className="w-5 h-5 mr-2" />
                 )}
                 <span>
                   {event?.btFaceRecognitionTextEN || t('auth.takeSelfie')}
@@ -150,7 +165,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
                   {isLoadingAllPhotos ? (
                     <Loader2 className="w-4 h-4 ml-2 animate-spin" />
                   ) : (
-                    <Camera className="w-5 h-5 ml-2" />
+                    <Images className="w-5 h-5 ml-2" />
                   )}
                 </>
               ) : (
@@ -158,7 +173,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
                   {isLoadingAllPhotos ? (
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   ) : (
-                    <Camera className="w-5 h-5 mr-2" />
+                    <Images className="w-5 h-5 mr-2" />
                   )}
                   <span>{t('hero.allPhotos')}</span>
                 </>

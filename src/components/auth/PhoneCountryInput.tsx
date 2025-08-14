@@ -7,74 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
 import { log } from "node:console";
+import countries from "@/types/contries";
 
 interface PhoneCountryInputProps {
   onSubmit: (phone: string, notifications: boolean) => void;
   onBack: () => void;
 }
-
-const countries = [
-  { 
-    code: "+972", 
-    name: { he: "ישראל", en: "Israel" }, 
-    flag: "🇮🇱",
-    pattern: /^5[0-9]{8}$/ // Israeli mobile format: 5XXXXXXXX
-  },
-  { 
-    code: "+1", 
-    name: { he: "ארה״ב", en: "United States" }, 
-    flag: "🇺🇸",
-    pattern: /^[2-9][0-9]{9}$/ // US format: [2-9]XXXXXXXXX
-  },
-  { 
-    code: "+44", 
-    name: { he: "בריטניה", en: "United Kingdom" }, 
-    flag: "🇬🇧",
-    pattern: /^7[0-9]{9}$/ // UK mobile format: 7XXXXXXXXX
-  },
-  { 
-    code: "+33", 
-    name: { he: "צרפת", en: "France" }, 
-    flag: "🇫🇷",
-    pattern: /^[67][0-9]{8}$/ // France mobile format: [67]XXXXXXXX
-  },
-  { 
-    code: "+49", 
-    name: { he: "גרמניה", en: "Germany" }, 
-    flag: "🇩🇪",
-    pattern: /^1[5-7][0-9]{8,9}$/ // Germany mobile format: 1[5-7]XXXXXXXX
-  },
-  { 
-    code: "+39", 
-    name: { he: "איטליה", en: "Italy" }, 
-    flag: "🇮🇹",
-    pattern: /^3[0-9]{8,9}$/ // Italy mobile format: 3XXXXXXXX
-  },
-  { 
-    code: "+34", 
-    name: { he: "ספרד", en: "Spain" }, 
-    flag: "🇪🇸",
-    pattern: /^[67][0-9]{8}$/ // Spain mobile format: [67]XXXXXXXX
-  },
-  { 
-    code: "+31", 
-    name: { he: "הולנד", en: "Netherlands" }, 
-    flag: "🇳🇱",
-    pattern: /^6[0-9]{8}$/ // Netherlands mobile format: 6XXXXXXXX
-  },
-  { 
-    code: "+41", 
-    name: { he: "שוויץ", en: "Switzerland" }, 
-    flag: "🇨🇭",
-    pattern: /^7[0-9]{8}$/ // Switzerland mobile format: 7XXXXXXXX
-  },
-  { 
-    code: "+43", 
-    name: { he: "אוסטריה", en: "Austria" }, 
-    flag: "🇦🇹",
-    pattern: /^6[0-9]{8,10}$/ // Austria mobile format: 6XXXXXXXX
-  },
-];
 
 export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) => {
   const [countryCode, setCountryCode] = useState("+972");
@@ -123,7 +61,7 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
   return (
     <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2">{t('auth.enterPhone')}</h2>
+        <h2 className="text-xl font-bold mb-2">{t('auth.enterPhone')}</h2>
         <p className="text-muted-foreground">
           {t('auth.phoneInstruction')}
         </p>
@@ -132,7 +70,7 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex gap-2" dir="ltr">
           <Select value={countryCode} onValueChange={setCountryCode}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-[90px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -161,11 +99,11 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
           />
         </div>
         
-        <div className="text-xs text-muted-foreground text-center" dir={language === 'he' ? 'rtl' : 'ltr'}>
+        {/* <div className="text-xs text-muted-foreground text-center" dir={language === 'he' ? 'rtl' : 'ltr'}>
           {t('auth.phoneExample')}
-        </div>
+        </div> */}
 
-        <div className="flex items-center space-x-2 space-x-reverse" dir={language === 'he' ? 'rtl' : 'ltr'}>
+        <div className="flex items-center text-center space-x-2 space-x-reverse" dir={language === 'he' ? 'rtl' : 'ltr'}>
           <Checkbox
             id="notifications"
             checked={notifications}
@@ -173,7 +111,7 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
           />
           <label
             htmlFor="notifications"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-sm text-center font-medium leading-none align-middle peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             {t('auth.notifyNewPhotos')}
           </label>
@@ -184,11 +122,11 @@ export const PhoneCountryInput = ({ onSubmit, onBack }: PhoneCountryInputProps) 
             type="button"
             variant="outline"
             onClick={onBack}
-            className="flex-1"
+            className="flex-1  mt-4"
           >
             {t('common.back')}
           </Button>
-          <Button type="submit" className="flex-1">
+          <Button type="submit" className="flex-1  mt-4">
             {t('auth.sendCode')}
           </Button>
         </div>

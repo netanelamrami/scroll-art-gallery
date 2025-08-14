@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Camera, RotateCcw, Check, Upload } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -7,9 +7,10 @@ import React from "react";
 interface SelfieCaptureProps {
   onCapture: (imageData: string) => void;
   onBack: () => void;
+  autoOpenCamera?: boolean;
 }
 
-export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
+export const SelfieCapture = ({ onCapture, onBack, autoOpenCamera }: SelfieCaptureProps) => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,66 +19,70 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t, language } = useLanguage();
+  const hasClickedRef = useRef(false);
+
+
+  useEffect(() => {
+    if (autoOpenCamera && !hasClickedRef.current) {
+      fileInputRef.current?.click();
+      hasClickedRef.current = true;
+    }
+  }, [autoOpenCamera]);
 
   // Check if device is mobile
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
   const startCamera = async () => {
-    try {
+    // try {
+      
+    //   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      //     alert('המצלמה אינה נתמכת בדפדפן זה');
+      //     return;
+      //   }
+      
+      //   const constraints = {
+        //     video: { 
+          //       facingMode: "user",
+          //       width: { ideal: 640, min: 320 },
+          //       height: { ideal: 480, min: 240 }
+          //     },
+          //     audio: false
+          //   };
+          
+    //   const stream = await navigator.mediaDevices.getUserMedia(constraints);      
+    //   streamRef.current = stream;
+
+    //   setIsCapturing(true);
+    //   setTimeout(() => {
+    //     if (videoRef.current) {
+      //       videoRef.current.srcObject = stream;
+    //       videoRef.current.play().catch(error => {
+    //         console.error("Error playing video:", error);
+    //       });
+    //       console.log('Video element source set to stream');
+    //     } else {
+      //       console.warn('videoRef.current עדיין null אחרי ההשהייה');
+      //     }
+      //   }, 350);
+      
+      
+      
+      // } catch (error) {
+        //   console.error("Error accessing camera:", error);
+        //   if (error.name === 'NotAllowedError') {
+          //     alert('יש לאשר גישה למצלמה כדי לצלם סלפי');
+          //   } else if (error.name === 'NotFoundError') {
+            //     alert('מצלמה לא נמצאה במכשיר');
+            //   } else {
+              //     alert('שגיאה בגישה למצלמה. נסה להעלות תמונה במקום זאת.');
+              //   }
+              // } finally {
+                //}
       setIsLoading(true);
-      
-      // בדיקה אם יש תמיכה במצלמה
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('המצלמה אינה נתמכת בדפדפן זה');
-        return;
-      }
-
-      const constraints = {
-        video: { 
-          facingMode: "user",
-          width: { ideal: 640, min: 320 },
-          height: { ideal: 480, min: 240 }
-        },
-        audio: false
-      };
-      
-      console.log('Requesting camera access with constraints:', constraints);
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('Camera stream obtained successfully');
-      
-      streamRef.current = stream;
-
-      setIsCapturing(true);
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play().catch(error => {
-            console.error("Error playing video:", error);
-          });
-          console.log('Video element source set to stream');
-        } else {
-          console.warn('videoRef.current עדיין null אחרי ההשהייה');
-        }
-      }, 350);
-
-
-
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      // טיפול בשגיאות ספציפיות
-      if (error.name === 'NotAllowedError') {
-        alert('יש לאשר גישה למצלמה כדי לצלם סלפי');
-      } else if (error.name === 'NotFoundError') {
-        alert('מצלמה לא נמצאה במכשיר');
-      } else {
-        alert('שגיאה בגישה למצלמה. נסה להעלות תמונה במקום זאת.');
-      }
-    } finally {
+      fileInputRef.current?.click();
       setIsLoading(false);
-    }
-  };
-
-  const stopCamera = () => {
+    };
+    
+   const stopCamera = () => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
@@ -109,7 +114,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
 
   const retakePhoto = () => {
     setCapturedImage(null);
-    startCamera();
+    //startCamera();
   };
 
   const confirmPhoto = () => {
@@ -135,7 +140,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
   };
 
   return (
-    <div className="space-y-6" dir={language === 'he' ? 'rtl' : 'ltr'}>
+    <div className="space-y-6"    dir={language === 'he' ? 'rtl' : 'ltr'} >
       <div className="text-center mb-6">
         <p className="text-muted-foreground">
           {t('auth.selfieInstruction')}
@@ -151,10 +156,12 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               {isMobile ? t('auth.takeSelfie') : t('auth.selectImageOrCamera')}
             </p>
             <div className="flex gap-2 justify-center flex-wrap">
-              <Button onClick={handleFileUpload} variant="outline">
-                <Upload className="w-4 h-4 mr-2" />
-                {t('auth.selectFile')}
-              </Button>
+              {!isLoading && (
+                <Button onClick={handleFileUpload} variant="outline">
+                  <Upload className="w-4 h-4 mr-2" />
+                  {t('auth.selectFile')}
+                </Button>
+              )}
               <Button onClick={startCamera} disabled={isLoading}>
                 {isLoading ? (
                   <div className={`flex items-center gap-2 ${language === 'he' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -173,13 +180,26 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
         )}
 
         {isCapturing && (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-cover scale-x-[-1]"
-          />
+        //   <video
+        //     ref={videoRef}
+        //     autoPlay
+        //     playsInline
+        //     muted
+        //  className="fixed inset-0 w-screen h-screen object-cover scale-x-[-1]"
+        //   />
+        <input
+          type="file"
+          accept="image/*"
+          capture="user" // מפעיל את המצלמה הקדמית (סלפי)
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              // בצע כאן טיפול כמו הצגה או העלאה
+              console.log(file);
+            }
+          }}
+        />
+
         )}
 
         {capturedImage && (
@@ -215,33 +235,27 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
       <div className="flex gap-3">
         {isCapturing && (
           <>
+           
             <Button
+              type="button"
+              variant="outline"
+              onClick={stopCamera}
+              className="flex-1"
+            >
+              {t('common.back')}
+            </Button>
+             <Button
               onClick={capturePhoto}
               className="flex-1"
             >
               <Camera className="w-4 h-4 mr-2" />
               {t('auth.takePhoto')}
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onBack}
-              className="flex-1"
-            >
-              {t('common.back')}
-            </Button>
           </>
         )}
 
         {capturedImage && (
           <>
-            <Button
-              onClick={confirmPhoto}
-              className="flex-1"
-            >
-              <Check className="w-4 h-4 mr-2" />
-              {t('auth.confirm')}
-            </Button>
             <Button
               variant="outline"
               onClick={retakePhoto}
@@ -250,10 +264,18 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
               <RotateCcw className="w-4 h-4 mr-2" />
               {t('auth.retake')}
             </Button>
+
+              <Button
+              onClick={confirmPhoto}
+              className="flex-1"
+            >
+              <Check className="w-4 h-4 mr-2" />
+              {t('auth.confirm')}
+            </Button>
           </>
         )}
 
-        {!isCapturing && !capturedImage && (
+        {/* {!isCapturing && !capturedImage && (
           <Button
             type="button"
             variant="outline"
@@ -262,7 +284,7 @@ export const SelfieCapture = ({ onCapture, onBack }: SelfieCaptureProps) => {
           >
             {t('common.back')}
           </Button>
-        )}
+        )} */}
       </div>
     </div>
   );

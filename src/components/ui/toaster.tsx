@@ -14,7 +14,6 @@ export function Toaster() {
   const { t, language } = useLanguage();
 
   return (
-    <div dir={language === 'he' ? 'rtl' : 'ltr'}>
       <ToastProvider>
         {toasts.map(function ({ id, title, description, action, open, ...props }) {
           return (
@@ -22,8 +21,7 @@ export function Toaster() {
               key={id} 
               open={open ?? true} 
               {...props}
-              className="bg-toast-bg border-toast-border shadow-toast backdrop-blur-md rounded-xl min-h-[48px] py-3 px-4 border data-[state=open]:animate-slide-in-from-bottom data-[state=closed]:animate-fade-out data-[swipe=end]:animate-slide-out-right"
-              dir={language === 'he' ? 'rtl' : 'ltr'}
+            className={`${language === 'he' ? 'rtl' : 'ltr'} bg-toast-bg border-toast-border shadow-toast backdrop-blur-md rounded-xl min-h-[48px] py-3 px-4 border data-[state=open]:animate-slide-in-from-bottom data-[state=closed]:animate-fade-out data-[swipe=end]:animate-slide-out-right`}
             >
               <div className="grid gap-1.5">
                 {title && (
@@ -44,6 +42,5 @@ export function Toaster() {
         })}
         <ToastViewport className={`fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:top-auto sm:flex-col md:max-w-[420px] ${language === 'he' ? 'sm:left-0' : 'sm:right-0'}`} />
       </ToastProvider>
-    </div>
   )
 }

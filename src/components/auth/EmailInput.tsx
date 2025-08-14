@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
+import { Mail } from "lucide-react";
 
 interface EmailInputProps {
   onSubmit: (email: string, notifications: boolean) => void;
@@ -56,16 +57,21 @@ export const EmailInput = ({ onSubmit, onBack }: EmailInputProps) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          type="email"
-          placeholder={t('auth.enterEmail')}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full"
-          required
-          dir="ltr"
-        />
-        
+       <div className="relative">
+          <Input
+            type="email"
+            placeholder="name@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full pr-10 pr-4 py-3  border border-gray-300 
+                       bg-gray-50 placeholder-gray-400 text-sm"
+            required
+            dir="ltr"
+          />
+          <Mail className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+
+        </div>
+
         <div className="flex items-center space-x-2 space-x-reverse" dir={language === 'he' ? 'rtl' : 'ltr'}>
           <Checkbox
             id="notifications"

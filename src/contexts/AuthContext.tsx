@@ -5,13 +5,14 @@ import { apiService } from '@/data/services/apiService';
 const AUTH_STORAGE_KEY = 'pixshare_auth_state';
 
 interface AuthContextType extends AuthState {
-  addUser: (userData: Omit<User, 'id' | 'createdAt' | 'isActive'>) => User;
+  addUser: (userData: Omit<User, 'createdAt' | 'isActive'>) => User;
   switchUser: (userId: string) => void;
   logout: () => void;
   deleteUser: (userId: string) => void;
   getCurrentUserImages: () => any[];
   hasMultipleUsers: boolean;
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  setSendNotification: (userId: string, value: boolean, content: string, isEmailMode: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,20 +27,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     currentUser: null,
     users: []
   });
+  const [firstLogin, setfirstLogin] =useState<boolean>(false);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const userid = parseInt(sessionStorage.getItem('userid') || '0');
+        const userid = parseInt(sessionStorage.getItem('userid'))
+        if(!userid) {
+          return;
+        }
         const users = await apiService.getUserForUser(userid);
+        
         const initialState = {
           isAuthenticated: users.length > 0,
           currentUser: users.length > 0 ? users[0] : null,
           users: users
         };
-        console.log(users)
-
-        console.log('AuthProvider initialization - initial state:', JSON.stringify(initialState, null, 2));
         setAuthState(initialState);
       } catch (e) {
         console.error('AuthProvider initialization - parse error:', e);
@@ -48,22 +51,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     initializeAuth();
-  }, []);
+  }, [firstLogin]);
 
 
   // Save to localStorage whenever state changes
-  useEffect(() => {
-    authState.isAuthenticated = true
-    try {
-      const dataToSave = JSON.stringify(authState);
-      // localStorage.setItem(AUTH_STORAGE_KEY, dataToSave);
+  // useEffect(() => {
+  //   authState.isAuthenticated = true
+  //   try {
+  //     const dataToSave = JSON.stringify(authState);
+  //     // localStorage.setItem(AUTH_STORAGE_KEY, dataToSave);
 
-      // Dispatch event for any listening components
-      window.dispatchEvent(new CustomEvent('authStateChanged', { detail: authState }));
-    } catch (error) {
-      console.error('AuthProvider - ERROR saving to localStorage:', error);
-    }
-  }, [authState]);
+  //     // Dispatch event for any listening components
+  //     //window.dispatchEvent(new CustomEvent('authStateChanged', { detail: authState }));
+  //   } catch (error) {
+  //     console.error('AuthProvider - ERROR saving to localStorage:', error);
+  //   }
+  // }, [authState]);
 
   // Force re-read from localStorage on component mount
   useEffect(() => {
@@ -72,7 +75,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         const parsed = JSON.parse(stored);
         if (parsed.isAuthenticated && !authState.isAuthenticated) {
-          console.log('AuthProvider - force updating from localStorage:', parsed);
           setAuthState({
             ...parsed,
             users: parsed.users?.map((user: any) => ({
@@ -81,22 +83,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             })) || []
           });
         }
-      } catch (e) {
-        console.log('AuthProvider - force update error:', e);
-      }
+      } 
+     catch (error) {
+      console.error('AuthProvider - ERROR parsing localStorage data:', error);    
     }
+  }
   }, []);
 
-  const addUser = (userData: Omit<User, 'id' | 'createdAt' | 'isActive'>) => {
-    console.log('AuthProvider addUser called with:', userData);
+  const addUser = (userData: Omit<User,  'createdAt' | 'isActive'>) => {
     const newUser: User = {
       ...userData,
-      id: Date.now().toString(),
       createdAt: new Date(),
       isActive: true
     };
-
-    console.log('AuthProvider Creating new user:', newUser);
 
     const newState = {
       isAuthenticated: true,
@@ -105,50 +104,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
         
     setAuthState(newState);
-
+    setfirstLogin(true);
+    
     return newUser;
   };
 
   const switchUser = (userId: string) => {
-    console.log('AuthContext switchUser called with userId:', userId);
     const user = authState.users.find(u => u.id === userId);
-    console.log('Found user:', user);
-    if (user) {
-      console.log('Switching to user:', user.id, user.name);
-      
-      // Update sessionStorage with the new user's ID
-            sessionStorage.setItem('userid', user.id.toString());
-
-      // sessionStorage.setItem('userid', user.id);
-      console.log('Updated sessionStorage userid to:', user.id);
-      
+    if (user) {      
       setAuthState(prev => ({
         ...prev,
         users: prev.users.map(u => ({ ...u, isActive: u.id === userId })),
         currentUser: user,
         isAuthenticated: true
       }));
-    } else {
-      console.log('User not found with id:', userId);
-    }
+        const event = new CustomEvent('switchToMyPhotos', { detail: user });
+        window.dispatchEvent(event);
+    } 
   };
 
   const logout = () => {
-    console.log('AuthProvider logout called - clearing all data');
-    console.log('AuthProvider Current authState before logout:', JSON.stringify(authState, null, 2));
-    
     const clearedState = {
       isAuthenticated: false,
       currentUser: null,
       users: []
     };
     
-    console.log('AuthProvider Setting cleared state:', clearedState);
     setAuthState(clearedState);
     
     // Also clear localStorage directly as backup
     setTimeout(() => {
       localStorage.removeItem(AUTH_STORAGE_KEY);
+      sessionStorage.removeItem('userid');
+      sessionStorage.removeItem('userFullName');
+      sessionStorage.removeItem('isRegister');
+      sessionStorage.removeItem('jwtUser');
+      sessionStorage.removeItem('photourl');
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth" // מעבר חלק
+    });
       console.log('AuthProvider localStorage cleared directly');
     }, 100);
   };
@@ -163,6 +158,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       currentUser: wasCurrentUser ? null : prev.currentUser,
       isAuthenticated: wasCurrentUser ? false : prev.isAuthenticated
     }));
+  };
+
+const setSendNotification = async (userId, value, content, isEmailMode) => {
+  setAuthState(prev => ({
+    ...prev,
+    users: prev.users.map(u =>
+      u.id === userId ? { ...u, sendNotification: value } : u
+    ),
+    currentUser:
+      prev.currentUser && prev.currentUser.id === userId
+        ? { ...prev.currentUser, sendNotification: value }
+        : prev.currentUser,
+  }));
+
+    const { user } = await apiService.loginUser(userId) as { user: User };
+
+    if (value) {
+      if (isEmailMode) {
+        user.email = content;
+      } else {
+        user.phone = content;
+        // user.countryCode = content.slice(0, 3);
+      }
+    }
+
+    user.sendNotification = value;
+    await apiService.updateUser(user);
   };
 
   const getCurrentUserImages = () => {
@@ -186,7 +208,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     deleteUser,
     getCurrentUserImages,
     hasMultipleUsers: authState.users.length > 1,
-    setUsers
+    setUsers,
+    setSendNotification
   };
 
   return (

@@ -3,6 +3,10 @@ import { Settings, LogOut, Bell, Users, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/hooks/useLanguage"
 import { useMultiUserAuth } from "@/contexts/AuthContext"
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+import { Languages } from "lucide-react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,8 +23,9 @@ interface SettingsMenuProps {
 }
 
 export function SettingsMenu({ event }: SettingsMenuProps) {
-  const { language, t } = useLanguage();
-  
+  const { language, t ,setLanguage} = useLanguage();
+  const { setTheme, theme } = useTheme()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,7 +34,7 @@ export function SettingsMenu({ event }: SettingsMenuProps) {
           <span className="sr-only">Settings</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={language === 'he' ? 'start' : 'end'} className="w-56 bg-background z-50">
+      <DropdownMenuContent align={ 'end'} className="w-48 bg-background z-50">
 
         {/* Notifications */}
         {/* <DropdownMenuItem asChild className="flex justify-between">
@@ -45,17 +50,34 @@ export function SettingsMenu({ event }: SettingsMenuProps) {
         {/* <DropdownMenuSeparator /> */}
 
         {/* Settings */}
-        <DropdownMenuItem asChild className="flex justify-between">
-          <div className="flex items-center justify-between w-full">
-            <span>{t('gallery.theme') || 'ערכת נושא'}</span>
-            <ThemeToggle />
+        <DropdownMenuItem asChild className="flex justify-between" dir={language === 'he' ? 'rtl' : 'ltr'}
+         onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+          <div className="flex items-center justify-between w-full" >
+          <span>{theme === "light" ? t('gallery.dark')  :t('gallery.light') }</span>
+          <Button
+              variant="ghost"
+              size="icon"
+              className="relative">
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+
+          </Button>
           </div>
         </DropdownMenuItem>
         
-        <DropdownMenuItem asChild className="flex justify-between">
+        <DropdownMenuItem asChild className="flex justify-between" dir={language === 'he' ? 'rtl' : 'ltr'}
+          onClick={() => setLanguage(language === "he" ? "en" : "he")}>
           <div className="flex items-center justify-between w-full">
             <span>{t('gallery.language') || 'שפה'}</span>
-            <LanguageToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2"
+            >
+              <Languages className="h-4 w-4" />
+              {language === "he" ? "EN" : "עב"}
+            </Button>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>

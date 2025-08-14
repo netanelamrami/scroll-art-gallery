@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
 import { toast } from "@/hooks/use-toast";
@@ -111,7 +111,7 @@ export const LightboxModal = ({
   const handleDownload = async () => {
     if (!currentImage) return;
     
-    const success = await downloadImage(currentImage.src, `image-${currentImage.id}.jpg`);
+    const success = await downloadImage(currentImage.largeSrc, `image-${currentImage.id}.jpg`);
     
     if (success) {
       toast({
@@ -167,7 +167,7 @@ export const LightboxModal = ({
                   isFavorite ? "text-black dark:text-white" : ""
                 )}
               >
-                <Star className={cn("h-4 w-4", isFavorite ? "fill-black dark:fill-white" : "fill-none")} />
+                <Heart className={cn("h-4 w-4", isFavorite ? "fill-black dark:fill-white" : "fill-none")} />
               </Button>
             )}
             
@@ -228,7 +228,7 @@ export const LightboxModal = ({
           )}
           
           <img
-            src={currentImage.src}
+            src={currentImage.mediumSrc}
             alt={currentImage.alt}
             className={cn(
               "max-w-full max-h-full w-auto h-auto object-contain shadow-gallery transition-opacity duration-300",

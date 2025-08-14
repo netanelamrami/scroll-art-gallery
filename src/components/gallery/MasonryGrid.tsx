@@ -27,7 +27,7 @@ export const MasonryGrid = ({
   const distributeImagesBalanced = (images: GalleryImage[], numColumns: number) => {
     const columnArrays = Array.from({ length: numColumns }, () => [] as GalleryImage[]);
     const columnHeights = Array.from({ length: numColumns }, () => 0);
-
+    // console.log('Distributing images into columns:', images, 'images across', numColumns, 'columns');
     images.forEach((image) => {
       // חישוב גובה אמיתי של התמונה בהתבסס על רוחב קבוע
       const baseWidth = 300; // רוחב קבוע לכל התמונות
@@ -44,8 +44,7 @@ export const MasonryGrid = ({
       
       // מציאת העמודה הקצרה ביותר
       const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-      
-      // הוספת התמונה לעמודה הקצרה ביותר
+      // הוספת התמונה לעמודה הקצרה בותר
       columnArrays[shortestColumnIndex].push(image);
       columnHeights[shortestColumnIndex] += actualHeight + 8; // +8 עבור מרווח בין תמונות
     });
@@ -57,7 +56,7 @@ export const MasonryGrid = ({
 
   return (
     <div
-      className="grid gap-1"
+      className="grid gap-0"
       style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
     >
       {columnArrays.map((columnImages, columnIndex) => (

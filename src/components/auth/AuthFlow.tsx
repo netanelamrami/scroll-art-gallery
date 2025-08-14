@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PhoneCountryInput } from "./PhoneCountryInput";
 import { EmailInput } from "./EmailInput";
 import { OTPVerification } from "./OTPVerification";
@@ -15,7 +15,7 @@ interface AuthFlowProps {
   event: event;
   onComplete: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
   onCancel: () => void;
- setUsers: (users: any[]) => void;
+  setUsers: (users: any[]) => void;
 }
 
 export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProps) => {
@@ -30,8 +30,21 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   const [loadingMessage, setLoadingMessage] = useState("");
   const { t, language } = useLanguage();
   const { toast } = useToast();
+  const [isVisible, setIsVisible] = useState(false);
 
   const isEmailMode = event?.registerBy === "Email";
+
+  useEffect(() => {
+    if (currentStep === "contact") {
+      setIsVisible(true);
+    }else{
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 3000); 
+      return () => clearTimeout(timer);
+    }
+
+  }, []);
 
   // פונקציה למזעור תמונה
   const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.7): Promise<Blob> => {
@@ -57,7 +70,6 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   const setUserData = async (user: any) => {
     try {
       setLoadingMessage(t('auth.loadingUserData'));
-      console.log('User data loaded:', user); 
       // שמירת מזהה המשתמש ב-sessionStorage
       sessionStorage.setItem('userid', user.id.toString());
       sessionStorage.setItem('photourl', user.photoUrl);
@@ -68,14 +80,14 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
       if (loginResponse && loginResponse.user) {
         setLoadingMessage(t('auth.loadingImages'));
         
-        // טעינת תמונות המשתמש
-        try {
-          const imagesResponse = await apiService.getImages( user.id, event.id);
+        // // טעינת תמונות המשתמש
+        // try {
+        //   const imagesResponse = await apiService.getImages( user.id, event.id);
 
-          console.log('User images loaded:', imagesResponse);
-        } catch (error) {
-          console.log('No images found for user or error loading images:', error);
-        }
+        //   console.log('User images loaded:', imagesResponse);
+        // } catch (error) {
+        //   console.log('No images found for user or error loading images:', error);
+        // }
         
         setLoadingMessage(t('auth.loadingRelatedUsers'));
         
@@ -183,6 +195,11 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
             });
           } else {
             // משתמש חדש - ממשיכים לשלב selfie
+            setIsVisible(false);
+              const timer = setTimeout(() => {
+                setIsVisible(true);
+              }, 3000); 
+              // return () => clearTimeout(timer);
             setCurrentStep("selfie");
           }
         } catch (error) {
@@ -248,7 +265,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           // שמירת הטוקן
           sessionStorage.setItem("jwtUser", registrationResponse.token);
           sessionStorage.setItem("isRegister", "true");
-          
+
           // שליחת SMS עם קישור לגלריה (רק לטלפון)
           if (!isEmailMode && registrationResponse.user?.id) {
             try {
@@ -294,9 +311,11 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
         if (registrationResponse && registrationResponse.token) {
           sessionStorage.setItem("jwtUser", registrationResponse.token);
           sessionStorage.setItem("isRegister", "true");
-          
+          sessionStorage.setItem('userid', registrationResponse.user.id.toString());
+
           // טעינת נתוני המשתמש (תמונות, משתמשים קשורים)
-          if (registrationResponse.user?.id) {
+          console.log('Registration response:', registrationResponse);
+          if (registrationResponse?.id) {
             await setUserData(registrationResponse.user);
           }
           
@@ -338,7 +357,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir={language === 'he' ? 'rtl' : 'ltr'}>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" dir={language === 'he' ? 'rtl' : 'ltr'}
+    style={{visibility: isVisible ? 'visible' : 'hidden'}}>
       <div className="bg-background border border-border rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-border">
@@ -355,23 +375,25 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           </div>
           
           {/* Progress indicator */}
-          <div className="mt-4 flex gap-2">
+          {needsFullAuth &&(
+          <div className="mt-4 flex gap-2" >
             {(needsFullAuth ? ["contact", "otp", "selfie"] : ["selfie"]).map((step, index) => (
               <div
-                key={step}
-                className={`h-2 flex-1 rounded-full transition-colors ${
-                  step === currentStep || 
-                  (currentStep === "complete" && index < (needsFullAuth ? 3 : 1))
+                  key={step}
+                  className={`h-2 flex-1 rounded-full transition-colors ${
+                    step === currentStep || 
+                    (currentStep === "complete" && index < (needsFullAuth ? 3 : 1))
                     ? "bg-primary" 
                     : currentStep === "otp" && step === "contact"
                     ? "bg-primary"
                     : currentStep === "selfie" && (step === "contact" || step === "otp")
                     ? "bg-primary"
                     : "bg-muted"
-                }`}
-              />
-            ))}
-          </div>
+                    }`}
+                    />
+                  ))}
+              </div>
+            )}
         </div>
 
         {/* Content */}
@@ -415,6 +437,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
             <SelfieCapture 
               onCapture={handleSelfieCapture}
               onBack={needsFullAuth ? () => setCurrentStep("otp") : onCancel}
+              autoOpenCamera = {true}
             />
           )}
         </div>

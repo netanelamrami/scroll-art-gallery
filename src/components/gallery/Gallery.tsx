@@ -12,16 +12,16 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
 import { downloadMultipleImages } from "@/utils/downloadUtils";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyPhotosState } from "./EmptyPhotosState";
 import { useAlbums } from "@/hooks/useAlbums";
+
 
 interface GalleryProps {
   event: event; 
   images: GalleryImage[];
   favoriteImages: Set<string>;
   onToggleFavorite: (imageId: string) => void;
-  galleryType?: 'all' | 'my' | 'favorites';
+  galleryType?: 'all' | 'my';
   onAlbumClick?: (albumId: string) => void;
   selectedAlbum?: string | null;
   selectionMode?: boolean;
@@ -50,11 +50,10 @@ export const Gallery = ({
   const [columns, setColumns] = useState(externalColumns || 4);
   const [isSelectionMode, setIsSelectionMode] = useState(selectionMode || false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(externalSelectedImages || new Set());
-  const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
+  // const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isFAQOpen, setIsFAQOpen] = useState(false);
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -92,6 +91,7 @@ export const Gallery = ({
   // Reset displayed images count when images change
   useEffect(() => {
     setDisplayedImagesCount(30);
+    console.log('Images updated, resetting displayed count to 30');
   }, [images]);
 
   // Infinite scroll effect - updated to use filtered images
@@ -110,10 +110,10 @@ export const Gallery = ({
         if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < currentImages.length) {
           setIsLoadingMore(true);
           // Simulate loading delay
-          setTimeout(() => {
-            setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
-            setIsLoadingMore(false);
-          }, 1500);
+          setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
+          setIsLoadingMore(false);
+          // setTimeout(() => {
+          // }, 1500);
         }
       },
       { threshold: 0.1 }
@@ -156,6 +156,7 @@ export const Gallery = ({
   };
 
   const handleImageSelection = (imageId: string) => {
+    console.log(imageId)
     if (onImageSelect) {
       onImageSelect(imageId);
     } else {
@@ -213,7 +214,7 @@ export const Gallery = ({
       });
       return;
     }
-
+      handleCancelSelection();
     const selectedImagesArray = filteredImages.filter(img => selectedImages.has(img.id));
     
     toast({
@@ -222,7 +223,7 @@ export const Gallery = ({
     });
 
     const success = await downloadMultipleImages(
-      selectedImagesArray.map(img => ({ src: img.src, id: img.id }))
+      selectedImagesArray.map(img => ({ src: img.largeSrc, id: img.id }))
     );
 
     if (success) {
@@ -237,14 +238,14 @@ export const Gallery = ({
         variant: "destructive"
       });
     }
+
   };
 
   const handleToggleFavorites = () => {
     Array.from(selectedImages).forEach(imageId => {
       onToggleFavorite(imageId);
     });
-    setSelectedImages(new Set());
-    setIsSelectionMode(false);
+    handleCancelSelection();
   };
 
   const handleCancelSelection = () => {
@@ -293,7 +294,7 @@ export const Gallery = ({
         description: t('common.favorites'),
       });
     } else {
-      setLocalSelectedAlbum(albumId);
+      //setLocalSelectedAlbum(albumId);
       toast({
         title: t('toast.error.title'),
         description: `${t('common.selected')}: ${albumId}`,
@@ -319,27 +320,25 @@ export const Gallery = ({
         selectedCount={selectedImages.size}
         onAuthComplete={onAuthComplete}
       />
-
+    
+      {!isSelectionMode && (
       <FloatingNavbar
         event={event}
         galleryType={galleryType || localGalleryType}
         onToggleGalleryType={() => {
-          // אם יש callback חיצוני (מה-Index), נשתמש בו
           if (localGalleryType === 'all') {
             setLocalGalleryType('my');
+            window.dispatchEvent(new CustomEvent('switchToMyPhotos', { detail: { type: localGalleryType } }));
           } else {
             setLocalGalleryType('all');
+            window.dispatchEvent(new CustomEvent('switchToAllPhotos', { detail: { type: localGalleryType } }));
           }
-          if (onAlbumClick) {
-            // קריאה לפונקציה שמעדכנת את הגלרייה ב-Index
-          window.dispatchEvent(new CustomEvent('toggleGalleryType', { detail: { type: localGalleryType } }));
-          } 
         }}
         onDownloadAll={handleDownloadAll}
         onToggleSelectionMode={handleToggleSelection}
-        imageCount={filteredImages.length}
+        imageCount={images.length}
       />
-
+      )}
       {/* Albums Section - Only show albums that have images for this user */}
       {images.length > 0 && (() => {
         // Filter albums to only show those that have images
@@ -372,7 +371,7 @@ export const Gallery = ({
       })()}
 
       {/* Gallery Grid */}
-      <div className="w-full px-2 py-8">
+      <div className="w-full px-0 py-4">
         {images.length === 0 ? (
           <EmptyPhotosState type={galleryType === 'all' ? 'allPhotos' : 'myPhotos'} />
         ) : (
@@ -393,10 +392,15 @@ export const Gallery = ({
               <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
                 {isLoadingMore ? (
                   <div className="flex items-center justify-center">
-                    <div className={`flex items-center gap-3 ${language === 'he' ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <span className="text-muted-foreground text-lg">{t('auth.loading')}</span>
-                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-black"></div>
+                  <div className={`flex  flex-col  items-center gap-3 `}>
+                    <span className="text-muted-foreground text-sm ">
+                      {/* animate-pulse */}
+                      {/* {t('auth.loading')} */}
+                      Powered by Pixshare AI
+                      </span>
+                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-black"></div>
                     </div>
+
                   </div>
                 ) : (
                   <div className="h-4" />
@@ -436,9 +440,10 @@ export const Gallery = ({
       <DownloadModal
         isOpen={showDownloadModal}
         onClose={() => setShowDownloadModal(false)}
-        imageCount={filteredImages.length}
-        images={filteredImages}
+        imageCount={images.length}
+        images={images}
         autoDownload={false}
+        eventId={event.id}
       />
     </div>
   );

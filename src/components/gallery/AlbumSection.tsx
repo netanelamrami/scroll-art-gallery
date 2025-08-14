@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Folder, Image, ChevronDown, ChevronUp, Download, Star } from "lucide-react";
+import { Folder, Image, ChevronDown, ChevronUp, Download, Star, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DownloadModal } from "./DownloadModal";
 import { GalleryImage } from "@/types/gallery";
@@ -20,7 +20,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadAlbumImages, setDownloadAlbumImages] = useState<GalleryImage[]>([]);
   const [downloadAlbumName, setDownloadAlbumName] = useState<string>("");
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   // Separate favorites album from API albums
   const favoritesAlbum = albums.find(album => album.id === 'favorites');
@@ -52,32 +52,33 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   };
 
   return (
-    <div className="w-full px-2 mb-2 sticky top-10 bg-background/95 backdrop-blur-sm border-b border-border pb-2 z-40 -mt-8">
+    <div className="sticky top-10 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full" dir={language === 'he' ? 'rtl' : 'rtl'}>
       {/* Collapsed view - horizontal bar */}
-      <div className="flex items-center justify-between gap-2 mb-1 overflow-hidden">
+      <div className="flex items-center justify-between gap-2 mb-1 overflow-x-auto">
         {/* Favorites album on the left */}
         <div className="flex items-center flex-shrink-0">
           {favoritesAlbum && (
             <Button
               variant={selectedAlbum === 'favorites' ? "secondary" : "ghost"}
               className={cn(
-                "h-8 px-2 text-xs sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all",
+                "h-8 px-2 text-sm sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all",
                 selectedAlbum === 'favorites' && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
               )}
               onClick={() => onAlbumClick('favorites')}
             >
-              <Star className="text-yellow-500 h-3 w-3 sm:h-4 sm:w-4 fill-current" />
+            <Heart style={{ height: 16, width: 16 }} />
+              {/* <Star className="text-yellow-500 h-3 w-3 sm:h-4 sm:w-4 fill-current" /> */}
               <span className="hidden sm:inline">{language === 'he' ? 'נבחרות' : 'Favorites'}</span>
-              <span className="text-xs text-muted-foreground">({favoritesAlbum.imageCount})</span>
+              <span className="text-sm text-muted-foreground">({favoritesAlbum.imageCount})</span>
             </Button>
           )}
         </div>
 
         {/* Other albums on the right - collapsed view with expand button */}
-        <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0">
+        <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0 thin-scrollbar" dir="ltr">
           {/* Show selected album first if it's not in the initial visible albums */}
           {(() => {
-            const visibleCount = window.innerWidth >= 768 ? 4 : 2; // More albums on larger screens
+            const visibleCount = window.innerWidth >= 768 ? 100 : 100; // More albums on larger screens
             let albumsToShow = [...apiAlbums];
             
             // If an album is selected and it's NOT in the first visible albums, bring it to front
@@ -97,7 +98,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 key={album.id}
                 variant={selectedAlbum === album.id ? "secondary" : "ghost"}
                 className={cn(
-                  "h-8 px-2 text-xs whitespace-nowrap transition-all",
+                  "h-8 px-2 text-sm whitespace-nowrap transition-all",
                   selectedAlbum === album.id && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
                 )}
                 onClick={() => onAlbumClick(album.id)}
@@ -107,11 +108,11 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
             ));
           })()}
           {(() => {
-            const visibleCount = window.innerWidth >= 768 ? 4 : 2;
+            const visibleCount = window.innerWidth >= 768 ? 8 : 8;
             return apiAlbums.length > visibleCount && (
               <Button
                 variant="ghost"
-                className="h-8 px-2 text-xs flex-shrink-0"
+                className="h-8 px-2 text-sm flex-shrink-0"
                 onClick={handleToggleExpand}
               >
                 +{apiAlbums.length - visibleCount}
@@ -119,14 +120,14 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
             );
           })()}
           {/* Expand button moved here to be close to albums */}
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             onClick={handleToggleExpand}
             className="h-6 w-6 sm:h-8 sm:w-8 p-0 rounded-full hover:bg-accent ml-1"
           >
             {isExpanded ? <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5" /> : <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" />}
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -148,19 +149,19 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                    <div className="w-full h-full bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900 dark:to-orange-900 flex items-center justify-center">
                      <Star className="text-lg sm:text-2xl text-yellow-500 fill-current" />
                    </div>
-                  <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
+                  <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-sm px-1 sm:px-1.5 py-0.5 rounded">
                     {favoritesAlbum.imageCount}
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs font-medium text-center">
+                  <span className="text-sm font-medium text-center">
                     {language === 'he' ? favoritesAlbum.name.replace('❤️ נבחרות', 'נבחרות') : 'Favorites'}
                   </span>
                 </div>
               </Button>
               
               {/* Download button for favorites */}
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="absolute top-2 right-2 h-6 w-6 p-0 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full"
@@ -170,7 +171,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 }}
               >
                 <Download className="h-3 w-3 text-white" />
-              </Button>
+              </Button> */}
             </div>
           )}
 
@@ -198,18 +199,18 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                  <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-xs px-1 sm:px-1.5 py-0.5 rounded">
+                  <div className="absolute bottom-0.5 right-0.5 sm:bottom-1 sm:right-1 bg-black/70 text-white text-sm px-1 sm:px-1.5 py-0.5 rounded">
                     {album.imageCount}
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
                   <Folder className="w-3 h-3 text-muted-foreground hidden sm:block" />
-                  <span className="text-xs font-medium text-center">{album.name}</span>
+                  <span className="text-sm font-medium text-center">{album.name}</span>
                 </div>
               </Button>
               
               {/* Download button for each album */}
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="absolute top-2 right-2 h-6 w-6 p-0 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full"
@@ -219,7 +220,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 }}
               >
                 <Download className="h-3 w-3 text-white" />
-              </Button>
+              </Button> */}
             </div>
           ))}
         </div>

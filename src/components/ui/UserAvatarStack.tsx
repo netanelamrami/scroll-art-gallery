@@ -20,40 +20,40 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
   const { language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [forceUpdate, setForceUpdate] = useState(0);
+  // const [showAuthModal, setShowAuthModal] = useState(false);
+  // const [forceUpdate, setForceUpdate] = useState(0);
 
   // Force update when users change
-  React.useEffect(() => {
-    console.log('UserAvatarStack - users changed:', users.length, 'current user:', currentUser?.id);
-    setForceUpdate(prev => prev + 1);
-  }, [users.length, currentUser?.id]);
+  // React.useEffect(() => {
+  //   console.log('UserAvatarStack - users changed:', users.length, 'current user:', currentUser?.id);
+  //   //setForceUpdate(prev => prev + 1);
+  // }, [users.length, currentUser?.id]);
 
   // Listen for user added events and auth state changes
-  React.useEffect(() => {
-    const handleUserAdded = () => {
-      setForceUpdate(prev => prev + 1);
-    };
+  // React.useEffect(() => {
+  //   // const handleUserAdded = () => {
+  //   //   setForceUpdate(prev => prev + 1);
+  //   // };
 
-    const handleAuthStateChanged = (event: CustomEvent) => {
-      setForceUpdate(prev => prev + 1);
-    };
+  //   // const handleAuthStateChanged = (event: CustomEvent) => {
+  //   //   setForceUpdate(prev => prev + 1);
+  //   // };
     
-    window.addEventListener('userAdded', handleUserAdded);
-    window.addEventListener('authStateChanged', handleAuthStateChanged);
+  //   // window.addEventListener('userAdded', handleUserAdded);
+  //   // window.addEventListener('authStateChanged', handleAuthStateChanged);
     
-    return () => {
-      window.removeEventListener('userAdded', handleUserAdded);
-      window.removeEventListener('authStateChanged', handleAuthStateChanged);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('userAdded', handleUserAdded);
+  //     window.removeEventListener('authStateChanged', handleAuthStateChanged);
+  //   };
+  // }, []);
 
   if (!isAuthenticated || !currentUser) {
     return (
       <>
         <div className={cn("relative", className)}>
           <Popover open={isOpen} onOpenChange={setIsOpen}>
-            <PopoverTrigger asChild>
+            {/* <PopoverTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
@@ -61,13 +61,13 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
               >
                 <UserCircle className="h-5 w-5" />
               </Button>
-            </PopoverTrigger>
+            </PopoverTrigger> */}
             <PopoverContent align="end" className="w-48 p-2">
               <Button
                 variant="ghost"
                 className="w-full justify-start text-sm"
                 onClick={() => {
-                  setShowAuthModal(true);
+                  //setShowAuthModal(true);
                   setIsOpen(false);
                 }}
               >
@@ -113,8 +113,8 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
   return (
     <>
       <div className={cn("relative", className)}>
-        <Popover open={isOpen} onOpenChange={setIsOpen}>
-          <PopoverTrigger asChild>
+        <Popover open={isOpen} onOpenChange={setIsOpen} >
+          <PopoverTrigger asChild >
             <Button
               variant="ghost"
               size="sm"
@@ -154,7 +154,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
             </Button>
           </PopoverTrigger>
           
-          <PopoverContent align="end" className="w-64 p-2">
+          <PopoverContent align="end" className="w-64 p-2"  dir={language === 'he' ? 'rtl' : 'ltr'}>
             <div className="space-y-2">
               {/* Current User */}
               <div className="px-2 py-2 bg-muted/50 rounded-md">
@@ -163,13 +163,13 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                 </p>
                 <div className="flex items-center gap-2">
                   <Avatar className="w-6 h-6">
-                    <AvatarImage src={currentUser.photoUrl || currentUser.selfieImage} alt={currentUser.name || 'User'} />
+                    <AvatarImage src={currentUser.photoUrl || currentUser.selfieImage} alt={currentUser.name == 'Anonymous' ? 'User' : currentUser.name || 'User'} />
                     <AvatarFallback>
                       <UserCircle className="w-4 h-4" />
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-sm font-medium truncate">
-                    {currentUser.name || (language === 'he' ? 'משתמש' : 'User')}
+                    {currentUser.name == 'Anonymous' ? 'User' : currentUser.name || (language === 'he' ? 'משתמש' : 'User')}
                   </span>
                 </div>
               </div>
@@ -191,7 +191,6 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                         setIsOpen(false);
                         // Trigger user photos reload
                         console.log('UserAvatarStack - dispatching switchToMyPhotos event');
-                        window.dispatchEvent(new CustomEvent('switchToMyPhotos'));
                       }}
                     >
                       <Avatar className="w-5 h-5 mr-2">
@@ -201,7 +200,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
                         </AvatarFallback>
                       </Avatar>
                       <span className="text-sm truncate flex-1 text-left">
-                        {user.name || (language === 'he' ? 'משתמש' : 'User')}
+                        {user.name == 'Anonymous' ? 'User' : currentUser.name  || (language === 'he' ? 'משתמש' : 'User')}
                       </span>
                     </Button>
                   ))}
@@ -209,7 +208,7 @@ export const UserAvatarStack = ({ event, onAuthComplete, className }: UserAvatar
               )}
 
               {/* Add User - only if less than 3 users */}
-              {users.length < 3 && (
+              {users.length < 3 && event.needDetect && (
                 <Button
                   variant="ghost"
                   className="w-full h-auto p-2 justify-start hover:bg-muted/50"

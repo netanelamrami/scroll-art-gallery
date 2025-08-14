@@ -1,3 +1,7 @@
+
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+
 // Download utility functions
 export const downloadImage = async (src: string, filename: string) => {
   try {
@@ -20,15 +24,23 @@ export const downloadImage = async (src: string, filename: string) => {
   }
 };
 
-export const downloadMultipleImages = async (images: Array<{src: string, id: string}>) => {
-  const results = await Promise.all(
+export const downloadMultipleImages = async (
+  images: Array<{ src: string; id: string }>
+) => {
+  const zip = new JSZip();
+
+  await Promise.all(
     images.map(async (image, index) => {
-      await new Promise(resolve => setTimeout(resolve, index * 500)); // Delay between downloads
-      return downloadImage(image.src, `image-${image.id}.jpg`);
+      await new Promise((resolve) => setTimeout(resolve, index * 200));
+      const response = await fetch(image.src);
+      const blob = await response.blob();
+      zip.file(`image-${image.id}.jpg`, blob);
     })
   );
-  
-  return results.every(result => result);
+
+  const zipBlob = await zip.generateAsync({ type: "blob" });
+  saveAs(zipBlob, "images.zip");
+  return true;
 };
 
 export const getDownloadFormData = () => {

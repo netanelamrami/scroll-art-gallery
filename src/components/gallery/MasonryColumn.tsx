@@ -25,7 +25,7 @@ export const MasonryColumn = ({
   onToggleFavorite
 }: MasonryColumnProps) => {
   return (
-    <div className="flex flex-col gap-0">
+    <div className="flex flex-col gap-0 relative">
       {images.map((image) => {
         const globalIndex = allImages.findIndex(img => img.id === image.id);
         return (

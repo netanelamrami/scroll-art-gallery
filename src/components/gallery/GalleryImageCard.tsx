@@ -84,6 +84,7 @@ export const GalleryImageCard = ({
         "bg-card hover:bg-accent/50 dark:bg-card dark:hover:bg-accent/50",
         "transform transition-all duration-300 hover:scale-[1.00]",
         "shadow-md hover:shadow-xl border border-border",
+        "hover:z-50", // הוספת z-index גבוה בהובר
         isSelectionMode && "ring-2 ring-transparent",
         isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-background"
       )}
@@ -149,7 +150,7 @@ export const GalleryImageCard = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0"
+                  className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MoreVertical className="h-4 w-4 text-white" />
@@ -157,7 +158,8 @@ export const GalleryImageCard = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align={language === 'he' ? 'start' : 'end'} 
-                className="w-48"
+                className="w-48 bg-popover border shadow-lg z-[100]"
+                sideOffset={5}
               >
                 <DropdownMenuItem 
                   onClick={(e) => {

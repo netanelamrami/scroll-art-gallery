@@ -370,7 +370,7 @@ export const Gallery = ({
       })()}
 
       {/* Gallery Grid */}
-      <div className="w-full px-0 py-4">
+      <div className="w-full px-0 py-4 relative">
         {images.length === 0 ? (
           <EmptyPhotosState type={galleryType === 'all' ? 'allPhotos' : 'myPhotos'} />
         ) : (

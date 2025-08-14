@@ -4,8 +4,7 @@ import { GalleryImage } from "@/types/gallery";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Download, Link, Copy, Star } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -34,7 +33,7 @@ export const GalleryImageCard = ({
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -85,6 +84,12 @@ export const GalleryImageCard = ({
       onImageDropdownClick?.(image.id, { x: rect.left, y: rect.bottom });
   };
 
+  const handleDropdownClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    onImageDropdownClick?.(image.id, { x: rect.left, y: rect.bottom });
+  };
+
   return (
     <div
       className={cn(
@@ -92,6 +97,7 @@ export const GalleryImageCard = ({
         "bg-card hover:bg-accent/50 dark:bg-card dark:hover:bg-accent/50",
         "transform transition-all duration-300 hover:scale-[1.00]",
         "shadow-md hover:shadow-xl border border-border",
+        "hover:z-50", // הוספת z-index גבוה בהובר
         isSelectionMode && "ring-2 ring-transparent",
         isSelected && "ring-1 ring-primary  ring-offset-background"
       )}
@@ -150,7 +156,11 @@ export const GalleryImageCard = ({
           {/* Three dots menu */}
           <div className={cn(
             "absolute top-2",
+<<<<<<< HEAD
             'right-2'
+=======
+            language === 'he' ? 'left-2' : 'right-2'
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
           )}>
             <Button
               variant="ghost"

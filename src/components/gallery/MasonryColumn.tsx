@@ -27,7 +27,11 @@ export const MasonryColumn = ({
   onImageDropdownClick
 }: MasonryColumnProps) => {
   return (
+<<<<<<< HEAD
     <div className="flex flex-col gap-1">
+=======
+    <div className="flex flex-col gap-0 relative">
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
       {images.map((image) => {
         const globalIndex = allImages.findIndex(img => img.id === image.id);
         return (
@@ -41,7 +45,10 @@ export const MasonryColumn = ({
             isFavorite={favoriteImages.has(image.id)}
             onToggleFavorite={() => onToggleFavorite?.(image.id)}
             onImageDropdownClick={onImageDropdownClick}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
           />
         );
       })}

@@ -217,9 +217,11 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, onDownloadAll, onTog
               // Add user to multi-user system
               const newUser = addUser({
                 name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
-                phone: authData.contact.includes('@') ? '' : authData.contact,
+                phoneNumber: authData.contact.includes('@') ? '' : authData.contact,
                 email: authData.contact.includes('@') ? authData.contact : '',
-                selfieImage: authData.selfieData
+                selfieImage: authData.selfieData,
+                eventId: event?.id || 0,
+                faceId: ''
               });
               
               console.log('New user added from BottomMenu:', newUser);

@@ -148,11 +148,13 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
 
 
     const newUser = addUser({
-      id:registrationResponse.id,
+      id: registrationResponse.id,
       name: userInfo.name || `משתמש ${Date.now()}`,
-      phone: '',
+      phoneNumber: '',
       email: '',
-      selfieImage
+      selfieImage,
+      eventId: event?.id || 0,
+      faceId: ''
     });
     console.log(newUser)
 

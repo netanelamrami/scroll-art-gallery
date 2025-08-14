@@ -39,8 +39,12 @@ const translations = {
     'gallery.backToGallery': 'חזור לגלרייה',
     'gallery.downloadImage': 'הורד תמונה',
     'gallery.copyLink': 'העתק קישור',
+<<<<<<< HEAD
 
 
+=======
+    
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
     // Floating Navbar - תפריט נופף
     'navbar.support': 'תמיכה',
     'navbar.allPhotos': 'כל התמונות',
@@ -308,8 +312,12 @@ const translations = {
     'gallery.backToGallery': 'Back to gallery',
     'gallery.downloadImage': 'Download image',
     'gallery.copyLink': 'Copy link',
+<<<<<<< HEAD
 
 
+=======
+    
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
     // Floating Navbar
     'navbar.support': 'Support',
     'navbar.allPhotos': 'All Photos',

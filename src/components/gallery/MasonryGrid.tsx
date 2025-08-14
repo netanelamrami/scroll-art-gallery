@@ -58,7 +58,7 @@ export const MasonryGrid = ({
 
   return (
     <div
-      className="grid gap-1"
+      className="grid gap-0"
       style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
     >
       {columnArrays.map((columnImages, columnIndex) => (

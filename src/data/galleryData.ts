@@ -34,7 +34,9 @@ export const generateGalleryImages = async (eventLink: string, count: number = 2
 
     return {
       id: `${imageData.name}`,
-      src: imageData.smallUrl, // או imageData.src לפי מה שמגיע מהשרת
+      src: imageData.smallUrl,
+      mediumSrc: imageData.mediumUrl || imageData.smallUrl,
+      largeSrc: imageData.largeUrl || imageData.smallUrl,
       alt: `Gallery image ${index + 1}`,
       size,
       width: displayWidth,

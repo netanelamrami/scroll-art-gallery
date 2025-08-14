@@ -6,7 +6,7 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   event: event;
-  onComplete: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
+  onComplete: (userData: any) => void;
 }
 
 export const AuthModal = ({ isOpen, onClose, event, onComplete }: AuthModalProps) => {

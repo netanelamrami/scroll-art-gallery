@@ -304,59 +304,6 @@ export const Gallery = ({
     }
   };
 
-  const handleImageDropdown = (imageId: string, position: { x: number; y: number }) => {
-    setDropdownImage({ id: imageId, position });
-      document.body.style.overflow = "hidden";
-
-  };
-
-  const handleDropdownClose = () => {
-    setDropdownImage(null);
-    document.body.style.overflow = "auto"; 
-    console.log('Dropdown closed');
-  };
-
-  const  handleImageDownload = async() => {
-    if (!dropdownImage) return;
-    
-    const image = images.find(img => img.id === dropdownImage.id);
-    if (!image) return;
-      toast({
-        title: t('downloadModal.downloadStarted'),
-        description: t('downloadModal.downloadStarted'),
-      });
-      handleDropdownClose();
-     const success = await downloadImage(image.largeSrc || image.src, image.id)
-      if (success) {
-        toast({
-          title: t('toast.downloadComplete.title'),
-          description: t('toast.downloadImageComplete.description'),
-        });
-      } else {
-        toast({
-          title: t('toast.error.title'),
-          description: t('downloadModal.downloadError'),
-          variant: "destructive"
-        });
-      }
-  };
-
-  const handleImageCopyLink = () => {
-    if (!dropdownImage) return;
-    
-    const image = images.find(img => img.id === dropdownImage.id);
-    if (!image) return;
-    
-    navigator.clipboard.writeText(image.src);
-    toast({
-      title: t('toast.linkCopied.title'),
-      description: t('toast.linkCopied.description'),
-    });
-    
-    handleDropdownClose();
-  };
-
-
   const displayedImages = filteredImages.slice(0, displayedImagesCount);
 
   return (
@@ -426,7 +373,7 @@ export const Gallery = ({
       })()}
 
       {/* Gallery Grid */}
-      <div className="w-full px-0 py-4">
+      <div className="w-full px-0 py-4 relative">
         {images.length === 0 ? (
           <EmptyPhotosState type={galleryType === 'all' ? 'allPhotos' : 'myPhotos'} />
         ) : (
@@ -501,54 +448,6 @@ export const Gallery = ({
         autoDownload={false}
         eventId={event.id}
       />
-
-     {/* Global Image Dropdown */}
-      {dropdownImage && (
-        <>
-          <div 
-            className="fixed inset-0 z-40" 
-            onClick={handleDropdownClose}
-          />
-          <div
-            className="fixed z-50 w-48 bg-popover border shadow-lg rounded-md"
-            style={{
-              left: `${Math.min(dropdownImage.position.x, window.innerWidth - 200)}px`,
-              top: `${Math.min(dropdownImage.position.y, window.innerHeight - 100)}px`,
-            }}
-            dir={language === 'he' ? 'rtl' : 'ltr'}
-          >
-            <div className="py-1">
-              <button
-                onClick={handleImageDownload}
-                className={cn(
-                  "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
-                  language === 'he' ? 'text-right' : 'text-left'
-                )}
-              >
-                <Download className={cn(
-                  "h-4 w-4",
-                  language === 'he' ? 'ml-2' : 'mr-2'
-                )} />
-                {t('gallery.downloadImage')}
-              </button>
-              <button
-                onClick={handleImageCopyLink}
-                className={cn(
-                  "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
-                  language === 'he' ? 'text-right' : 'text-left'
-                )}
-              >
-                <Link className={cn(
-                  "h-4 w-4",
-                  language === 'he' ? 'ml-2' : 'mr-2'
-                )} />
-                {t('gallery.copyLink')}
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
     </div>
   );
 };

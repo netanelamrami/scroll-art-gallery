@@ -40,21 +40,33 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
     countryCode: "+972"
   });
   // setIsEmailMode(event?.registerBy === "Email");
-  useEffect(() => {
-    setCurrentStep(initialStep);
-    formData.email = currentUser.email || "";
+useEffect(() => {
+  setCurrentStep(initialStep);
 
-    const country = countries.find(c =>
-      currentUser.phoneNumber?.startsWith(c.code)
-    );
-    const phone = country
-      ? currentUser.phoneNumber.replace(country.code, "")
-      : currentUser.phoneNumber || "";
-    if( country && !validatePhoneNumber(phone , country.toString())){
-      formData.phone = phone
-    }
+  if (currentUser.email !== 'Anonymous') {
+    setFormData(prev => ({
+      ...prev,
+      email: currentUser.email || ""
+    }));
+  }
 
-  }, []);
+  const country = countries.find(c =>
+    currentUser.phoneNumber?.startsWith(c.code)
+  );
+
+  const phone = country
+    ? currentUser.phoneNumber.replace(country.code, "")
+    : currentUser.phoneNumber || "";
+
+
+  if (country && !validatePhoneNumber(phone, country.toString())) {
+    setFormData(prev => ({
+      ...prev,
+      phone: phone
+    }));
+  }
+}, []);
+
 
 
   // Auto close after 7 seconds

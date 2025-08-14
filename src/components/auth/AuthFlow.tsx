@@ -41,13 +41,12 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
     }else{
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 2000); 
+      }, 0); 
       return () => clearTimeout(timer);
     }
 
   }, []);
 
-  // פונקציה למזעור תמונה
   const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.7): Promise<Blob> => {
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
@@ -184,7 +183,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
             setIsVisible(false);
               const timer = setTimeout(() => {
                 setIsVisible(true);
-              }, 2000); 
+              }, 0); 
               // return () => clearTimeout(timer);
             setCurrentStep("selfie");
           }

@@ -4,8 +4,7 @@ import { GalleryImage } from "@/types/gallery";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Download, Link, Copy, Star } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -17,6 +16,7 @@ interface GalleryImageCardProps {
   onSelectionChange?: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  onImageDropdownClick?: (imageId: string, position: { x: number; y: number }) => void;
 }
 
 export const GalleryImageCard = ({ 
@@ -26,7 +26,8 @@ export const GalleryImageCard = ({
   isSelected = false,
   onSelectionChange,
   isFavorite = false,
-  onToggleFavorite
+  onToggleFavorite,
+  onImageDropdownClick
 }: GalleryImageCardProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -75,6 +76,12 @@ export const GalleryImageCard = ({
       title: t('toast.linkCopied.title'),
       description: t('toast.linkCopied.description'),
     });
+  };
+
+  const handleDropdownClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    onImageDropdownClick?.(image.id, { x: rect.left, y: rect.bottom });
   };
 
   return (
@@ -145,56 +152,14 @@ export const GalleryImageCard = ({
             "absolute top-2",
             language === 'he' ? 'left-2' : 'right-2'
           )}>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <MoreVertical className="h-4 w-4 text-white" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align={language === 'he' ? 'start' : 'end'} 
-                className="w-48 bg-popover border shadow-lg z-[100]"
-                sideOffset={5}
-              >
-                <DropdownMenuItem 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDownload();
-                  }}
-                  className={cn(
-                    "cursor-pointer",
-                    language === 'he' ? 'text-right' : 'text-left'
-                  )}
-                >
-                  <Download className={cn(
-                    "h-4 w-4",
-                    language === 'he' ? 'ml-2' : 'mr-2'
-                  )} />
-                  {t('gallery.downloadImage')}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCopyLink();
-                  }}
-                  className={cn(
-                    "cursor-pointer",
-                    language === 'he' ? 'text-right' : 'text-left'
-                  )}
-                >
-                  <Link className={cn(
-                    "h-4 w-4",
-                    language === 'he' ? 'ml-2' : 'mr-2'
-                  )} />
-                  {t('gallery.copyLink')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
+              onClick={handleDropdownClick}
+            >
+              <MoreVertical className="h-4 w-4 text-white" />
+            </Button>
           </div>
           
           <div className="absolute bottom-2 right-2">

@@ -78,12 +78,6 @@ export const GalleryImageCard = ({
     });
     };
 
-    const handleDropdownClick = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      const rect = e.currentTarget.getBoundingClientRect();
-      onImageDropdownClick?.(image.id, { x: rect.left, y: rect.bottom });
-  };
-
   const handleDropdownClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
@@ -156,11 +150,7 @@ export const GalleryImageCard = ({
           {/* Three dots menu */}
           <div className={cn(
             "absolute top-2",
-<<<<<<< HEAD
             'right-2'
-=======
-            language === 'he' ? 'left-2' : 'right-2'
->>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
           )}>
             <Button
               variant="ghost"

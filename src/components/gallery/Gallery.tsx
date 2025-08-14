@@ -304,6 +304,88 @@ export const Gallery = ({
     }
   };
 
+  const handleImageDropdown = (imageId: string, position: { x: number; y: number }) => {
+    setDropdownImage({ id: imageId, position });
+<<<<<<< HEAD
+      document.body.style.overflow = "hidden";
+
+=======
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
+  };
+
+  const handleDropdownClose = () => {
+    setDropdownImage(null);
+<<<<<<< HEAD
+    document.body.style.overflow = "auto"; 
+    console.log('Dropdown closed');
+  };
+
+  const  handleImageDownload = async() => {
+=======
+  };
+
+  const handleImageDownload = () => {
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
+    if (!dropdownImage) return;
+    
+    const image = images.find(img => img.id === dropdownImage.id);
+    if (!image) return;
+<<<<<<< HEAD
+      toast({
+        title: t('downloadModal.downloadStarted'),
+        description: t('downloadModal.downloadStarted'),
+      });
+      handleDropdownClose();
+     const success = await downloadImage(image.largeSrc || image.src, image.id)
+      if (success) {
+        toast({
+          title: t('toast.downloadComplete.title'),
+          description: t('toast.downloadImageComplete.description'),
+        });
+      } else {
+        toast({
+          title: t('toast.error.title'),
+          description: t('downloadModal.downloadError'),
+          variant: "destructive"
+        });
+      }
+=======
+    
+    const link = document.createElement("a");
+    link.href = image.largeSrc || image.src;
+    link.download = `image-${image.id}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: t('toast.downloadImageComplete.title'),
+      description: t('toast.downloadImageComplete.description'),
+    });
+    
+    handleDropdownClose();
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
+  };
+
+  const handleImageCopyLink = () => {
+    if (!dropdownImage) return;
+    
+    const image = images.find(img => img.id === dropdownImage.id);
+    if (!image) return;
+    
+    navigator.clipboard.writeText(image.src);
+    toast({
+      title: t('toast.linkCopied.title'),
+      description: t('toast.linkCopied.description'),
+    });
+    
+    handleDropdownClose();
+  };
+
+<<<<<<< HEAD
+
+=======
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
   const displayedImages = filteredImages.slice(0, displayedImagesCount);
 
   return (
@@ -448,6 +530,61 @@ export const Gallery = ({
         autoDownload={false}
         eventId={event.id}
       />
+
+<<<<<<< HEAD
+     {/* Global Image Dropdown */}
+=======
+      {/* Global Image Dropdown */}
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
+      {dropdownImage && (
+        <>
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={handleDropdownClose}
+          />
+          <div
+            className="fixed z-50 w-48 bg-popover border shadow-lg rounded-md"
+            style={{
+              left: `${Math.min(dropdownImage.position.x, window.innerWidth - 200)}px`,
+              top: `${Math.min(dropdownImage.position.y, window.innerHeight - 100)}px`,
+            }}
+            dir={language === 'he' ? 'rtl' : 'ltr'}
+          >
+            <div className="py-1">
+              <button
+                onClick={handleImageDownload}
+                className={cn(
+                  "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
+                  language === 'he' ? 'text-right' : 'text-left'
+                )}
+              >
+                <Download className={cn(
+                  "h-4 w-4",
+                  language === 'he' ? 'ml-2' : 'mr-2'
+                )} />
+                {t('gallery.downloadImage')}
+              </button>
+              <button
+                onClick={handleImageCopyLink}
+                className={cn(
+                  "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
+                  language === 'he' ? 'text-right' : 'text-left'
+                )}
+              >
+                <Link className={cn(
+                  "h-4 w-4",
+                  language === 'he' ? 'ml-2' : 'mr-2'
+                )} />
+                {t('gallery.copyLink')}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+<<<<<<< HEAD
+
+=======
+>>>>>>> 5fc2342a822990ba8e514876378ca89e3c397fed
     </div>
   );
 };

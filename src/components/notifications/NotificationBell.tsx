@@ -11,7 +11,6 @@ interface NotificationBellProps {
 }
 
 export const NotificationBell = ({ event }: NotificationBellProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [userRegister, setUserReister] = useState(false);
   const { t } = useLanguage();
@@ -28,13 +27,15 @@ useEffect(() => {
       setIsSubscribed(true);
       // setUserContact(savedContact);
     }
+    else{
+      setIsSubscribed(false);
+    }
   };
 
   loadData();
 }, [currentUser]);
 
   const toggleSubscription = () => {
-    console.log(currentUser)
     if (currentUser.sendNotification == true) {
       // כבה התראות
       localStorage.setItem('notificationSubscription', 'false');
@@ -56,12 +57,15 @@ useEffect(() => {
       // });
         window.dispatchEvent(
           new CustomEvent('notificationOpen', {
-            detail: "contact" // כאן אתה שולח את הערך
+            detail: "contact" 
           }));
 
     }else{
       // פתח מודל להרשמה או הפעלת התראות
-        window.dispatchEvent(new CustomEvent('notificationOpen'));
+         window.dispatchEvent(
+          new CustomEvent('notificationOpen', {
+            detail: "collapsed" 
+          }));
 
     }
   };

@@ -11,9 +11,12 @@ import { FloatingNavbar } from "./FloatingNavbar";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
-import { downloadMultipleImages } from "@/utils/downloadUtils";
+import { downloadImage, downloadMultipleImages } from "@/utils/downloadUtils";
 import { EmptyPhotosState } from "./EmptyPhotosState";
 import { useAlbums } from "@/hooks/useAlbums";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Download, Link } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 
 interface GalleryProps {
@@ -55,6 +58,7 @@ export const Gallery = ({
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
+  const [dropdownImage, setDropdownImage] = useState<{ id: string; position: { x: number; y: number } } | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t, language } = useLanguage();
@@ -155,7 +159,6 @@ export const Gallery = ({
   };
 
   const handleImageSelection = (imageId: string) => {
-    console.log(imageId)
     if (onImageSelect) {
       onImageSelect(imageId);
     } else {
@@ -301,6 +304,59 @@ export const Gallery = ({
     }
   };
 
+  const handleImageDropdown = (imageId: string, position: { x: number; y: number }) => {
+    setDropdownImage({ id: imageId, position });
+      document.body.style.overflow = "hidden";
+
+  };
+
+  const handleDropdownClose = () => {
+    setDropdownImage(null);
+    document.body.style.overflow = "auto"; 
+    console.log('Dropdown closed');
+  };
+
+  const  handleImageDownload = async() => {
+    if (!dropdownImage) return;
+    
+    const image = images.find(img => img.id === dropdownImage.id);
+    if (!image) return;
+      toast({
+        title: t('downloadModal.downloadStarted'),
+        description: t('downloadModal.downloadStarted'),
+      });
+      handleDropdownClose();
+     const success = await downloadImage(image.largeSrc || image.src, image.id)
+      if (success) {
+        toast({
+          title: t('toast.downloadComplete.title'),
+          description: t('toast.downloadImageComplete.description'),
+        });
+      } else {
+        toast({
+          title: t('toast.error.title'),
+          description: t('downloadModal.downloadError'),
+          variant: "destructive"
+        });
+      }
+  };
+
+  const handleImageCopyLink = () => {
+    if (!dropdownImage) return;
+    
+    const image = images.find(img => img.id === dropdownImage.id);
+    if (!image) return;
+    
+    navigator.clipboard.writeText(image.src);
+    toast({
+      title: t('toast.linkCopied.title'),
+      description: t('toast.linkCopied.description'),
+    });
+    
+    handleDropdownClose();
+  };
+
+
   const displayedImages = filteredImages.slice(0, displayedImagesCount);
 
   return (
@@ -384,6 +440,7 @@ export const Gallery = ({
               onImageSelection={handleImageSelection}
               favoriteImages={favoriteImages}
               onToggleFavorite={onToggleFavorite}
+              onImageDropdownClick={handleImageDropdown}
             />
             
             {/* Load More Trigger & Loader */}
@@ -444,6 +501,54 @@ export const Gallery = ({
         autoDownload={false}
         eventId={event.id}
       />
+
+     {/* Global Image Dropdown */}
+      {dropdownImage && (
+        <>
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={handleDropdownClose}
+          />
+          <div
+            className="fixed z-50 w-48 bg-popover border shadow-lg rounded-md"
+            style={{
+              left: `${Math.min(dropdownImage.position.x, window.innerWidth - 200)}px`,
+              top: `${Math.min(dropdownImage.position.y, window.innerHeight - 100)}px`,
+            }}
+            dir={language === 'he' ? 'rtl' : 'ltr'}
+          >
+            <div className="py-1">
+              <button
+                onClick={handleImageDownload}
+                className={cn(
+                  "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
+                  language === 'he' ? 'text-right' : 'text-left'
+                )}
+              >
+                <Download className={cn(
+                  "h-4 w-4",
+                  language === 'he' ? 'ml-2' : 'mr-2'
+                )} />
+                {t('gallery.downloadImage')}
+              </button>
+              <button
+                onClick={handleImageCopyLink}
+                className={cn(
+                  "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
+                  language === 'he' ? 'text-right' : 'text-left'
+                )}
+              >
+                <Link className={cn(
+                  "h-4 w-4",
+                  language === 'he' ? 'ml-2' : 'mr-2'
+                )} />
+                {t('gallery.copyLink')}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
     </div>
   );
 };

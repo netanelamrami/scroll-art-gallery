@@ -244,6 +244,7 @@ const handleAuthComplete = async (user: User) => {
  };
 
     const handleNotificationOpen = (event: CustomEvent) => {
+      console.log('Notification open event received:', event.detail);
       setInitialStepNotification(event.detail)
       setShowNotificationSubscription(true);
     };

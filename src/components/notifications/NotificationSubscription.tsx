@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import countries from "@/types/contries";
+import { getDownloadFormData, saveDownloadFormData } from "@/utils/downloadUtils";
 
 type NotificationStep = "collapsed" | "contact" | "otp" | "complete" | "hidden";
 
@@ -41,6 +42,18 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
   // setIsEmailMode(event?.registerBy === "Email");
   useEffect(() => {
     setCurrentStep(initialStep);
+    formData.email = currentUser.email || "";
+
+    const country = countries.find(c =>
+      currentUser.phoneNumber?.startsWith(c.code)
+    );
+    const phone = country
+      ? currentUser.phoneNumber.replace(country.code, "")
+      : currentUser.phoneNumber || "";
+    if( country && !validatePhoneNumber(phone , country.toString())){
+      formData.phone = phone
+    }
+
   }, []);
 
 
@@ -50,7 +63,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
       const timer = setTimeout(() => {
         setCurrentStep("hidden");
           onClose();
-      }, 10000); 
+      }, 8000); 
 
       return () => clearTimeout(timer);
     }
@@ -60,7 +73,6 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
     setNotifications(notificationPreference);
     setIsLoading(true);
     setLoadingMessage(isEmailMode ? t('auth.sendingEmail') : t('auth.sendingSMS'));
-    
     try {
       if (isEmailMode) {
         await apiService.sendOTPEmail(contact);
@@ -102,12 +114,27 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
       });
       return;
     }
-    //change notification preference
-    const content = isEmailMode ? formData.email : `${formData.countryCode}${formData.phone}`
-    setSendNotification(currentUser.id, true, content, isEmailMode)
     setCurrentStep("complete");
-    onSubscribe(contactInfo, notifications);
+
+    //change notification preference
+    const content = isEmailMode ? formData.email : `${formData.countryCode}${formData.phone}`;
+    setSendNotification(currentUser.id, true, content, isEmailMode);
+       setTimeout(() => {
+        setCurrentStep("hidden");
+        onSubscribe(contactInfo, notifications); 
+      }, 3000);
+    };
+
+const validatePhoneNumber = (number: string, countryCode: string): boolean => {
+    const selectedCountry = countries.find(country => country.code === countryCode);
+    if (!selectedCountry) return false;
+    
+    // Remove leading zero and any spaces/dashes
+    const cleanNumber = number.replace(/^0/, '').replace(/[\s-]/g, '');
+    
+    return selectedCountry.pattern.test(cleanNumber);
   };
+
 
   const stepTitles = {
     collapsed: "",
@@ -122,8 +149,9 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
 
   if (currentStep === "collapsed") {
     return (
-      <div className="fixed bottom-20 left-0 right-0 z-[60] mx-2 sm:left-1/2 sm:right-auto sm:transform sm:-translate-x-1/2 sm:max-w-md animate-fade-in">
-        <div className="bg-card/95 backdrop-blur-sm border border-accent/50 text-card-foreground rounded-lg shadow-lg p-3 w-full sm:max-w-md">
+
+        <div className="fixed top-14 left-0 right-0 z-[60] mx-2   sm:right-0 sm:left-auto sm:transform-none sm:max-w-md animate-fade-in min-w-[350px]">  
+          <div className="bg-card/95 backdrop-blur-sm border border-accent/50 text-card-foreground rounded-lg shadow-lg p-3 w-full sm:max-w-md">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-blue-500" />
@@ -328,8 +356,8 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
                   ✓ {t('notifications.subscribeSuccess')}
                 </div>
               </div>
-              
-              <Button onClick={() => setCurrentStep("hidden")} className="w-full">
+            
+              <Button onClick={() =>{ onSubscribe(contactInfo, notifications); setCurrentStep("hidden");}} className="w-full">
                 {t('notifications.close')}
               </Button>
             </div>
@@ -339,3 +367,4 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
     </div>
   );
 };
+

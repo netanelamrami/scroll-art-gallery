@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        
         const userid = parseInt(sessionStorage.getItem('userid'))
         if(!userid) {
           return;
@@ -44,8 +45,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           users: users
         };
         setAuthState(initialState);
+        console.log('AuthProvider - New user added:', authState);
       } catch (e) {
-        console.error('AuthProvider initialization - parse error:', e);
         setAuthState({ isAuthenticated: false, currentUser: null, users: [] });
       }
     };
@@ -58,11 +59,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // useEffect(() => {
   //   authState.isAuthenticated = true
   //   try {
-  //     const dataToSave = JSON.stringify(authState);
+  //     // const dataToSave = JSON.stringify(authState);
   //     // localStorage.setItem(AUTH_STORAGE_KEY, dataToSave);
 
   //     // Dispatch event for any listening components
   //     //window.dispatchEvent(new CustomEvent('authStateChanged', { detail: authState }));
+  //         console.log( authState);
+
   //   } catch (error) {
   //     console.error('AuthProvider - ERROR saving to localStorage:', error);
   //   }
@@ -71,6 +74,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Force re-read from localStorage on component mount
   useEffect(() => {
     const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    
     if (stored) {
       try {
         const parsed = JSON.parse(stored);

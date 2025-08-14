@@ -17,6 +17,7 @@ interface GalleryImageCardProps {
   onSelectionChange?: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  onImageDropdownClick?: (imageId: string, position: { x: number; y: number }) => void;
 }
 
 export const GalleryImageCard = ({ 
@@ -26,7 +27,8 @@ export const GalleryImageCard = ({
   isSelected = false,
   onSelectionChange,
   isFavorite = false,
-  onToggleFavorite
+  onToggleFavorite,
+  onImageDropdownClick
 }: GalleryImageCardProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -75,6 +77,12 @@ export const GalleryImageCard = ({
       title: t('toast.linkCopied.title'),
       description: t('toast.linkCopied.description'),
     });
+    };
+
+    const handleDropdownClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const rect = e.currentTarget.getBoundingClientRect();
+      onImageDropdownClick?.(image.id, { x: rect.left, y: rect.bottom });
   };
 
   return (
@@ -85,7 +93,7 @@ export const GalleryImageCard = ({
         "transform transition-all duration-300 hover:scale-[1.00]",
         "shadow-md hover:shadow-xl border border-border",
         isSelectionMode && "ring-2 ring-transparent",
-        isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+        isSelected && "ring-1 ring-primary  ring-offset-background"
       )}
       onClick={handleClick}
       onMouseEnter={() => setShowOverlay(true)}
@@ -138,6 +146,21 @@ export const GalleryImageCard = ({
       {!isSelectionMode && showOverlay && (
         <>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-300" />
+          
+          {/* Three dots menu */}
+          <div className={cn(
+            "absolute top-2",
+            'right-2'
+          )}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
+              onClick={handleDropdownClick}
+            >
+              <MoreVertical className="h-4 w-4 text-white" />
+            </Button>
+          </div>
           
           <div className="absolute bottom-2 right-2">
             <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">

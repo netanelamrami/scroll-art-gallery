@@ -102,8 +102,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       currentUser: newUser,
       users: [...authState.users.map(u => ({ ...u, isActive: false })), newUser]
     };
-        
+    
     setAuthState(newState);
+    console.log('AuthProvider - New user added:', newState);
     setfirstLogin(true);
     
     return newUser;
@@ -173,12 +174,11 @@ const setSendNotification = async (userId, value, content, isEmailMode) => {
   }));
 
     const { user } = await apiService.loginUser(userId) as { user: User };
-
     if (value) {
       if (isEmailMode) {
         user.email = content;
       } else {
-        user.phone = content;
+        user.phoneNumber = content;
         // user.countryCode = content.slice(0, 3);
       }
     }

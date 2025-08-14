@@ -91,7 +91,6 @@ export const Gallery = ({
   // Reset displayed images count when images change
   useEffect(() => {
     setDisplayedImagesCount(30);
-    console.log('Images updated, resetting displayed count to 30');
   }, [images]);
 
   // Infinite scroll effect - updated to use filtered images

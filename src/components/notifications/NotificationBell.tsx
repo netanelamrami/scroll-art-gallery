@@ -57,8 +57,7 @@ useEffect(() => {
         window.dispatchEvent(
           new CustomEvent('notificationOpen', {
             detail: "contact" // כאן אתה שולח את הערך
-          })
-);
+          }));
 
     }else{
       // פתח מודל להרשמה או הפעלת התראות

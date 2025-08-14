@@ -8,12 +8,13 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
 import { apiService } from "@/data/services/apiService";
 import { event } from "@/types/event";
+import { User } from "@/types/auth";
 
 type AuthStep = "contact" | "otp" | "selfie" | "complete";
 
 interface AuthFlowProps {
   event: event;
-  onComplete: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
+  onComplete: (userData: User) => void;
   onCancel: () => void;
   setUsers: (users: any[]) => void;
 }
@@ -40,7 +41,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
     }else{
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 3000); 
+      }, 2000); 
       return () => clearTimeout(timer);
     }
 
@@ -70,41 +71,30 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
   const setUserData = async (user: any) => {
     try {
       setLoadingMessage(t('auth.loadingUserData'));
-      // שמירת מזהה המשתמש ב-sessionStorage
       sessionStorage.setItem('userid', user.id.toString());
       sessionStorage.setItem('photourl', user.photoUrl);
-      //sessionStorage.setItem('userFullName', 'Anonymous');
-      
-      // טעינת נתוני המשתמש
-      const loginResponse = await apiService.loginUser(user.id);
-      if (loginResponse && loginResponse.user) {
-        setLoadingMessage(t('auth.loadingImages'));
-        
-        // // טעינת תמונות המשתמש
-        // try {
-        //   const imagesResponse = await apiService.getImages( user.id, event.id);
 
-        //   console.log('User images loaded:', imagesResponse);
-        // } catch (error) {
-        //   console.log('No images found for user or error loading images:', error);
-        // }
+      //need it
+      // const loginResponse = await apiService.loginUser(user.id);
+      // if (loginResponse && loginResponse.user) {
+      //   setLoadingMessage(t('auth.loadingImages'));
+
+      //   setLoadingMessage(t('auth.loadingRelatedUsers'));
         
-        setLoadingMessage(t('auth.loadingRelatedUsers'));
+      //   // טעינת משתמשים קשורים
+      //   try {
+      //     // const usersResponse = await apiService.getUserForUser(user.id);
+      //     // console.log('Related users loaded:', usersResponse);
+      //   } catch (error) {
+      //     console.log('No related users found or error loading users:', error);
+      //   }
         
-        // טעינת משתמשים קשורים
-        try {
-          const usersResponse = await apiService.getUserForUser(user.id);
-          console.log('Related users loaded:', usersResponse);
-        } catch (error) {
-          console.log('No related users found or error loading users:', error);
-        }
-        
-        toast({
-          title: t('toast.downloadComplete.title'),
-          description: t('auth.registrationComplete'),
-          variant: "default",
-        });
-      }
+      //   toast({
+      //     title: t('toast.downloadComplete.title'),
+      //     description: t('auth.registrationComplete'),
+      //     variant: "default",
+      //   });
+      // }
     } catch (error) {
       console.error('Error loading user data:', error);
       toast({
@@ -182,12 +172,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
             await setUserData(userAuth.user);
             
             setCurrentStep("complete");
-            onComplete({
-              contact: contactInfo,
-              otp: otp,
-              selfieData: userAuth.user.photoUrl, // ציון שזה משתמש קיים - זה לא יוסיף משתמש חדש
-              notifications: notifications
-            });            
+            onComplete(userAuth.user); 
+
             toast({
               title: t('auth.welcomeBack'),
               description: t('auth.existingUserDesc'),
@@ -198,7 +184,7 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
             setIsVisible(false);
               const timer = setTimeout(() => {
                 setIsVisible(true);
-              }, 3000); 
+              }, 2000); 
               // return () => clearTimeout(timer);
             setCurrentStep("selfie");
           }
@@ -280,20 +266,14 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
               });
             }
           }
-          
           // טעינת נתוני המשתמש (תמונות, משתמשים קשורים)
           if (registrationResponse.user?.id) {
             await setUserData(registrationResponse.user);
           }
           
           setCurrentStep("complete");
-          onComplete({
-            contact: contactInfo || "selfie-only",
-            otp: otpCode || "no-otp",
-            selfieData: imageData,
-            notifications: notifications
-          });
-          
+          onComplete(registrationResponse.user); 
+
           toast({
             title: t('auth.registrationSuccess'),
             description: isEmailMode ? t('auth.registrationSuccessDesc') : t('auth.registrationSuccessWithSMS'),
@@ -314,18 +294,14 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
           sessionStorage.setItem('userid', registrationResponse.user.id.toString());
 
           // טעינת נתוני המשתמש (תמונות, משתמשים קשורים)
-          console.log('Registration response:', registrationResponse);
-          if (registrationResponse?.id) {
+
+          if (registrationResponse?.user.id) {
             await setUserData(registrationResponse.user);
           }
           
           setCurrentStep("complete");
-          onComplete({
-            contact: contactInfo || "selfie-only",
-            otp: otpCode || "no-otp", 
-            selfieData: imageData,
-            notifications: notifications
-          });
+          onComplete(registrationResponse.user); 
+
           
           toast({
             title: t('auth.eventRegistrationSuccess'),

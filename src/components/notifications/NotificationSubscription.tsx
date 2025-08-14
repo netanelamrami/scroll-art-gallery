@@ -20,7 +20,7 @@ interface NotificationSubscriptionProps {
   event: event;
   onSubscribe: (contact: string, notifications: boolean) => void;
   onClose: () => void;
-  initialStep?: NotificationStep; // חדש - שלב התחלתי
+  initialStep?: NotificationStep;
 }
 
 export const NotificationSubscription = ({ event, onSubscribe, onClose, initialStep = "collapsed"}: NotificationSubscriptionProps) => {
@@ -40,7 +40,6 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
   });
   // setIsEmailMode(event?.registerBy === "Email");
   useEffect(() => {
-    console.log(initialStep)
     setCurrentStep(initialStep);
   }, []);
 
@@ -105,7 +104,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
     }
     //change notification preference
     const content = isEmailMode ? formData.email : `${formData.countryCode}${formData.phone}`
-    setSendNotification(currentUser.id,true, content, isEmailMode)
+    setSendNotification(currentUser.id, true, content, isEmailMode)
     setCurrentStep("complete");
     onSubscribe(contactInfo, notifications);
   };

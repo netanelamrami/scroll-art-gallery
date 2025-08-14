@@ -3,22 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { Gallery } from "@/components/gallery/Gallery";
 import { NotificationSubscription } from "@/components/notifications/NotificationSubscription";
-import { FloatingNavbar } from "@/components/gallery/FloatingNavbar";
 import { AuthFlow } from "@/components/auth/AuthFlow";
 import { LeadGenerationModal } from "@/components/leads/LeadGenerationModal";
-import { BackToTopButton } from "@/components/ui/back-to-top";
 import { DownloadModal } from "@/components/gallery/DownloadModal";
-import { generateGalleryImages } from "@/data/galleryData";
-import { log } from "console";
 import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMultiUserAuth } from "@/contexts/AuthContext";
-import { BottomMenu } from "@/components/ui/bottom-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import QRCode from "qrcode";
-import { downloadMultipleImages } from "@/utils/downloadUtils";
-import { toast } from "sonner";
+import { User } from "@/types/auth";
+
 type NotificationStep = "collapsed" | "contact" | "otp" | "complete" | "hidden";
 
 const Index = () => {
@@ -26,11 +18,9 @@ const Index = () => {
   const navigate = useNavigate();
   const [showGallery, setShowGallery] = useState(false);
   const [galleryType, setGalleryType] = useState<'all' | 'my' >('all');
-  const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
+  // const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
   const [showAuthFlow, setShowAuthFlow] = useState(false);
-  const [userData, setUserData] = useState<{contact: string; otp: string; selfieData: string; notifications: boolean} | null>(null);
   const [event, setEvent] = useState(null);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [favoriteImages, setFavoriteImages] = useState<Set<string>>(new Set());
@@ -41,13 +31,11 @@ const Index = () => {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
   const [columns, setColumns] = useState(3);
-  const [qrCode, setQrCode] = useState<string>('');
-  const [isQrOpen, setIsQrOpen] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
-const [initialStepNotification, setInitialStepNotification] = useState<NotificationStep>("collapsed");
+  const [initialStepNotification, setInitialStepNotification] = useState<NotificationStep>("collapsed");
 
   const [galleryImages, setGalleryImages] = useState([]);
-  const [userImages, setUserImages] = useState([]); // תמונות של המשתמש הנוכחי
+  const [userImages, setUserImages] = useState([]); 
   
   // Use multi-user auth system
   const { isAuthenticated, addUser,  currentUser, setUsers } = useMultiUserAuth();
@@ -223,44 +211,37 @@ const handleToggleFavorite = (imageId: string) => {
 };
 
 
-  const handleAuthComplete = async (authData: {contact: string; otp: string; selfieData: string; notifications: boolean}) => {
-    setUserData(authData);
+const handleAuthComplete = async (user: User) => {
     setShowAuthFlow(false);
-    // רק אם זה לא משתמש קיים, נוסיף אותו לרשימת המשתמשים
-    if (authData.selfieData !== "existing-user") {
-      const newUser = addUser({
-        name: authData.contact.includes('@') ? authData.contact.split('@')[0] : '',
-        phone: authData.contact.includes('@') ? '' : authData.contact,
-        email: authData.contact.includes('@') ? authData.contact : '',
-        selfieImage: authData.selfieData
-      });
-      
-    } 
+    addUser(user);
+
     
     // Force immediate re-render
     forceUpdate({});
     
     // טוען את התמונות של המשתמש
-    await loadUserImages(currentUser);
+    await loadUserImages(user);
     
     // Set gallery state
     setGalleryType('my');
     setShowGallery(true);
     
     // Show notification subscription for selfie-only users
-    if (!event.needDetect) {
+  
       setTimeout(() => {
-        setShowNotificationSubscription(true);
-      }, 1000);
-    }
+        if (!event.needDetect && !user.sendNotification) {
+            setShowNotificationSubscription(true);
+          }
+      }, 2000);
+      
     
     // Smooth scroll to gallery
     setTimeout(() => {
       document.getElementById('gallery')?.scrollIntoView({
         behavior: 'smooth'
-      });
-    }, 100);
-  };
+        });
+      }, 100);
+ };
 
     const handleNotificationOpen = (event: CustomEvent) => {
       setInitialStepNotification(event.detail)
@@ -339,14 +320,14 @@ const handleToggleFavorite = (imageId: string) => {
       const galleryElement = document.getElementById('gallery');
       if (!galleryElement) return;
 
-      const galleryTop = galleryElement.offsetTop;
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
+      // const galleryTop = galleryElement.offsetTop;
+      // const scrollTop = window.scrollY;
+      // const windowHeight = window.innerHeight;
       
       // Hide floating navbar if user scrolled back near the hero section
       // Show it when user is well into the gallery
-      const shouldShow = scrollTop > galleryTop;
-      setShowFloatingNavbar(shouldShow);
+      // const shouldShow = scrollTop > galleryTop;
+      // setShowFloatingNavbar(shouldShow);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -410,7 +391,7 @@ const handleToggleFavorite = (imageId: string) => {
             selectedAlbum={selectedAlbum}
             selectionMode={selectionMode}
             selectedImages={selectedImages}
-            onAuthComplete={handleAuthComplete}
+            // onAuthComplete={handleAuthComplete}
             onImageSelect={(imageId) => {
               const newSelected = new Set(selectedImages);
               if (newSelected.has(imageId)) {

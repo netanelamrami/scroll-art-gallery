@@ -6,7 +6,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
-import { log } from "node:console";
 import countries from "@/types/contries";
 
 interface PhoneCountryInputProps {

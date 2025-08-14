@@ -18,7 +18,7 @@ interface FloatingNavbarProps {
   onDownloadAll?: () => void;
   onToggleSelectionMode?: () => void;
   className?: string;
-  imageCount?: number; // מספר התמונות הנוכחיות
+  imageCount?: number; 
 }
 
 export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDownloadAll, onToggleSelectionMode, className, imageCount = 0 }: FloatingNavbarProps) => {
@@ -32,7 +32,6 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   const [showMenu, setShowMenu] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Track scroll to show/hide back to top button - רק אם יש תמונות
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -103,9 +102,9 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
 
 
   // Desktop version - always expanded with text
-  if (!isMobile) {
+  if (!isMobile && showMenu) {
     return (
-      <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`}>
+      <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`} >
         <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-4 py-3 flex items-center gap-2">
 
 
@@ -150,8 +149,8 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
           </Button>
 
           {/* Share Event */}
-          <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
-            <DialogTrigger asChild>
+          <Dialog open={isQrOpen} onOpenChange={setIsQrOpen} >
+            <DialogTrigger asChild >
               <Button
                 variant="ghost"
                 size="sm"
@@ -163,7 +162,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
-              <DialogHeader>
+              <DialogHeader >
                 <DialogTitle className="text-center">{t('share.title')}</DialogTitle>
               </DialogHeader>
               <div className="flex flex-col items-center space-y-4 py-4">

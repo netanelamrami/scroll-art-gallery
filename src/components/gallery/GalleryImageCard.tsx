@@ -32,7 +32,7 @@ export const GalleryImageCard = ({
   const [hasError, setHasError] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -138,6 +138,62 @@ export const GalleryImageCard = ({
       {!isSelectionMode && showOverlay && (
         <>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-300" />
+          
+          {/* Three dots menu */}
+          <div className={cn(
+            "absolute top-2",
+            language === 'he' ? 'left-2' : 'right-2'
+          )}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreVertical className="h-4 w-4 text-white" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align={language === 'he' ? 'start' : 'end'} 
+                className="w-48"
+              >
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownload();
+                  }}
+                  className={cn(
+                    "cursor-pointer",
+                    language === 'he' ? 'text-right' : 'text-left'
+                  )}
+                >
+                  <Download className={cn(
+                    "h-4 w-4",
+                    language === 'he' ? 'ml-2' : 'mr-2'
+                  )} />
+                  {t('gallery.downloadImage')}
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyLink();
+                  }}
+                  className={cn(
+                    "cursor-pointer",
+                    language === 'he' ? 'text-right' : 'text-left'
+                  )}
+                >
+                  <Link className={cn(
+                    "h-4 w-4",
+                    language === 'he' ? 'ml-2' : 'mr-2'
+                  )} />
+                  {t('gallery.copyLink')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           
           <div className="absolute bottom-2 right-2">
             <div className="px-2 py-1 bg-black/70 backdrop-blur-sm rounded text-white text-xs">

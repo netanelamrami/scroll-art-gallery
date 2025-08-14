@@ -29,6 +29,16 @@ const translations = {
     'gallery.share': 'שיתוף',
     'gallery.cancelSelection': 'ביטול בחירה',
     'gallery.selectedImages': 'תמונות נבחרות',
+    'gallery.noImages': 'אין תמונות זמינות',
+    'gallery.loadingImages': 'טוען תמונות...',
+    'gallery.selectMode': 'בחירת תמונות',
+    'gallery.selectedCount': 'תמונות נבחרו',
+    'gallery.shareSelected': 'שתף נבחרות',
+    'gallery.shareEvent': 'שתף אירוע',
+    'gallery.viewAll': 'צפה בכל התמונות',
+    'gallery.backToGallery': 'חזור לגלרייה',
+    'gallery.downloadImage': 'הורד תמונה',
+    'gallery.copyLink': 'העתק קישור',
     
     // Floating Navbar - תפריט נופף
     'navbar.support': 'תמיכה',
@@ -287,6 +297,16 @@ const translations = {
     'gallery.share': 'Share',
     'gallery.cancelSelection': 'Cancel Selection',
     'gallery.selectedImages': 'Selected Images',
+    'gallery.noImages': 'No images available',
+    'gallery.loadingImages': 'Loading images...',
+    'gallery.selectMode': 'Select images',
+    'gallery.selectedCount': 'images selected',
+    'gallery.shareSelected': 'Share selected',
+    'gallery.shareEvent': 'Share event',
+    'gallery.viewAll': 'View all photos',
+    'gallery.backToGallery': 'Back to gallery',
+    'gallery.downloadImage': 'Download image',
+    'gallery.copyLink': 'Copy link',
     
     // Floating Navbar
     'navbar.support': 'Support',

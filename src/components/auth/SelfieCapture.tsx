@@ -24,8 +24,8 @@ export const SelfieCapture = ({ onCapture, onBack, autoOpenCamera }: SelfieCaptu
 
   useEffect(() => {
     if (autoOpenCamera && !hasClickedRef.current) {
-      startCamera();
-      fileInputRef.current?.click();
+      // startCamera();
+      // fileInputRef.current?.click();
       hasClickedRef.current = true;
     }
   }, [autoOpenCamera]);

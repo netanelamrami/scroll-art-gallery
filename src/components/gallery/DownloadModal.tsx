@@ -22,10 +22,10 @@ interface DownloadModalProps {
   autoDownload?: boolean; // For immediate download if <= 20 images
   albumName?: string; // Name of the album being downloaded
   galleryType?: 'all' | 'my' | 'favorites'; // סוג הגלרייה - עבור קביעת DownloadAllPhotos
-  eventId?: number; // מזהה האירוע
+  event?: any; // מזהה האירוע
 }
 
-export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false, albumName, galleryType = 'all', eventId }: DownloadModalProps) => {
+export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDownload = false, albumName, galleryType = 'all', event }: DownloadModalProps) => {
   const [step, setStep] = useState<'contact' | 'quality' | 'success'>('contact');
   const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
@@ -78,7 +78,8 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
         setStep('success');
         const success = await downloadMultipleImages(
           images.map(img => ({ src: formData.quality == 'high' ? img.largeSrc : img.mediumSrc  , id: img.id }))
-        );
+          ,event.name
+        ); 
         
         if (success) {
           toast({
@@ -98,7 +99,7 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
         const phoneData = formData.phone ? `${formData.countryCode}${formData.phone.replace(/^0/, '')}` : '';
         const downloadRequest = {
           UserId: userId,
-          EventId: eventId,
+          EventId: event.id,
           Email: formData.email,
           Phone: phoneData,
           Quality: formData.quality == 'high' ? true : false, // "high" or "web"

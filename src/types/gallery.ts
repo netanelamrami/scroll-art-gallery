@@ -8,6 +8,7 @@ export interface GalleryImage {
   width: number;
   height: number;
   albumId?: string;
+  photoHeight?: 0;
 }
 
 export interface Album {

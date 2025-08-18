@@ -44,6 +44,12 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   }, [imageCount]);
 
 
+  useEffect(() => {
+    if(!showMenu){
+      setIsExpanded(false);
+    }
+  }, [showMenu]);
+
 
   // Close navbar when clicking outside (mobile only)
   useEffect(() => {
@@ -104,7 +110,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   // Desktop version - always expanded with text
   if (!isMobile && showMenu) {
     return (
-      <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] ${className}`} >
+      <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 max-w-[95vw] ${className}`} >
         <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-4 py-3 flex items-center gap-2">
 
 
@@ -237,7 +243,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
       <div className="relative">
         
         {/* Expanded state - full navbar */}
-        {isExpanded && (
+        {isExpanded && showMenu &&(
           <div className={`absolute bottom-16 start-0 bg-background/95 backdrop-blur-sm border shadow-lg rounded-2xl px-3 py-3 flex flex-col gap-2 animate-fade-in transition-all duration-500 transform origin-bottom min-w-[160px]`}>
            {/* Toggle Selection Mode */}
             {imageCount > 0 && (

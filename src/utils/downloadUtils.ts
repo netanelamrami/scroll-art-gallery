@@ -25,7 +25,8 @@ export const downloadImage = async (src: string, filename: string) => {
 };
 
 export const downloadMultipleImages = async (
-  images: Array<{ src: string; id: string }>
+  images: Array<{ src: string; id: string }>,
+  fileName: string = "images"
 ) => {
   const zip = new JSZip();
 

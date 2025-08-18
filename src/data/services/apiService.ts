@@ -1,6 +1,7 @@
 import { User } from "@/types/auth";
 
 const BASE_URL = "https://api.pixshare.live/PixApi/api";
+// const BASE_URL = "http://localhost:5050/api";
 
 export const apiService = {
   async sendSMS(phoneNumber: string, message: string, otp: boolean = true) {

@@ -225,7 +225,7 @@ export const Gallery = ({
     });
 
     const success = await downloadMultipleImages(
-      selectedImagesArray.map(img => ({ src: img.largeSrc, id: img.id }))
+      selectedImagesArray.map(img => ({ src: img.largeSrc, id: img.id })), event.name
     );
 
     if (success) {
@@ -423,6 +423,7 @@ export const Gallery = ({
             selectedAlbum={selectedAlbum}
             allImages={images}
             getImagesByAlbum={getImagesByAlbum}
+            event={event}
           />
         ) : null;
       })()}
@@ -501,7 +502,7 @@ export const Gallery = ({
         imageCount={images.length}
         images={images}
         autoDownload={false}
-        eventId={event.id}
+        event={event}
       />
 
      {/* Global Image Dropdown */}

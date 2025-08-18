@@ -72,7 +72,8 @@ const Index = () => {
           size: `${imageData.size} MB`,
           width: 400,
           height: 300,
-          albumId: imageData.albomId?.toString() || 'main'
+          albumId: imageData.albomId?.toString() || 'main',
+          photoHeight: imageData.photoHeight || 0 
         }));
         setGalleryImages(formattedImages);
         setIsLoading(false);
@@ -121,7 +122,7 @@ const Index = () => {
         document.getElementById('gallery')?.scrollIntoView({
           behavior: 'smooth'
         });
-      }, 100);
+      }, 300);
     }, 1000);
   };
 
@@ -155,7 +156,8 @@ const Index = () => {
           size: 'medium' as const,
           width: 400,
           height: 300,
-          albumId: imageData.albomId?.toString() || 'main'
+          albumId: imageData.albomId?.toString() || 'main',
+           photoHeight: imageData.photoHeight || 0 
         })) || [];
         
         setUserImages(formattedUserImages);
@@ -174,7 +176,7 @@ const Index = () => {
       document.getElementById('gallery')?.scrollIntoView({
         behavior: 'smooth'
       });
-    }, 100);
+    }, 300);
   };
 
   const handleAlbumClick = (albumId: string) => {
@@ -189,7 +191,7 @@ const Index = () => {
         document.getElementById('gallery')?.scrollIntoView({
           behavior: 'smooth'
         });
-      }, 100);
+      }, 300);
     }
   };
 
@@ -240,7 +242,7 @@ const handleAuthComplete = async (user: User) => {
       document.getElementById('gallery')?.scrollIntoView({
         behavior: 'smooth'
         });
-      }, 100);
+      }, 300);
  };
 
     const handleNotificationOpen = (event: CustomEvent) => {
@@ -445,7 +447,7 @@ const handleAuthComplete = async (user: User) => {
         autoDownload={galleryImages.length <= 20}
         albumName={event?.name || "כל התמונות"}
         galleryType={galleryType}
-        eventId={event?.id}
+        event={event}
       />
 
     </div>

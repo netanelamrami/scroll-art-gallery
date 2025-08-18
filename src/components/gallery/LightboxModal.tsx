@@ -110,7 +110,12 @@ export const LightboxModal = ({
 
   const handleDownload = async () => {
     if (!currentImage) return;
-    
+
+      toast({
+        title: t('toast.downloadStarting.title'),
+        description: t('toast.downloadStarting.title'),
+      });
+
     const success = await downloadImage(currentImage.largeSrc, `image-${currentImage.id}.jpg`);
     
     if (success) {

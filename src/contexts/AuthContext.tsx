@@ -145,11 +145,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       sessionStorage.removeItem('isRegister');
       sessionStorage.removeItem('jwtUser');
       sessionStorage.removeItem('photourl');
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth" // מעבר חלק
-    });
+    // window.scrollTo({
+    //   top: 0,
+    //   behavior: "smooth" // מעבר חלק
+    // });
       console.log('AuthProvider localStorage cleared directly');
+      window.location.reload();
     }, 100);
   };
 

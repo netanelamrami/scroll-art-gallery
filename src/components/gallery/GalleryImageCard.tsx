@@ -91,7 +91,7 @@ export const GalleryImageCard = ({
         "bg-card hover:bg-accent/50 dark:bg-card dark:hover:bg-accent/50",
         "transform transition-all duration-300 hover:scale-[1.00]",
         "shadow-md hover:shadow-xl border border-border",
-        "hover:z-50", // הוספת z-index גבוה בהובר
+        "hover:z-30", // הוספת z-index גבוה בהובר
         isSelectionMode && "ring-2 ring-transparent",
         isSelected && "ring-1 ring-primary  ring-offset-background"
       )}

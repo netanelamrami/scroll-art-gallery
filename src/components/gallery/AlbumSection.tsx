@@ -13,9 +13,10 @@ interface AlbumSectionProps {
   selectedAlbum?: string;
   allImages?: GalleryImage[];
   getImagesByAlbum?: (albumId: string) => GalleryImage[];
+  event?: any; // Event data, if applicable
 }
 
-export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImages = [], getImagesByAlbum }: AlbumSectionProps) => {
+export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImages = [], getImagesByAlbum , event}: AlbumSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadAlbumImages, setDownloadAlbumImages] = useState<GalleryImage[]>([]);
@@ -234,6 +235,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
         images={downloadAlbumImages}
         autoDownload={downloadAlbumImages.length <= 20}
         albumName={downloadAlbumName}
+        event={event}
       />
     </div>
   );

@@ -40,6 +40,28 @@ const translations = {
     'gallery.downloadImage': 'הורד תמונה',
     'gallery.copyLink': 'העתק קישור',
     
+    // Common
+    common: {
+      of: 'מתוך',
+      imageSize: 'גודל תמונה',
+      backToGallery: 'חזרה לגלריה'
+    },
+    
+    // Image Save functionality
+    imageSave: {
+      title: 'שמירת תמונה',
+      subtitle: 'לחץ ארוך על התמונה כדי לשמור אותה',
+      instructions: {
+        title: 'איך לשמור תמונה באייפון:',
+        step1: 'לחץ ארוך על התמונה למטה',
+        step2: 'בחר "שמירה בתמונות" מהתפריט',
+        step3: 'התמונה תישמר בגלריית הצילומים שלך'
+      },
+      longPressHint: 'לחץ ארוך על התמונה כדי לשמור אותה לגלריה',
+      copied: 'הקישור הועתק בהצלחה',
+      downloaded: 'התמונה הורדה בהצלחה'
+    },
+    
     // Floating Navbar - תפריט נופף
     'navbar.support': 'תמיכה',
     'navbar.allPhotos': 'כל התמונות',
@@ -486,18 +508,36 @@ const translations = {
     'privacy.policy': 'Privacy Policy',
     
     // Common
-    'common.back': 'Back',
-    'common.selected': 'Selected',
-    'common.favorites': 'Favorites',
-    'common.download': 'Download',
-    'common.cancel': 'Cancel',
-    'common.delete': 'Delete',
-    'common.close': 'Close',
-    'common.next': 'Next',
-    'common.of': 'of',
-    'common.imageSize': 'Size',
-    'common.activeUser': 'Active User',
-    'common.optional': 'Optional',
+    common: {
+      back: 'Back',
+      selected: 'Selected',
+      favorites: 'Favorites',
+      download: 'Download',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      close: 'Close',
+      next: 'Next',
+      of: 'of',
+      imageSize: 'Size',
+      activeUser: 'Active User',
+      optional: 'Optional',
+      backToGallery: 'Back to Gallery'
+    },
+    
+    // Image Save functionality
+    imageSave: {
+      title: 'Save Image',
+      subtitle: 'Long press on the image to save it',
+      instructions: {
+        title: 'How to save image on iPhone:',
+        step1: 'Long press on the image below',
+        step2: 'Select "Save to Photos" from the menu',
+        step3: 'The image will be saved to your photo gallery'
+      },
+      longPressHint: 'Long press on the image to save it to your gallery',
+      copied: 'Link copied successfully',
+      downloaded: 'Image downloaded successfully'
+    },
 
     // Notifications
     'notifications.title': 'New photo alerts',
@@ -568,8 +608,14 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   }, [language]);
 
   const t = (key: string): string => {
-    const translation = translations[language][key as keyof typeof translations[typeof language]];
-    return translation || key;
+    const keys = key.split('.');
+    let translation: any = translations[language];
+    
+    for (const k of keys) {
+      translation = translation?.[k];
+    }
+    
+    return typeof translation === 'string' ? translation : key;
   };
 
   return (

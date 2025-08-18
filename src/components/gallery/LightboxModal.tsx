@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
 import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
+import { isIOS } from "@/utils/deviceUtils";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -28,6 +30,7 @@ export const LightboxModal = ({
   isFavorite = false,
   onToggleFavorite,
 }: LightboxModalProps) => {
+  const navigate = useNavigate();
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -111,10 +114,21 @@ export const LightboxModal = ({
   const handleDownload = async () => {
     if (!currentImage) return;
 
-      toast({
-        title: t('toast.downloadStarting.title'),
-        description: t('toast.downloadStarting.title'),
+    // Check if iOS - redirect to image save page
+    if (isIOS()) {
+      const params = new URLSearchParams({
+        url: currentImage.largeSrc,
+        name: `image-${currentImage.id}.jpg`
       });
+      navigate(`/image-save?${params.toString()}`);
+      return;
+    }
+
+    // For Android/Desktop - direct download
+    toast({
+      title: t('toast.downloadStarting.title'),
+      description: t('toast.downloadStarting.description'),
+    });
 
     const success = await downloadImage(currentImage.largeSrc, `image-${currentImage.id}.jpg`);
     

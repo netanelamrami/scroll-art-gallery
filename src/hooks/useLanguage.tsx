@@ -41,26 +41,20 @@ const translations = {
     'gallery.copyLink': 'העתק קישור',
     
     // Common
-    common: {
-      of: 'מתוך',
-      imageSize: 'גודל תמונה',
-      backToGallery: 'חזרה לגלריה'
-    },
+    'common.of': 'מתוך',
+    'common.imageSize': 'גודל תמונה',
+    'common.backToGallery': 'חזרה לגלריה',
     
     // Image Save functionality
-    imageSave: {
-      title: 'שמירת תמונה',
-      subtitle: 'לחץ ארוך על התמונה כדי לשמור אותה',
-      instructions: {
-        title: 'איך לשמור תמונה באייפון:',
-        step1: 'לחץ ארוך על התמונה למטה',
-        step2: 'בחר "שמירה בתמונות" מהתפריט',
-        step3: 'התמונה תישמר בגלריית הצילומים שלך'
-      },
-      longPressHint: 'לחץ ארוך על התמונה כדי לשמור אותה לגלריה',
-      copied: 'הקישור הועתק בהצלחה',
-      downloaded: 'התמונה הורדה בהצלחה'
-    },
+    'imageSave.title': 'שמירת תמונה',
+    'imageSave.subtitle': 'לחץ ארוך על התמונה כדי לשמור אותה',
+    'imageSave.instructions.title': 'איך לשמור תמונה באייפון:',
+    'imageSave.instructions.step1': 'לחץ ארוך על התמונה למטה',
+    'imageSave.instructions.step2': 'בחר "שמירה בתמונות" מהתפריט',
+    'imageSave.instructions.step3': 'התמונה תישמר בגלריית הצילומים שלך',
+    'imageSave.longPressHint': 'לחץ ארוך על התמונה כדי לשמור אותה לגלריה',
+    'imageSave.copied': 'הקישור הועתק בהצלחה',
+    'imageSave.downloaded': 'התמונה הורדה בהצלחה',
     
     // Floating Navbar - תפריט נופף
     'navbar.support': 'תמיכה',
@@ -248,8 +242,6 @@ const translations = {
     'common.delete': 'מחק',
     'common.close': 'סגור',
     'common.next': 'הבא',
-    'common.of': 'מתוך',
-    'common.imageSize': 'גודל',
     'common.activeUser': 'משתמש פעיל',
     'common.optional': 'אופציונלי',
 
@@ -508,36 +500,30 @@ const translations = {
     'privacy.policy': 'Privacy Policy',
     
     // Common
-    common: {
-      back: 'Back',
-      selected: 'Selected',
-      favorites: 'Favorites',
-      download: 'Download',
-      cancel: 'Cancel',
-      delete: 'Delete',
-      close: 'Close',
-      next: 'Next',
-      of: 'of',
-      imageSize: 'Size',
-      activeUser: 'Active User',
-      optional: 'Optional',
-      backToGallery: 'Back to Gallery'
-    },
+    'common.back': 'Back',
+    'common.selected': 'Selected',
+    'common.favorites': 'Favorites',
+    'common.download': 'Download',
+    'common.cancel': 'Cancel',
+    'common.delete': 'Delete',
+    'common.close': 'Close',
+    'common.next': 'Next',
+    'common.of': 'of',
+    'common.imageSize': 'Size',
+    'common.activeUser': 'Active User',
+    'common.optional': 'Optional',
+    'common.backToGallery': 'Back to Gallery',
     
     // Image Save functionality
-    imageSave: {
-      title: 'Save Image',
-      subtitle: 'Long press on the image to save it',
-      instructions: {
-        title: 'How to save image on iPhone:',
-        step1: 'Long press on the image below',
-        step2: 'Select "Save to Photos" from the menu',
-        step3: 'The image will be saved to your photo gallery'
-      },
-      longPressHint: 'Long press on the image to save it to your gallery',
-      copied: 'Link copied successfully',
-      downloaded: 'Image downloaded successfully'
-    },
+    'imageSave.title': 'Save Image',
+    'imageSave.subtitle': 'Long press on the image to save it',
+    'imageSave.instructions.title': 'How to save image on iPhone:',
+    'imageSave.instructions.step1': 'Long press on the image below',
+    'imageSave.instructions.step2': 'Select "Save to Photos" from the menu',
+    'imageSave.instructions.step3': 'The image will be saved to your photo gallery',
+    'imageSave.longPressHint': 'Long press on the image to save it to your gallery',
+    'imageSave.copied': 'Link copied successfully',
+    'imageSave.downloaded': 'Image downloaded successfully',
 
     // Notifications
     'notifications.title': 'New photo alerts',
@@ -608,14 +594,8 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   }, [language]);
 
   const t = (key: string): string => {
-    const keys = key.split('.');
-    let translation: any = translations[language];
-    
-    for (const k of keys) {
-      translation = translation?.[k];
-    }
-    
-    return typeof translation === 'string' ? translation : key;
+    const translation = translations[language][key as keyof typeof translations[typeof language]];
+    return translation || key;
   };
 
   return (

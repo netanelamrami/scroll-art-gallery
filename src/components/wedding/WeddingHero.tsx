@@ -31,7 +31,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
   const handleMyPhotosClick = () => {
     if (isAuthenticated && currentUser) {
       // User is already authenticated, dispatch event to switch to my photos
-      window.dispatchEvent(new CustomEvent('switchToMyPhotos'));
+      window.dispatchEvent(new CustomEvent('switchToMyPhotos', { detail:  currentUser }));
       
       // Scroll to gallery
       setTimeout(() => {
@@ -103,9 +103,11 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-1 tracking-wide">
             {event?.name || 'Loading...'}
           </h1>
-             <h3 className=" md:text-xl font-semibold text-white mb-1 tracking-wide">
-            {event?.description || 'Loading...'}
-          </h3>
+          {event?.description && (
+              <h3 className=" md:text-xl font-semibold text-white mb-1 tracking-wide" >
+                {event?.description }
+              </h3>
+            )}
           {/* <p className="text-xl md:text-2xl text-white/90 font-light">
             15.06.2024
           </p> */}

@@ -142,8 +142,13 @@ export const apiService = {
 
   async sendWelcomeSMS(phoneNumber: string, eventLink: string, userId: string): Promise<any> {
     try {
-      const message = `היי, נתפסת בעדשה!📸\nתמונות חדשות מחכות לך בגלריה האישית שלך >>>\nhttps://www.pixshare.live/gallery/${eventLink}?userid=${userId}\n\nPixShare AI`;
-      
+    const message = `היי, הגלריה האישית שלך כאן🎉
+אם אין תמונות כרגע, תקבל/י התראה כשהן יעלו 🔔
+לצפייה מהירה בגלריה 👇🏼
+https://www.pixshare.live/gallery/${eventLink}?userid=${userId}
+הגלריה זמינה כחודש.
+בברכה, Pixshare AI`;      
+
       const smsData = {
         phoneNumber,
         message,

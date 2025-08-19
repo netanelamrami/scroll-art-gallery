@@ -53,7 +53,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   };
 
   return (
-    <div className="sticky top-10 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full" dir={language === 'he' ? 'rtl' : 'rtl'}>
+    <div className="sticky top-10 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full" dir={language === 'he' ? 'ltr' : 'rtl'}>
       {/* Collapsed view - horizontal bar */}
       <div className="flex items-center justify-between gap-2 mb-1 overflow-x-auto pt-2">
         {/* Favorites album on the left */}
@@ -76,7 +76,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
         </div>
 
         {/* Other albums on the right - collapsed view with expand button */}
-        <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0 thin-scrollbar" dir="ltr">
+        <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0 thin-scrollbar" dir={language === 'he' ? 'rtl' : 'ltr'}>
           {/* Show selected album first if it's not in the initial visible albums */}
           {(() => {
             const visibleCount = window.innerWidth >= 768 ? 100 : 100; // More albums on larger screens

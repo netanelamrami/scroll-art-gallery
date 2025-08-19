@@ -38,7 +38,7 @@ const translations = {
     'gallery.viewAll': 'צפה בכל התמונות',
     'gallery.backToGallery': 'חזור לגלרייה',
     'gallery.downloadImage': 'הורד תמונה',
-    'gallery.copyLink': 'העתק קישור',
+    'gallery.addToFavorites': 'הוסף למועדפים',
     
     // Common
     'common.of': 'מתוך',
@@ -51,8 +51,8 @@ const translations = {
     'imageSave.instructions.title': 'איך לשמור תמונה באייפון:',
     'imageSave.instructions.step1': 'לחץ ארוך על התמונה למטה',
     'imageSave.instructions.step2': 'בחר "שמירה בתמונות" מהתפריט',
-    'imageSave.instructions.step3': 'התמונה תישמר בגלריית הצילומים שלך',
-    'imageSave.longPressHint': 'לחץ ארוך על התמונה כדי לשמור אותה לגלריה',
+    'imageSave.instructions.step3': 'התמונה תישמר בגלרייה',
+    'imageSave.longPressHint': 'המתן לטעינת התמונה ולחץ ארוך לשמירה בגלריה',
     'imageSave.copied': 'הקישור הועתק בהצלחה',
     'imageSave.downloaded': 'התמונה הורדה בהצלחה',
     
@@ -320,7 +320,7 @@ const translations = {
     'gallery.viewAll': 'View all photos',
     'gallery.backToGallery': 'Back to gallery',
     'gallery.downloadImage': 'Download image',
-    'gallery.copyLink': 'Copy link',
+    'gallery.addToFavorites': 'Add to Favorites',    
     
     // Floating Navbar
     'navbar.support': 'Support',

@@ -15,7 +15,7 @@ import { downloadImage, downloadMultipleImages } from "@/utils/downloadUtils";
 import { EmptyPhotosState } from "./EmptyPhotosState";
 import { useAlbums } from "@/hooks/useAlbums";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Download, Link } from "lucide-react";
+import { Download, Heart, Link } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 
@@ -64,7 +64,7 @@ export const Gallery = ({
   const { t, language } = useLanguage();
   
   // Use albums hook
-  const { albums, getImagesByAlbum } = useAlbums(event.id.toString(), images);
+  const { albums, getImagesByAlbum, firstAlbum } = useAlbums(event.id.toString(), images);
 
   // Sync external props with internal state
   useEffect(() => {
@@ -85,43 +85,55 @@ export const Gallery = ({
     }
   }, [externalSelectedImages]);
 
-  // Set first album as default when albums are loaded
-  useEffect(() => {
-    if (albums.length > 0 && !selectedAlbum && onAlbumClick) {
-      onAlbumClick(albums[0].id);
-    }
-  }, [albums, selectedAlbum, onAlbumClick]);
+
 
   // Reset displayed images count when images change
   useEffect(() => {
     setDisplayedImagesCount(30);
   }, [images]);
 
+  useEffect(() => {
+    if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
+      onAlbumClick(firstAlbum);
+    }
+  }, [firstAlbum, albums, selectedAlbum, onAlbumClick]);
+
+    useEffect(() => {
+    if (firstAlbum != null) {
+      onAlbumClick(firstAlbum);
+    }
+  }, [firstAlbum]);
+  // Reset displayed images count when images change
+
   // Infinite scroll effect - updated to use filtered images
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         let currentImages = images;
+
         if (selectedAlbum) {
           if (selectedAlbum === 'favorites') {
             currentImages = images.filter(img => favoriteImages.has(img.id));
           } else {
             currentImages = getImagesByAlbum(selectedAlbum);
+            console.log(selectedAlbum)
           }
         }
+        console.log('Current images:', currentImages, 'Displayed count:', displayedImagesCount, 'Is loading more:', isLoadingMore);
         
         if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < currentImages.length) {
+
           setIsLoadingMore(true);
           // Simulate loading delay
-          setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
-          setIsLoadingMore(false);
-          // setTimeout(() => {
-          // }, 1500);
+          setTimeout(() => {
+            setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
+            setIsLoadingMore(false);
+          }, 1000);
         }
       },
       { threshold: 0.1 }
     );
-
+    console.log(images)
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
     }
@@ -148,6 +160,8 @@ export const Gallery = ({
     window.addEventListener('resize', updateColumns);
     return () => window.removeEventListener('resize', updateColumns);
   }, []);
+
+
 
   const handleImageClick = (image: GalleryImage, index: number) => {
     if (isSelectionMode) {
@@ -250,6 +264,7 @@ export const Gallery = ({
     handleCancelSelection();
   };
 
+
   const handleCancelSelection = () => {
     setSelectedImages(new Set());
     setIsSelectionMode(false);
@@ -313,7 +328,6 @@ export const Gallery = ({
   const handleDropdownClose = () => {
     setDropdownImage(null);
     document.body.style.overflow = "auto"; 
-    console.log('Dropdown closed');
   };
 
   const  handleImageDownload = async() => {
@@ -342,22 +356,25 @@ export const Gallery = ({
 
   };
 
-  const handleImageCopyLink = () => {
-    if (!dropdownImage) return;
+  // const handleImageCopyLink = () => {
+  //   if (!dropdownImage) return;
     
-    const image = images.find(img => img.id === dropdownImage.id);
-    if (!image) return;
+  //   const image = images.find(img => img.id === dropdownImage.id);
+  //   if (!image) return;
     
-    navigator.clipboard.writeText(image.src);
-    toast({
-      title: t('toast.linkCopied.title'),
-      description: t('toast.linkCopied.description'),
-    });
+  //   navigator.clipboard.writeText(image.src);
+  //   toast({
+  //     title: t('toast.linkCopied.title'),
+  //     description: t('toast.linkCopied.description'),
+  //   });
     
-    handleDropdownClose();
+  //   handleDropdownClose();
+  // };
+
+  const handleToggleImageFavorites = () => {
+      onToggleFavorite(dropdownImage?.id );
+      handleDropdownClose();
   };
-
-
 
   const displayedImages = filteredImages.slice(0, displayedImagesCount);
 
@@ -447,8 +464,8 @@ export const Gallery = ({
             />
             
             {/* Load More Trigger & Loader */}
-            {displayedImagesCount < filteredImages.length && (
-              <div ref={loadMoreRef} className="w-full py-8 flex justify-center">
+            {displayedImagesCount < filteredImages.length  && (
+              <div ref={loadMoreRef} className="w-full py-4 flex justify-center">
                 {isLoadingMore ? (
                   <div className="flex items-center justify-center">
                   <div className={`flex  flex-col  items-center gap-3 `}>
@@ -457,7 +474,7 @@ export const Gallery = ({
                       {/* {t('auth.loading')} */}
                       Powered by Pixshare AI
                       </span>
-                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-black"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-black"></div>
                     </div>
 
                   </div>
@@ -533,20 +550,21 @@ export const Gallery = ({
                   "h-4 w-4",
                   language === 'he' ? 'ml-2' : 'mr-2'
                 )} />
+                
                 {t('gallery.downloadImage')}
               </button>
               <button
-                onClick={handleImageCopyLink}
+                onClick={handleToggleImageFavorites}
                 className={cn(
                   "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
                   language === 'he' ? 'text-right' : 'text-left'
                 )}
               >
-                <Link className={cn(
+                <Heart className={cn(
                   "h-4 w-4",
                   language === 'he' ? 'ml-2' : 'mr-2'
                 )} />
-                {t('gallery.copyLink')}
+                {t('gallery.addToFavorites')}
               </button>
             </div>
           </div>

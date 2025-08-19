@@ -85,28 +85,28 @@ export const ImageSave = () => {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full">
           <div 
-            className={cn(
-              "relative bg-card border border-border rounded-lg overflow-hidden shadow-lg transition-all duration-700",
-              showInstructions ? "opacity-100 scale-100" : "opacity-70 scale-95"
-            )}
+            // className={cn(
+            //   "relative bg-card border border-border rounded-lg overflow-hidden shadow-lg transition-all duration-700",
+            //   showInstructions ? "opacity-100 scale-100" : "opacity-70 scale-95"
+            // )}
           >
             <img
               src={imageUrl}
               alt={imageName}
               className="w-full h-auto max-h-[70vh] object-contain"
-              draggable={false}
+              // draggable={false}
             />
             
             {/* Download Hint Overlay */}
             <div 
-              className={cn(
-                "absolute inset-0 bg-black/20 flex items-center justify-center transition-all duration-1000",
-                showInstructions ? "opacity-100" : "opacity-0"
-              )}
+              // className={cn(
+              //   "absolute inset-0 bg-black/20 flex items-center justify-center transition-all duration-1000 pointer-events-none",
+              //   showInstructions ? "opacity-100" : "opacity-0"
+              // )}
             >
-              <div className="bg-white/90 dark:bg-black/90 backdrop-blur-sm rounded-full p-4 animate-pulse">
+              {/* <div className="bg-white/90 dark:bg-black/90 backdrop-blur-sm rounded-full p-4 animate-pulse">
                 <Download className="h-8 w-8 text-primary" />
-              </div>
+              </div> */}
             </div>
           </div>
           
@@ -125,7 +125,7 @@ export const ImageSave = () => {
       </div>
 
       {/* Bottom Actions */}
-      <div className="p-4 border-t border-border bg-background">
+      {/* <div className="p-4 border-t border-border bg-background">
         <div className="flex items-center justify-center gap-4">
           <Button
             variant="outline"
@@ -139,7 +139,7 @@ export const ImageSave = () => {
             {t('common.backToGallery')}
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

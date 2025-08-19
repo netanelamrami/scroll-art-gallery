@@ -7,6 +7,7 @@ export const useAlbums = (eventId: string, images: GalleryImage[]) => {
   const [albumImages, setAlbumImages] = useState<Record<string, GalleryImage[]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [firstAlbum, setFirstAlbum] = useState<string | null>(null);
 
   useEffect(() => {
     if (!eventId) return;
@@ -62,7 +63,8 @@ export const useAlbums = (eventId: string, images: GalleryImage[]) => {
       imageCount: imagesByAlbum[album.id]?.length || 0,
       thumbnail: imagesByAlbum[album.id]?.[0]?.src
     }));
-
+    console.log(updatedAlbums.find(album => album.imageCount > 0)?.id || null)
+    setFirstAlbum(updatedAlbums.find(album => album.imageCount > 0)?.id || null);
     setAlbums(updatedAlbums);
     setAlbumImages(imagesByAlbum);
   }, [albums.length, images]);
@@ -75,12 +77,14 @@ export const useAlbums = (eventId: string, images: GalleryImage[]) => {
     return albums.find(album => album.id === albumId);
   };
 
+
   return {
     albums,
     albumImages,
     isLoading,
     error,
     getImagesByAlbum,
-    getAlbumById
+    getAlbumById,
+    firstAlbum
   };
 };

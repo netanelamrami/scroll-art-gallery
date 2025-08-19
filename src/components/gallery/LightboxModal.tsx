@@ -127,10 +127,10 @@ export const LightboxModal = ({
     // For Android/Desktop - direct download
     toast({
       title: t('toast.downloadStarting.title'),
-      description: t('toast.downloadStarting.description'),
+      description: t('toast.downloadStarting.title'),
     });
 
-    const success = await downloadImage(currentImage.largeSrc, `image-${currentImage.id}.jpg`);
+    const success = await downloadImage(currentImage.largeSrc, `${currentImage.id}`);
     
     if (success) {
       toast({
@@ -249,10 +249,11 @@ export const LightboxModal = ({
           <img
             src={currentImage.mediumSrc}
             alt={currentImage.alt}
-            className={cn(
-              "max-w-full max-h-full w-auto h-auto object-contain shadow-gallery transition-opacity duration-300",
-              imageLoaded ? "opacity-100" : "opacity-0"
-            )}
+          className={cn(
+            "max-w-full w-auto h-auto object-contain shadow-gallery transition-opacity duration-300 max-h-[calc(100vh-12vh)]",
+            imageLoaded ? "opacity-100" : "opacity-0"
+          )}
+
             onLoad={() => setImageLoaded(true)}
             draggable={false}
           />

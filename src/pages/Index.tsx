@@ -33,6 +33,7 @@ const Index = () => {
   const [columns, setColumns] = useState(3);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [initialStepNotification, setInitialStepNotification] = useState<NotificationStep>("collapsed");
+  const [shouldLoadUserImages, setShouldLoadUserImages] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
   const [userImages, setUserImages] = useState([]); 
@@ -58,7 +59,7 @@ const Index = () => {
         }
         
         setEvent(eventData);
-        
+        console.log(event)
         return apiService.getEventImagesFullData(currentEventLink);
       })
       .then(imagesData => {
@@ -109,6 +110,14 @@ const Index = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (shouldLoadUserImages && event && currentUser) {
+      loadUserImages(currentUser).then(() => {
+        setShouldLoadUserImages(false); // אפס את הסמן לאחר הטעינה
+      });
+    }
+  }, [shouldLoadUserImages, event, currentUser]);
+
   const handleViewAllPhotos = () => {
     setIsLoadingAllPhotos(true);
     setGalleryType('all');
@@ -135,6 +144,10 @@ const Index = () => {
   };
 
 
+const onUserClickedLoadImages = () => {
+  setShouldLoadUserImages(true);
+};
+
   // פונקציה נפרדת לטעינת תמונות המשתמש
   const loadUserImages = async (user) => {
     setIsLoadingMyPhotos(true);
@@ -142,11 +155,11 @@ const Index = () => {
       const userId = Number(user.id)//parseInt(sessionStorage.getItem('userid') || '0');
       const eventId = event?.id;
     
+      console.log(userId, event)
       if (userId && eventId) {
 
         const userImagesData = await apiService.getImages(userId, eventId);
-        
-        // המרת נתוני התמונות למבנה שהאפליקציה מצפה אליו
+        console.log( userImagesData)
         const formattedUserImages = userImagesData?.map((imageData: any, index: number) => ({
           id: imageData.name || `user-image-${index}`,
           src: imageData.smallUrl,
@@ -157,7 +170,7 @@ const Index = () => {
           width: 400,
           height: 300,
           albumId: imageData.albomId?.toString() || 'main',
-           photoHeight: imageData.photoHeight || 0 
+          photoHeight: imageData.photoHeight || 0 
         })) || [];
         
         setUserImages(formattedUserImages);
@@ -191,6 +204,7 @@ const Index = () => {
         document.getElementById('gallery')?.scrollIntoView({
           behavior: 'smooth'
         });
+            setSelectedAlbum(albumId);
       }, 300);
     }
   };
@@ -222,7 +236,8 @@ const handleAuthComplete = async (user: User) => {
     forceUpdate({});
     
     // טוען את התמונות של המשתמש
-    await loadUserImages(user);
+    onUserClickedLoadImages();
+    // await loadUserImages(user);
     
     // Set gallery state
     setGalleryType('my');
@@ -234,7 +249,7 @@ const handleAuthComplete = async (user: User) => {
         if (!event.needDetect && !user.sendNotification) {
             setShowNotificationSubscription(true);
           }
-      }, 2000);
+      }, 3000);
       
     
     // Smooth scroll to gallery
@@ -243,10 +258,9 @@ const handleAuthComplete = async (user: User) => {
         behavior: 'smooth'
         });
       }, 300);
- };
+   };
 
     const handleNotificationOpen = (event: CustomEvent) => {
-      console.log('Notification open event received:', event.detail);
       setInitialStepNotification(event.detail)
       setShowNotificationSubscription(true);
     };
@@ -264,12 +278,14 @@ const handleAuthComplete = async (user: User) => {
 
     const handleSwitchToMyPhotos = async (event) => {
       const user = event.detail;
-     if (!isAuthenticated) {
+      if (!isAuthenticated) {
           setShowAuthFlow(true);
           return;
         }
 
-        await loadUserImages(user ?? currentUser);
+        // await loadUserImages(user ?? currentUser);
+        onUserClickedLoadImages();
+
         setGalleryType('my');
         setShowGallery(true);
       
@@ -278,7 +294,8 @@ const handleAuthComplete = async (user: User) => {
     // Listen for user switch events
     const handleAuthStateChanged = async () => {
       if (isAuthenticated && galleryType === 'my') {        
-        await loadUserImages(currentUser);
+         onUserClickedLoadImages();
+        // await loadUserImages(currentUser);
       }
     };
 
@@ -343,7 +360,9 @@ const handleAuthComplete = async (user: User) => {
   const filteredImages = (() => {
     let baseImages = galleryImages;    
     if (galleryType === 'my' && isAuthenticated) {
+      console.log(userImages)
       baseImages = userImages; // שימוש בתמונות המשתמש שנטענו מהשרת
+      return baseImages
     }
     if(event?.withPhotos){
       return baseImages;

@@ -47,8 +47,16 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   useEffect(() => {
     if(!showMenu){
       setIsExpanded(false);
+      setIsQrOpen(false);
     }
   }, [showMenu]);
+
+
+  useEffect(() => {
+    if(!isExpanded){
+      setIsQrOpen(false);
+    }
+  }, [isExpanded]);
 
 
   // Close navbar when clicking outside (mobile only)

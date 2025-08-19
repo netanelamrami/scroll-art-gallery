@@ -5,6 +5,7 @@ import { useMultiUserAuth } from "@/contexts/AuthContext";
 import { SettingsMenu } from "@/components/ui/settings-menu";
 import { Heart, Camera, Users, Loader2, Images } from "lucide-react";
 import { event } from "@/types/event";
+import { EventLockModal } from "./EventLockModal";
 
 interface WeddingHeroProps {
   event: event;
@@ -18,6 +19,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
   const { t, setDefaultLanguage, language } = useLanguage();
   const { isAuthenticated, currentUser } = useMultiUserAuth();
   const [loaded, setLoaded] = useState(false);
+  const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
 
   // Set default language based on event language
   useEffect(() => {
@@ -43,6 +45,21 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
       // User needs to authenticate first
       onViewMyPhotos();
     }
+  };
+
+  // Handle All Photos button click
+  const handleAllPhotosClick = () => {
+    // Check if event is locked with code
+    if (event?.eventPhotoLockType === "Code") {
+      setIsEventLockModalOpen(true);
+    } else {
+      onViewAllPhotos();
+    }
+  };
+
+  // Handle successful code verification
+  const handleLockSuccess = () => {
+    onViewAllPhotos();
   };
 
   // useEffect(() => {
@@ -159,7 +176,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           {/* Show All Photos button only if withPhotos is true */}
           {event?.withPhotos && (
             <Button
-              onClick={onViewAllPhotos}
+              onClick={handleAllPhotosClick}
               size="lg"
               disabled={isLoadingAllPhotos}
               className="bg-white text-black hover:bg-white/90 px-4 py-3 text-base font-medium min-w-[150px] shadow-xl md:px-8 md:py-6 md:text-lg md:min-w-[200px] disabled:opacity-50"
@@ -214,6 +231,14 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           </div>
         </div> */}
       </div>
+
+      {/* Event Lock Modal */}
+      <EventLockModal
+        isOpen={isEventLockModalOpen}
+        onClose={() => setIsEventLockModalOpen(false)}
+        onSuccess={handleLockSuccess}
+        eventId={event?.id || 0}
+      />
     </div>
   );
 };

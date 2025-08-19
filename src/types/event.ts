@@ -43,4 +43,5 @@ export interface event {
   isAllPhotoEventLock: boolean;
   eventLanguage: "HE" | "EN";
   galleryGridSize: number;
+  eventPhotoLockType?: string;
 }

@@ -76,7 +76,10 @@ export const GalleryHeader = ({
                     <Download className="h-4 w-4 mr-2" />
                     {language === 'he' ? 'הורד הכל' : 'Download All'}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { onToggleSelection(); setIsMoreMenuOpen(false); }}>
+                  <DropdownMenuItem onClick={() => { 
+                    window.dispatchEvent(new CustomEvent('toggleSelectionMode')); 
+                    setIsMoreMenuOpen(false); 
+                  }}>
                     <CheckSquare className="h-4 w-4 mr-2" />
                     {language === 'he' ? 'בחר תמונות' : 'Select Images'}
                   </DropdownMenuItem>

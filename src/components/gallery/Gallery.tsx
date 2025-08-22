@@ -409,7 +409,7 @@ export const Gallery = ({
           }
         }}
         onDownloadAll={handleDownloadAll}
-        onToggleSelectionMode={handleToggleSelection}
+        onToggleSelectionMode={() => window.dispatchEvent(new CustomEvent('toggleSelectionMode'))}
         imageCount={images.length}
       />
       )}

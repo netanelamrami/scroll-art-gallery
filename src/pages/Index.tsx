@@ -271,6 +271,11 @@ const handleAuthComplete = async (user: User) => {
       setSelectedImages(new Set());
     };
 
+    const handleToggleSelectionFromNavbar = () => {
+      setSelectionMode(!selectionMode);
+      setSelectedImages(new Set());
+    };
+
     const handleSwitchToAllPhotos = (event) => {
 
         setGalleryType('all');
@@ -300,6 +305,7 @@ const handleAuthComplete = async (user: User) => {
     };
 
     window.addEventListener('exitSelectionMode', handleExitSelectionMode);
+    window.addEventListener('toggleSelectionMode', handleToggleSelectionFromNavbar);
     window.addEventListener('switchToAllPhotos', handleSwitchToAllPhotos);
     window.addEventListener('switchToMyPhotos', handleSwitchToMyPhotos);
     window.addEventListener('authStateChanged', handleAuthStateChanged);
@@ -307,13 +313,14 @@ const handleAuthComplete = async (user: User) => {
 
     return () => {
       window.removeEventListener('exitSelectionMode', handleExitSelectionMode);
+      window.removeEventListener('toggleSelectionMode', handleToggleSelectionFromNavbar);
       window.removeEventListener('switchToAllPhotos', handleSwitchToAllPhotos);
       window.removeEventListener('switchToMyPhotos', handleSwitchToMyPhotos);
       window.removeEventListener('authStateChanged', handleAuthStateChanged);
       window.removeEventListener('notificationOpen', handleNotificationOpen);
 
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, selectionMode]);
 
   const handleColumnsChange = (newColumns: number) => {
     setColumns(newColumns);

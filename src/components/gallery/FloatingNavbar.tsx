@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Share2, Images, MessageCircle, QrCode, ArrowUp, Menu, Download, CheckSquare, Users } from 'lucide-react';
+import { Share2, Images, MessageCircle, QrCode, ArrowUp, Menu, Download, CheckSquare, Users, X } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { FAQSupportDialog } from './FAQSupportDialog';
@@ -39,12 +39,16 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       setShowBackToTop(scrollTop > 1000 && imageCount > 0);
-      setShowMenu(scrollTop > 500 );
+      setShowMenu(scrollTop > 500);
+      // Auto-expand on first show for mobile
+      if (isMobile && scrollTop > 500 && !isExpanded) {
+        setTimeout(() => setIsExpanded(true), 300);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [imageCount]);
+  }, [imageCount, isMobile, isExpanded]);
 
 
   useEffect(() => {
@@ -256,85 +260,46 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
     );
   }
 
-  // Mobile version - collapsible vertically
+  // Mobile version - horizontal with slide animation
   return (
-    <div className={`fixed bottom-6 start-6 z-50 ${className}`} data-floating-navbar>
-      <div className="relative">
-        
-        {/* Expanded state - full navbar */}
-        {isExpanded && showMenu &&(
-          <div className={`absolute bottom-16 start-0 bg-background/95 backdrop-blur-sm border shadow-lg rounded-2xl px-3 py-3 flex flex-col gap-2 animate-fade-in transition-all duration-500 transform origin-bottom min-w-[160px]`}>
-           {/* Toggle Selection Mode */}
-            {imageCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  onToggleSelectionMode?.();
-                  setIsExpanded(false);
-                }}
-                className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
-              >
-                <CheckSquare className="h-4 w-4" />
-                <span>{language === 'he' ? 'בחר תמונות' : 'Select Images'}</span>
-              </Button>
-            )}
-
-              {/* Download All */}
-            {imageCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  onDownloadAll?.();
-                  setIsExpanded(false);
-                }}
-                className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
-              >
-                <Download className="h-4 w-4" />
-              <span>{language === 'he' ? 'הורד' : 'Download'}</span>
-              </Button>
-          )}
-
-            {/* Gallery Toggle */}
-           {event.withPhotos && (
+    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 max-w-[95vw] ${className}`} data-floating-navbar>
+      {showMenu && (
+        <div 
+          className={`bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-2 flex items-center gap-1 transition-all duration-500 ease-out ${
+            isExpanded 
+              ? 'opacity-100 translate-y-0 scale-100' 
+              : 'opacity-0 translate-y-4 scale-95 pointer-events-none'
+          }`}
+        >
+          {/* Gallery Toggle */}
+          {event.withPhotos && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                onToggleGalleryType();
-                setIsExpanded(false);
-              }}
-              className="rounded-full px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
+              onClick={onToggleGalleryType}
+              className="rounded-full px-3 py-2 text-xs hover:bg-accent transition-all duration-200"
             >
-              {galleryType === 'all' ? <Users className="h-4 w-4" /> : <Images className="h-4 w-4" />}
-
-              <span>
-                {galleryType === 'all' ? t('navbar.myPhotos') :t ('navbar.allPhotos')}
+              {galleryType === 'all' ? <Users className="h-3 w-3 mr-1" /> : <Images className="h-3 w-3 mr-1" />}
+              <span className="hidden sm:inline">
+                {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') : t('navbar.allPhotos')}
               </span>
             </Button>
-           )}
-       
-      
+          )}
 
-            {/* Share Event */}
-            <Dialog open={isQrOpen} onOpenChange={setIsQrOpen} >
-              <DialogTrigger asChild >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    generateQRCode();
-                    //setIsExpanded(false);
-                  }}
-                  className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
-                >
-                  <Share2 className="h-4 w-4" />
-                <span>{t('navbar.shareEvent')}</span>
-                </Button>
-              </DialogTrigger>
-
-            <DialogContent className="sm:max-w-md" onClick={(e) => {e.stopPropagation()}}>
+          {/* Share Event */}
+          <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={generateQRCode}
+                className="rounded-full hover:bg-accent px-3 py-2 text-xs transition-all duration-200"
+              >
+                <Share2 className="h-3 w-3 mr-1" />
+                <span className="hidden sm:inline">{t('navbar.shareEvent')}</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="text-center">{t('share.title')}</DialogTitle>
               </DialogHeader>
@@ -349,8 +314,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                 </p>
                 <Button
                   variant="outline"
-                  onClick={(e) => {
-                     e.stopPropagation();
+                  onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
                     toast({
                       title: t('toast.linkCopied.title'),
@@ -364,56 +328,53 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                 </Button>
               </div>
             </DialogContent>
-            </Dialog>
+          </Dialog>
 
-            {/* Support */}
+          {/* Support */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsSupportOpen(true)}
+            className="rounded-full hover:bg-accent px-3 py-2 text-xs transition-all duration-200"
+          >
+            <MessageCircle className="h-3 w-3 mr-1" />
+            <span className="hidden sm:inline">{language === 'he' ? 'תמיכה' : 'Support'}</span>
+          </Button>
+
+          {/* Back to Top Button */}
+          {showBackToTop && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => {
-                setIsSupportOpen(true);
-                setIsExpanded(false);
-              }}
-              className="rounded-full hover:bg-accent px-3 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 justify-start w-full"
+              onClick={scrollToGallery}
+              className="rounded-full hover:bg-accent px-3 py-2 transition-all duration-200"
+              title="חזרה למעלה"
             >
-              <MessageCircle className="h-4 w-4" />
-               <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
+              <ArrowUp className="h-3 w-3" />
             </Button>
-          </div>
-        )}
+          )}
 
-        {/* Control button - always stays in place */}
-       {showMenu && (
-        <div className="fixed bottom-6 start-6 z-40">
-            <Button
-              variant="ghost"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="h-14 w-14 left-6 rounded-full bg-white/90 hover:bg-white shadow-lg border border-gray-200 p-0 transition-all duration-300 hover:scale-105"
-            >
-              <Menu 
-                className={`w-6 h-6 text-gray-700 transition-transform duration-300 ${
-                  isExpanded ? 'rotate-180' : 'rotate-0'
-                }`} 
-              />
-            </Button>
-            </div>
-           )}
-      </div>
-   
-
-      {/* Back to Top Button - Mobile (Fixed separate button on the right) */}
-      {showBackToTop && (
-        <div className="fixed bottom-6 end-6 z-40">
+          {/* Close button */}
           <Button
-            variant="secondary"
+            variant="ghost"
             size="sm"
-            onClick={scrollToGallery}
-            className="h-12 w-12 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
-            title="חזרה למעלה"
+            onClick={() => setIsExpanded(false)}
+            className="rounded-full hover:bg-accent px-2 py-2 ml-2 transition-all duration-200"
           >
-            <ArrowUp className="h-4 w-4" />
+            <X className="h-3 w-3" />
           </Button>
         </div>
+      )}
+
+      {/* Toggle button */}
+      {showMenu && !isExpanded && (
+        <Button
+          variant="ghost"
+          onClick={() => setIsExpanded(true)}
+          className="h-12 w-12 rounded-full bg-background/95 backdrop-blur-sm hover:bg-accent shadow-lg border p-0 transition-all duration-300 hover:scale-105"
+        >
+          <Menu className="w-5 h-5" />
+        </Button>
       )}
 
       <FAQSupportDialog

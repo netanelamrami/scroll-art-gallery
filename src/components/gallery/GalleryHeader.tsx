@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import { Grid, LayoutGrid, Grid3x3, MoreVertical, Download, CheckSquare, Share2, X } from "lucide-react";
@@ -7,6 +7,9 @@ import { cn } from "@/lib/utils";
 import { event } from "@/types/event";
 import { UserAvatarStack } from "@/components/ui/UserAvatarStack";
 import { NotificationBell } from "../notifications/NotificationBell";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useMultiUserAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface GalleryHeaderProps {
   event: event;
@@ -36,8 +39,9 @@ export const GalleryHeader = ({
   onAuthComplete,
 }: GalleryHeaderProps) => {
   const { t, language } = useLanguage();
-  // Check if mobile for different column options
-  const isMobile = window.innerWidth < 768;
+  const { currentUser } = useMultiUserAuth();
+  const isMobile = useIsMobile();
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const columnOptions = isMobile 
     ? [
         { value: 1, icon: Grid, label: "עמודה 1" },
@@ -59,6 +63,26 @@ export const GalleryHeader = ({
             </h1>
           </div>
           <div className="flex items-center gap-1">
+            {/* Mobile: Three dots menu for download/select when not authenticated or no images */}
+            {isMobile && totalImages > 0 && !currentUser && (
+              <DropdownMenu open={isMoreMenuOpen} onOpenChange={setIsMoreMenuOpen}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background border shadow-lg">
+                  <DropdownMenuItem onClick={() => { onDownloadAll(); setIsMoreMenuOpen(false); }}>
+                    <Download className="h-4 w-4 mr-2" />
+                    {language === 'he' ? 'הורד הכל' : 'Download All'}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { onToggleSelection(); setIsMoreMenuOpen(false); }}>
+                    <CheckSquare className="h-4 w-4 mr-2" />
+                    {language === 'he' ? 'בחר תמונות' : 'Select Images'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
              {/* Notification Bell */}
             {!isSelectionMode && (

@@ -39,13 +39,11 @@ export const useAlbums = (eventId: string, images: GalleryImage[]) => {
     fetchAlbums();
   }, [eventId]);
 
-  // ארגון תמונות לפי אלבומים
   useEffect(() => {
     if (!albums.length || !images.length) return;
 
     const imagesByAlbum: Record<string, GalleryImage[]> = {};
     
-    // אתחול אלבומים ריקים
     albums.forEach(album => {
       imagesByAlbum[album.id] = [];
     });

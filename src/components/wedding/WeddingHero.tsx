@@ -18,7 +18,6 @@ interface WeddingHeroProps {
 export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false }: WeddingHeroProps) => {
   const { t, setDefaultLanguage, language } = useLanguage();
   const { isAuthenticated, currentUser } = useMultiUserAuth();
-  const [loaded, setLoaded] = useState(false);
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
 
   // Set default language based on event language
@@ -50,7 +49,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
   // Handle All Photos button click
   const handleAllPhotosClick = () => {
     // Check if event is locked with code
-    if (event?.eventPhotoLockType === "Code") {
+    if (event?.isAllPhotoEventLock && event?.eventPhotoLockType === "Code") {
       setIsEventLockModalOpen(true);
     } else {
       onViewAllPhotos();

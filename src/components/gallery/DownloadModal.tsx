@@ -180,8 +180,7 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
                         placeholder="name@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full pr-10 pr-4 py-3  border border-gray-300 
-                                  bg-gray-50 placeholder-gray-400 text-sm"
+                        className="w-full pr-10 pr-4 py-3  border border-gray-300  placeholder-gray-400 text-sm"
                         required
                         dir="ltr"
                       />

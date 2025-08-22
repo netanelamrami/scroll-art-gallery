@@ -10,6 +10,7 @@ import QRCode from 'qrcode';
 import { event } from "@/types/event";
 import { faqData } from '@/data/faqData';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useMultiUserAuth } from '@/contexts/AuthContext';
 
 interface FloatingNavbarProps {
   event: event;
@@ -31,6 +32,8 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const { isAuthenticated, currentUser } = useMultiUserAuth();
+  const [isConnect, setIsConnect] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,6 +61,14 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
     }
   }, [isExpanded]);
 
+  useEffect(() => {
+    if(!currentUser){
+      setIsConnect(false);
+    }
+    else{
+      setIsConnect(true);
+    }
+  }, [currentUser]);
 
   // Close navbar when clicking outside (mobile only)
   useEffect(() => {
@@ -159,7 +170,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
               {galleryType === 'all' ? <Users className="h-4 w-4" /> : <Images className="h-4 w-4" />}
 
                 <span>
-                  {galleryType === 'all' ? t('navbar.myPhotos') :t ('navbar.allPhotos')}
+                  {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') :t ('navbar.allPhotos')}
                 </span>
               </Button>
             )}

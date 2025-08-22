@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { apiService } from "@/data/services/apiService";
 
 interface EventLockModalProps {
   isOpen: boolean;
@@ -18,41 +19,45 @@ export const EventLockModal = ({ isOpen, onClose, onSuccess, eventId }: EventLoc
   const { t, language } = useLanguage();
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim()) {
-      toast.error(language === 'he' ? 'אנא הזן קוד' : 'Please enter code');
+      const error = language === 'he' ? 'אנא הזן קוד' : 'Please enter code'
+        toast({
+          title: error,
+          // description: t('auth.emailSentDesc'),
+          variant: "default",
+        });
       return;
     }
 
     setIsLoading(true);
     try {
       // Call API to check event lock
-      const response = await fetch('/api/checkEventLock', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          eventId,
-          lockValue: code,
-          eventPhotoLockType: 'Code'
-        }),
-      });
-
-      const data = await response.json();
-      
-      if (data.isLocked) {
+      const isCodeValid = await apiService.checkEventLock(eventId, code)
+      console.log(isCodeValid)
+      if (isCodeValid) {
         onSuccess();
         onClose();
         setCode("");
       } else {
-        toast.error(language === 'he' ? 'קוד שגוי' : 'Invalid code');
+        const error = language === 'he' ? 'קוד שגוי' : 'Invalid code'
+        toast({
+          title: error,
+          // description: t('auth.emailSentDesc'),
+          variant: "default",
+        });
       }
     } catch (error) {
       console.error('Error checking event lock:', error);
-      toast.error(language === 'he' ? 'שגיאה בבדיקת הקוד' : 'Error checking code');
+        const errorCach = language === 'he' ? 'שגיאה בבדיקת הקוד' : 'Error checking code'
+        toast({
+          title: errorCach,
+          // description: t('auth.emailSentDesc'),
+          variant: "default",
+        });
     } finally {
       setIsLoading(false);
     }

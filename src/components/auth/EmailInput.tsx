@@ -63,8 +63,7 @@ export const EmailInput = ({ onSubmit, onBack }: EmailInputProps) => {
             placeholder="name@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pr-10 pr-4 py-3  border border-gray-300 
-                       bg-gray-50 placeholder-gray-400 text-sm"
+            className="w-full pr-10 pr-4 py-3  border border-gray-300  placeholder-gray-400 text-sm"
             required
             dir="ltr"
           />

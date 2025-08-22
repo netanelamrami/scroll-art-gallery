@@ -62,7 +62,8 @@ const translations = {
     'navbar.myPhotos': 'התמונות שלי',
     'navbar.shareEvent': 'שתף אירוע',
     'navbar.shareEventMobile': 'שתף',
-    
+     'navbar.findMe': 'מצא אותי',
+
     // Share Dialog - דיאלוג שיתוף
     'share.title': 'שתף את הגלריה',
     'share.description': 'סרוק את הקוד או שתף את הקישור',
@@ -117,7 +118,7 @@ const translations = {
     'auth.sendErrorDesc': 'שליחת ה{type} נכשלה. אנא נסה שוב.',
     'auth.otpError': 'קוד האימות שגוי. אנא נסה שוב.',
     'auth.otpSystemError': 'אירעה שגיאה באימות הקוד. אנא נסה שוב.',
-    'auth.welcomeBack': 'ברוכים השובים!',
+    'auth.welcomeBack': 'ברוכים השבים',
     'auth.existingUserDesc': 'זוהית כמשתמש רשום. נכנסת לגלריה!',
     'auth.registrationSuccess': 'רישום הושלם בהצלחה!',
     'auth.registrationSuccessDesc': 'נרשמת בהצלחה!',
@@ -328,7 +329,8 @@ const translations = {
     'navbar.myPhotos': 'My Photos',
     'navbar.shareEvent': 'Share Event',
     'navbar.shareEventMobile': 'Share',
-    
+     'navbar.findMe': 'Find me',
+
     // Share Dialog
     'share.title': 'Share Gallery',
     'share.description': 'Scan the code or share the link',

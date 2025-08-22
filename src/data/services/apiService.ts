@@ -177,7 +177,7 @@ https://www.pixshare.live/gallery/${eventLink}?userid=${userId}
 
   async checkEventLock (eventId: number, code: string)  {
     try {
-      const response = await fetch(`https://api.pixshare.live/PixApi/api/Event/CheckEventLock?eventId=${eventId}&lockValue=${code}&lockType=Code`, {
+      const response = await fetch(`${BASE_URL}/Event/CheckEventLock?eventId=${eventId}&lockValue=${code}&lockType=Code`, {
         method: 'GET',  // או 'POST' אם ה-API דורש, אך שים לב לנושא הקודם עם ה-405
         headers: {
           'Content-Type': 'application/json',

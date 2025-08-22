@@ -264,19 +264,18 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   return (
     <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 max-w-[95vw] ${className}`} data-floating-navbar>
       {showMenu && (
-        <div 
-          className={`bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-2 flex items-center gap-1 transition-all duration-700 ease-in-out ${
-            isExpanded 
-              ? 'opacity-100 translate-y-0 scale-100 transform-gpu' 
-              : 'opacity-0 translate-y-8 scale-75 transform-gpu pointer-events-none'
-          }`}
-          style={{
-            transformOrigin: isExpanded ? 'center center' : '50% 100%',
-            transform: isExpanded 
-              ? 'translateY(0) scale(1)' 
-              : 'translateY(20px) scale(0.3)',
-          }}
-        >
+          <div
+            className={`
+              bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-2 flex items-center gap-1 
+              transition-all duration-500 ease-in-out 
+              ${isExpanded 
+                ? 'opacity-100 scale-100' 
+                : 'opacity-0 scale-0 pointer-events-none'}
+            `}
+            style={{
+              transformOrigin: 'bottom center', // יוצא מתוך ההמבורגר
+            }}
+          >
           {/* Gallery Toggle */}
           {event.withPhotos && (
             <Button
@@ -374,16 +373,14 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
 
       {/* Toggle button with origin animation */}
       {showMenu && !isExpanded && (
-        <Button
-          variant="ghost"
-          onClick={() => setIsExpanded(true)}
-          className="h-12 w-12 rounded-full bg-background/95 backdrop-blur-sm hover:bg-accent shadow-lg border p-0 transition-all duration-500 ease-out hover:scale-110 animate-fade-in"
-          style={{
-            animation: 'slideInFromCenter 0.5s ease-out'
-          }}
-        >
-          <Menu className="w-5 h-5 transition-transform duration-300" />
-        </Button>
+      <Button
+        variant="ghost"
+        onClick={() => setIsExpanded(true)}
+        className="h-12 w-12 rounded-full bg-background/95 backdrop-blur-sm hover:bg-accent shadow-lg border p-0 
+                  transition-transform duration-500 ease-out hover:scale-110"
+      >
+        <Menu className="w-5 h-5 transition-transform duration-300" />
+      </Button>
       )}
 
       <FAQSupportDialog

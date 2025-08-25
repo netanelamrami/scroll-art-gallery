@@ -17,6 +17,8 @@ import { useAlbums } from "@/hooks/useAlbums";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Download, Heart, Link } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isIOS } from "@/utils/deviceUtils";
+import { useNavigate } from "react-router-dom";
 
 
 interface GalleryProps {
@@ -68,6 +70,7 @@ export const Gallery = ({
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t, language } = useLanguage();
+    const navigate = useNavigate();
   
   // Use albums hook
   const { albums, getImagesByAlbum, firstAlbum } = useAlbums(event.id.toString(), images);
@@ -145,7 +148,6 @@ export const Gallery = ({
       },
       { threshold: 0.1 }
     );
-    console.log(images)
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
     }
@@ -348,6 +350,28 @@ export const Gallery = ({
     
     const image = images.find(img => img.id === dropdownImage.id);
     if (!image) return;
+    
+    if (isIOS()) {
+      // Get current scroll position and event link from URL
+      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      const currentPath = window.location.pathname;
+      const eventLink = currentPath.startsWith('/') ? currentPath.slice(1) : currentPath;
+      console.log(scrollPosition.toString())
+          
+          const params = new URLSearchParams({
+            url: image.largeSrc,
+            name: `${image.id}.jpg`,
+            returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
+            // lightboxIndex: 0,
+            scrollPosition: scrollPosition.toString(),
+            eventLink: eventLink || ''
+          });
+          navigate(`/image-save?${params.toString()}`);
+          return;
+        }
+
+
+
       toast({
         title: t('downloadModal.downloadStarted'),
         description: t('downloadModal.downloadStarted'),

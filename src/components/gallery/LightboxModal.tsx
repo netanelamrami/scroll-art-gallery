@@ -123,7 +123,7 @@ export const LightboxModal = ({
       
       const params = new URLSearchParams({
         url: currentImage.largeSrc,
-        name: `image-${currentImage.id}.jpg`,
+        name: `${currentImage.id}.jpg`,
         returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
         lightboxIndex: currentIndex.toString(),
         scrollPosition: scrollPosition.toString(),

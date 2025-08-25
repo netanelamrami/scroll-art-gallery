@@ -63,7 +63,6 @@ const Index = () => {
         }
         
         setEvent(eventData);
-        console.log(event)
         return apiService.getEventImagesFullData(currentEventLink);
       })
       .then(imagesData => {
@@ -101,6 +100,7 @@ const Index = () => {
             navigate(location.pathname, { replace: true, state: {} });
           }, 100);
         } else if (location.state?.scrollPosition) {
+          
           setTimeout(() => {
             window.scrollTo(0, location.state.scrollPosition);
             navigate(location.pathname, { replace: true, state: {} });

@@ -23,6 +23,7 @@ interface GalleryHeaderProps {
   isSelectionMode: boolean;
   selectedCount: number;
   onAuthComplete?: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
+  onViewMyPhotos: () => void;
 }
 
 export const GalleryHeader = ({
@@ -37,6 +38,7 @@ export const GalleryHeader = ({
   isSelectionMode,
   selectedCount,
   onAuthComplete,
+  onViewMyPhotos
 }: GalleryHeaderProps) => {
   const { t, language } = useLanguage();
   const { currentUser } = useMultiUserAuth();
@@ -64,8 +66,28 @@ export const GalleryHeader = ({
           </div>
           <div className="flex items-center gap-1">
             {/* Mobile: Three dots menu for download/select when not authenticated or no images */}
-            {isMobile && totalImages > 0 && !currentUser && (
-              <DropdownMenu open={isMoreMenuOpen} onOpenChange={setIsMoreMenuOpen}>
+
+
+             {/* Notification Bell */}
+            {!isSelectionMode && (
+              <NotificationBell event={event}/>
+            )}
+
+          {/* User Management */}
+          <div className="flex items-center ">
+            <UserAvatarStack 
+              totalImages={totalImages}
+              onDownloadAll={onDownloadAll}
+              event={event}
+              onAuthComplete={onAuthComplete}
+              onViewMyPhotos={onViewMyPhotos}
+            />
+
+          </div>
+
+
+          {/* {isMobile && totalImages > 0  &&  (
+            <DropdownMenu open={isMoreMenuOpen} onOpenChange={setIsMoreMenuOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                     <MoreVertical className="h-4 w-4" />
@@ -85,21 +107,7 @@ export const GalleryHeader = ({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            )}
-
-             {/* Notification Bell */}
-            {!isSelectionMode && (
-              <NotificationBell event={event}/>
-            )}
-
-          {/* User Management */}
-          <div className="flex items-center ">
-            <UserAvatarStack 
-              event={event}
-              onAuthComplete={onAuthComplete}
-              className="ml-2"
-              />
-              </div>
+            )} */}
           </div>
         </div>
       </div>

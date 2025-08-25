@@ -6,6 +6,8 @@ import { SettingsMenu } from "@/components/ui/settings-menu";
 import { Heart, Camera, Users, Loader2, Images } from "lucide-react";
 import { event } from "@/types/event";
 import { EventLockModal } from "./EventLockModal";
+import {Language} from '../../types/gallery'
+import { isMobile } from "@/utils/deviceUtils";
 
 interface WeddingHeroProps {
   event: event;
@@ -16,17 +18,25 @@ interface WeddingHeroProps {
 }
 
 export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false }: WeddingHeroProps) => {
-  const { t, setDefaultLanguage, language } = useLanguage();
+  const { t, setLanguage, language } = useLanguage();
   const { isAuthenticated, currentUser } = useMultiUserAuth();
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
+  const [eventPhoto, setEventPhoto] = useState('');
 
   // Set default language based on event language
   useEffect(() => {
+  if (!isMobile() && !event?.isEventPhotoSame) {
+      setEventPhoto(event?.eventPhotoComp);
+    } else {
+      setEventPhoto(event?.eventPhoto);
+    }
     if (event?.eventLanguage) {
       const defaultLang = event.eventLanguage === 'HE' ? 'he' : 'en';
-      setDefaultLanguage(defaultLang);
+      const savedLanguage = localStorage.getItem('language') as Language;
+
+      setLanguage(savedLanguage ?? defaultLang)
     }
-  }, [event?.eventLanguage, setDefaultLanguage]);
+  }, [event?.eventLanguage]);
 
   // Handle My Photos button click
   const handleMyPhotosClick = () => {
@@ -48,19 +58,10 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
 
   // Handle All Photos button click
   const handleAllPhotosClick = () => {
-    // Check if event is locked with code
-    if (event?.isAllPhotoEventLock && event?.eventPhotoLockType === "Code") {
-      setIsEventLockModalOpen(true);
-    } else {
-      onViewAllPhotos();
-    }
+     window.dispatchEvent(new CustomEvent('switchToAllPhotos', { detail: { type: 'all' } }));
   };
 
-  // Handle successful code verification
-  const handleLockSuccess = () => {
-    onViewAllPhotos();
-  };
-
+ 
   // useEffect(() => {
   //   if (event?.eventPhoto) {
   //     const img = new Image();
@@ -100,7 +101,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-             backgroundImage: event ? `url(${event.eventPhoto})` : 'none'
+             backgroundImage: event ? `url(${eventPhoto})` : 'none'
         }}
       >
         {/* Overlay */}
@@ -209,14 +210,14 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
             {t('privacy.agreement.prefix')}{' '}
             <button
               className="underline hover:text-white/90 transition-colors"
-              onClick={() => window.open("https://www.pixshare.live/takanon", "_blank")}
+              onClick={() => window.open("https://www.pixshare.live/takanon?lang=" + event.eventLanguage === 'HE' ? 'he' : 'en', "_blank")}
             >
               {t('privacy.terms')}
             </button>
             {' '}{t('privacy.agreement.and')}{' '}
             <button
               className="underline hover:text-white/90 transition-colors"
-              onClick={() => window.open("https://www.pixshare.live/privacy", "_blank")}
+              onClick={() => window.open("https://www.pixshare.live/privacy?lang=" + event.eventLanguage === 'HE' ? 'he' : 'en' , "_blank")}
             >
               {t('privacy.policy')}
             </button>
@@ -231,13 +232,6 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
         </div> */}
       </div>
 
-      {/* Event Lock Modal */}
-      <EventLockModal
-        isOpen={isEventLockModalOpen}
-        onClose={() => setIsEventLockModalOpen(false)}
-        onSuccess={handleLockSuccess}
-        eventId={event?.id || 0}
-      />
     </div>
   );
 };

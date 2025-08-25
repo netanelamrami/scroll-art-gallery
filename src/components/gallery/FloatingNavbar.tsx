@@ -32,6 +32,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [delayForBurger, setDelayForBurger] = useState(false);
   const { isAuthenticated, currentUser } = useMultiUserAuth();
   const [isConnect, setIsConnect] = useState(false);
 
@@ -39,10 +40,14 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       setShowBackToTop(scrollTop > 1000 && imageCount > 0);
-      setShowMenu(scrollTop > 500);
+      if(showMenu)
+      setTimeout(() => setShowMenu(scrollTop > 500), 0);
+
       // Auto-expand on first show for mobile
-      if (isMobile && scrollTop > 500 && !isExpanded) {
-        setTimeout(() => setIsExpanded(true), 300);
+      if (isMobile && scrollTop > 500 && !isExpanded && !showMenu) {
+        setTimeout(() => setIsExpanded(true), 0);
+        setTimeout(() => setShowMenu(true), 0);
+
       }
     };
 
@@ -54,6 +59,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   useEffect(() => {
     if(!showMenu){
       setIsExpanded(false);
+      setDelayForBurger(false);
       setIsQrOpen(false);
     }
   }, [showMenu]);
@@ -75,20 +81,20 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
   }, [currentUser]);
 
   // Close navbar when clicking outside (mobile only)
-  useEffect(() => {
-    if (!isMobile) return;
+  // useEffect(() => {
+  //   if (!isMobile) return;
     
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      const navbar = target.closest('[data-floating-navbar]');
-      if (!navbar && isExpanded) {
-        setIsExpanded(false);
-      }
-    };
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     const target = event.target as Element;
+  //     const navbar = target.closest('[data-floating-navbar]');
+  //     if (!navbar && isExpanded) {
+  //       setIsExpanded(false);
+  //     }
+  //   };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [isMobile, isExpanded]);
+  //   document.addEventListener('click', handleClickOutside);
+  //   return () => document.removeEventListener('click', handleClickOutside);
+  // }, [isMobile, isExpanded]);
 
   const questions = faqData[language] || faqData.he;
   
@@ -136,50 +142,7 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
       <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 max-w-[95vw] ${className}`} >
         <div className="bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-4 py-3 flex items-center gap-2">
 
-
-          {/* Download All */}
-          {imageCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onDownloadAll}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm"
-              >
-              <Download className="h-4 w-4 mr-2" />
-              <span>{language === 'he' ? 'הורד' : 'Download'}</span>
-            </Button>
-          )}
-
-          {/* Toggle Selection Mode */}
-          {imageCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onToggleSelectionMode}
-              className="rounded-full hover:bg-accent px-4 py-2 text-sm"
-            >
-              <CheckSquare className="h-4 w-4 mr-2" />
-              <span>{language === 'he' ? 'בחר תמונות' : 'Select Images'}</span>
-            </Button>
-            )}
-
-        {/* Gallery Toggle */}
-          {event.withPhotos && (
-              <Button
-              variant="outline"
-              size="sm"
-              onClick={onToggleGalleryType}
-              className="rounded-full px-4 py-2 text-sm"
-              >
-              {galleryType === 'all' ? <Users className="h-4 w-4" /> : <Images className="h-4 w-4" />}
-
-                <span>
-                  {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') :t ('navbar.allPhotos')}
-                </span>
-              </Button>
-            )}
-
-          {/* Share Event */}
+      {/* Share Event */}
           <Dialog open={isQrOpen} onOpenChange={setIsQrOpen} >
             <DialogTrigger asChild >
               <Button
@@ -223,6 +186,49 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
             </DialogContent>
           </Dialog>
        
+         
+          {/* Toggle Selection Mode */}
+          {imageCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleSelectionMode}
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm"
+            >
+              <CheckSquare className="h-4 w-4 mr-2" />
+              <span>{language === 'he' ? 'בחר תמונות' : 'Select Images'}</span>
+            </Button>
+            )}
+
+        {/* Gallery Toggle */}
+          {event.withPhotos && (
+              <Button
+              variant="outline"
+              size="sm"
+              onClick={onToggleGalleryType}
+              className="rounded-full px-4 py-2 text-sm"
+              >
+              {galleryType === 'all' ? <Users className="h-4 w-4" /> : <Images className="h-4 w-4" />}
+
+                <span>
+                  {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') :t ('navbar.allPhotos')}
+                </span>
+              </Button>
+            )}
+                  {/* Download All */}
+                {imageCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onDownloadAll}
+                    className="rounded-full hover:bg-accent px-4 py-2 text-sm"
+                    >
+                    <Download className="h-4 w-4 mr-2" />
+                    <span>{language === 'he' ? 'הורד' : 'Download'}</span>
+                  </Button>
+                )}
+
+    
           {/* Support */}
           <Button
             variant="ghost"
@@ -262,50 +268,95 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
 
   // Mobile version - horizontal with smooth origin animations
   return (
-    <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 max-w-[95vw] ${className}`} data-floating-navbar>
+    <div className={`fixed bottom-6 left-1 z-50  w-[98vw]`} style={{minWidth:'48px'}}>
       {showMenu && (
-          <div
-            className={`
-              bg-background/95 backdrop-blur-sm border shadow-lg rounded-full px-3 py-2 flex items-center gap-1 
-              transition-all duration-500 ease-in-out 
-              ${isExpanded 
-                ? 'opacity-100 scale-100' 
-                : 'opacity-0 scale-0 pointer-events-none'}
-            `}
-            style={{
-              transformOrigin: 'bottom center', // יוצא מתוך ההמבורגר
-            }}
+        <button
+          onClick={() => {
+            if (isExpanded) {
+              // setIsExpanded(false);
+              // setTimeout(() => setDelayForBurger(false), 200);
+            } else {
+              setIsExpanded(true);
+              setDelayForBurger(true);
+            }
+          }}
+          className={`
+            flex items-center overflow-hidden
+            bg-background/95 backdrop-blur-sm border shadow-lg rounded-full
+            transition-all duration-500 ease-in-out
+            ${isExpanded ? "w-[98vw] px-3" : "w-12 px-0 justify-center "}
+            h-12
+            cursor-pointer
+          `}
+          aria-label={isExpanded ? "Close menu" : "Open menu"}
           >
-          {/* Gallery Toggle */}
-          {event.withPhotos && (
-            <Button
-              variant="outline"
+          <Menu
+            className={`
+              absolute  w-4 h-4 text-foreground transition-opacity duration-300 ease-in-out
+              ${isExpanded ? "opacity-0" : "opacity-100"}
+            `}
+            aria-hidden={isExpanded}
+          />
+          <div className="relative w-4 h-4 flex-shrink-0">
+            <X
+            onClick={() => {
+                    setIsExpanded(false);
+                }}
+             className={`
+                absolute left-0 w-4 h-4 text-foreground transition-opacity duration-300 ease-in-out
+                ${isExpanded ? "opacity-100" : "opacity-0"}
+              `}
+              aria-hidden={!isExpanded}
+            />
+          </div>
+
+          {/* הנאבר - כפתורים מופיעים רק כשהנאבר פתוח */}
+          <nav
+            className={`
+              flex items-center ms-3  text-xs transition-opacity duration-500   justify-between
+              ${isExpanded ? "opacity-100  w-[98vw]" : "opacity-0 pointer-events-none"}
+            `}
+          >
+
+            {/* <Button
+              variant="ghost"
               size="sm"
-              onClick={onToggleGalleryType}
-              className="rounded-full px-3 py-2 text-xs hover:bg-accent transition-all duration-200 hover:scale-105"
+              onClick={generateQRCode}
+              className="rounded-full py-2"
             >
-              {galleryType === 'all' ? <Users className="h-3 w-3 mr-1" /> : <Images className="h-3 w-3 mr-1" />}
-              <span className="hidden sm:inline">
-                {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') : t('navbar.allPhotos')}
-              </span>
+              <Share2 className="h-3 w-3 mr-1" />
+                <span>{t('navbar.shareEvent')}</span>
+            </Button> */}
+
+          {/* Toggle Selection Mode */}
+          {/* {imageCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleSelectionMode}
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm"
+            >
+              <CheckSquare className="h-4 w-4 mr-1" />
+              <span>{language === 'he' ? 'בחר' : 'Select'}</span>
             </Button>
-          )}
+            )} */}
+
 
           {/* Share Event */}
-          <Dialog open={isQrOpen} onOpenChange={setIsQrOpen}>
-            <DialogTrigger asChild>
+          <Dialog open={isQrOpen} onOpenChange={setIsQrOpen} >
+            <DialogTrigger asChild >
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={generateQRCode}
-                className="rounded-full hover:bg-accent px-3 py-2 text-xs transition-all duration-200 hover:scale-105"
+                className="rounded-full hover:bg-accent px-2 py-2 text-sm"
               >
-                <Share2 className="h-3 w-3 mr-1" />
-                <span className="hidden sm:inline">{t('navbar.shareEvent')}</span>
+                <Share2 className="h-4 w-4 mr-1" />
+                <span>{t('navbar.shareEvent')}</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
-              <DialogHeader>
+              <DialogHeader >
                 <DialogTitle className="text-center">{t('share.title')}</DialogTitle>
               </DialogHeader>
               <div className="flex flex-col items-center space-y-4 py-4">
@@ -328,59 +379,52 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
                   }}
                   className="w-full"
                 >
-                  <Share2 className="h-4 w-4 mr-2" />
+                  <Share2 className="h-4 w-4 mr-1" />
                   {t('share.copyLink')}
                 </Button>
               </div>
             </DialogContent>
           </Dialog>
 
-          {/* Support */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsSupportOpen(true)}
-            className="rounded-full hover:bg-accent px-3 py-2 text-xs transition-all duration-200 hover:scale-105"
-          >
-            <MessageCircle className="h-3 w-3 mr-1" />
-            <span className="hidden sm:inline">{language === 'he' ? 'תמיכה' : 'Support'}</span>
-          </Button>
 
-          {/* Back to Top Button */}
-          {showBackToTop && (
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onToggleGalleryType}
+              className="rounded-full px-2 py-2"
+            >
+                {/* <Users className="h-3 w-3 mr-1" /> */}
+                {galleryType === 'all' ? <Users className="h-4 w-4" /> : <Images className="h-4 w-4" />}
+
+                <span>
+                  {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') :t ('navbar.allPhotos')}
+                </span>
+            </Button>
+
             <Button
               variant="ghost"
               size="sm"
-              onClick={scrollToGallery}
-              className="rounded-full hover:bg-accent px-3 py-2 transition-all duration-200 hover:scale-105"
-              title="חזרה למעלה"
+              onClick={() => setIsSupportOpen(true)}
+              className="rounded-full px-2 py-2"
             >
-              <ArrowUp className="h-3 w-3" />
+              <MessageCircle className="h-3 w-3 mr-1" />
+              <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
             </Button>
-          )}
 
-          {/* Close button */}
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsExpanded(false)}
-            className="rounded-full hover:bg-accent px-2 py-2 ml-2 transition-all duration-200 hover:scale-105"
+            onClick={scrollToGallery}
+            className={`rounded-full py-2 transition-opacity duration-300 ${
+              showBackToTop  ? "visible opacity-100 pointer-events-auto" : "invisible opacity-0 pointer-events-none"
+            }`}
           >
-            <X className="h-3 w-3" />
+            <ArrowUp className="h-3 w-3" />
           </Button>
-        </div>
-      )}
 
-      {/* Toggle button with origin animation */}
-      {showMenu && !isExpanded && (
-      <Button
-        variant="ghost"
-        onClick={() => setIsExpanded(true)}
-        className="h-12 w-12 rounded-full bg-background/95 backdrop-blur-sm hover:bg-accent shadow-lg border p-0 
-                  transition-transform duration-500 ease-out hover:scale-110"
-      >
-        <Menu className="w-5 h-5 transition-transform duration-300" />
-      </Button>
+          </nav>
+        </button>
       )}
 
       <FAQSupportDialog

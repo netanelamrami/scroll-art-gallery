@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-type Language = 'he' | 'en';
+import {Language} from '../types/gallery'
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
-  setDefaultLanguage: (lang: Language) => void;
+  // setDefaultLanguage: (lang: Language) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -60,7 +59,7 @@ const translations = {
     'navbar.support': 'תמיכה',
     'navbar.allPhotos': 'כל התמונות',
     'navbar.myPhotos': 'התמונות שלי',
-    'navbar.shareEvent': 'שתף אירוע',
+    'navbar.shareEvent': 'שתף',
     'navbar.shareEventMobile': 'שתף',
      'navbar.findMe': 'מצא אותי',
 
@@ -327,7 +326,7 @@ const translations = {
     'navbar.support': 'Support',
     'navbar.allPhotos': 'All Photos',
     'navbar.myPhotos': 'My Photos',
-    'navbar.shareEvent': 'Share Event',
+    'navbar.shareEvent': 'Share',
     'navbar.shareEventMobile': 'Share',
      'navbar.findMe': 'Find me',
 
@@ -584,12 +583,14 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     return savedLanguage || 'he';
   });
 
-  const setDefaultLanguage = (defaultLang: Language) => {
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (!savedLanguage) {
-      setLanguage(defaultLang);
-    }
-  };
+  // const setDefaultLanguage = (defaultLang: Language) => {
+  //   const savedLanguage = localStorage.getItem('language') as Language;
+  //   console.log('dddddddd' +  defaultLang)
+  //   console.log('dddddddd3333333333' +  savedLanguage)
+  //   if (!savedLanguage || defaultLang != null) {
+  //     setLanguage(savedLanguage);
+  //   }
+  // };
 
   useEffect(() => {
     localStorage.setItem('language', language);
@@ -601,7 +602,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, setDefaultLanguage }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       <div className={language === 'he' ? 'rtl' : 'ltr'}>
         {children}
       </div>

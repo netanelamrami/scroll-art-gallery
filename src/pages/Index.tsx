@@ -10,6 +10,7 @@ import { apiService } from "../data/services/apiService";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMultiUserAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/auth";
+import { EventLockModal } from "@/components/wedding/EventLockModal";
 
 type NotificationStep = "collapsed" | "contact" | "otp" | "complete" | "hidden";
 
@@ -34,6 +35,7 @@ const Index = () => {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [initialStepNotification, setInitialStepNotification] = useState<NotificationStep>("collapsed");
   const [shouldLoadUserImages, setShouldLoadUserImages] = useState(false);
+  const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
   const [userImages, setUserImages] = useState([]); 
@@ -122,7 +124,6 @@ const Index = () => {
     setIsLoadingAllPhotos(true);
     setGalleryType('all');
 
-    // Simulate loading delay for server response
     setTimeout(() => {
       setShowGallery(true);
       setIsLoadingAllPhotos(false);
@@ -264,6 +265,9 @@ const handleAuthComplete = async (user: User) => {
       setInitialStepNotification(event.detail)
       setShowNotificationSubscription(true);
     };
+    const handleLockSuccess = () => {
+        handleViewAllPhotos()
+    };
   // Listen for exit selection mode event and gallery type toggle
   useEffect(() => {
     const handleExitSelectionMode = () => {
@@ -276,10 +280,16 @@ const handleAuthComplete = async (user: User) => {
       setSelectedImages(new Set());
     };
 
-    const handleSwitchToAllPhotos = (event) => {
-
-        setGalleryType('all');
+    const handleSwitchToAllPhotos = () => {
+      if (event?.isAllPhotoEventLock && event?.eventPhotoLockType === "Code") {
+        setIsEventLockModalOpen(true);
+        
+      } else {
+        handleViewAllPhotos()
+      }
     };
+
+
 
     const handleSwitchToMyPhotos = async (event) => {
       const user = event.detail;
@@ -431,6 +441,7 @@ const handleAuthComplete = async (user: User) => {
               setSelectedImages(newSelected);
             }}
             columns={columns}
+            onViewMyPhotos={handleViewMyPhotos}
           />
 
         </div>
@@ -475,6 +486,14 @@ const handleAuthComplete = async (user: User) => {
         galleryType={galleryType}
         event={event}
       />
+
+        {/* Event Lock Modal */}
+        <EventLockModal
+          isOpen={isEventLockModalOpen}
+          onClose={() => setIsEventLockModalOpen(false)}
+          onSuccess={handleLockSuccess}
+          eventId={event?.id || 0}
+        />
 
     </div>
   );

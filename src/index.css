@@ -226,3 +226,133 @@ All colors MUST be HSL.
   scrollbar-width: thin;
   scrollbar-color: #6BC7C5 transparent;
 }
+
+
+/* אנימציית ה-navbar - גדילה/התכווצות */
+@keyframes growFromBurger {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(20px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shrinkToBurger {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3) translateY(20px);
+  }
+}
+
+/* אנימציית כניסת כפתורים עם fadeIn ו-stagger */
+@keyframes fadeInStagger {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* אנימציית יציאת כפתורים (fadeOut עם stagger) */
+@keyframes fadeOutStagger {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+}
+
+/* מחלקות delay מותאמות לשימוש בכפתורים */
+.fade-in-delay-1 {
+  animation: fadeInStagger 0.4s ease-out forwards;
+  animation-delay: 0.15s;
+}
+.fade-in-delay-2 {
+  animation: fadeInStagger 0.4s ease-out forwards;
+  animation-delay: 0.3s;
+}
+.fade-in-delay-3 {
+  animation: fadeInStagger 0.4s ease-out forwards;
+  animation-delay: 0.45s;
+}
+.fade-in-delay-4 {
+  animation: fadeInStagger 0.4s ease-out forwards;
+  animation-delay: 0.6s;
+}
+.fade-in-delay-5 {
+  animation: fadeInStagger 0.4s ease-out forwards;
+  animation-delay: 0.75s;
+}
+
+.fade-out-delay-1 {
+  animation: fadeOutStagger 0.3s ease-in forwards;
+  animation-delay: 0s;
+}
+.fade-out-delay-2 {
+  animation: fadeOutStagger 0.3s ease-in forwards;
+  animation-delay: 0.1s;
+}
+.fade-out-delay-3 {
+  animation: fadeOutStagger 0.3s ease-in forwards;
+  animation-delay: 0.2s;
+}
+.fade-out-delay-4 {
+  animation: fadeOutStagger 0.3s ease-in forwards;
+  animation-delay: 0.3s;
+}
+.fade-out-delay-5 {
+  animation: fadeOutStagger 0.3s ease-in forwards;
+  animation-delay: 0.4s;
+}
+@keyframes growFromBurger {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shrinkToBurger {
+  0% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+.animate-growFromBurger {
+  animation: growFromBurger 0.4s ease forwards;
+  transform-origin: bottom center; /* או left center אם רוצים לפתוח משמאל */
+}
+
+.animate-shrinkToBurger {
+  animation: shrinkToBurger 0.4s ease forwards;
+  transform-origin: bottom center;
+}
+.fade-in-delayed {
+  animation: fadeInDelayed 0.5s ease forwards;
+  animation-delay: 1.5s; /* או 2s לפי הצורך */
+}

@@ -22,3 +22,5 @@ export interface ImageDimensions {
   width: number;
   height: number;
 }
+
+export type Language = 'he' | 'en';

@@ -24,7 +24,6 @@ export const apiService = {
         throw new Error("Failed to send SMS");
       }
       
-      // אם התגובה ריקה, נחזיר אובייקט פשוט
       const responseText = await res.text();
       return responseText ? JSON.parse(responseText) : { success: true };
     } catch (error) {

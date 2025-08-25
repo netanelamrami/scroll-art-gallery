@@ -18,6 +18,8 @@ export const SelfieCapture = ({ onCapture, onBack, autoOpenCamera }: SelfieCaptu
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef1 = useRef<HTMLInputElement>(null);
+
   const { t, language } = useLanguage();
   const hasClickedRef = useRef(false);
 
@@ -137,7 +139,7 @@ export const SelfieCapture = ({ onCapture, onBack, autoOpenCamera }: SelfieCaptu
   };
 
   const handleFileUpload = () => {
-    fileInputRef.current?.click();
+    fileInputRef1.current?.click();
   };
 
   return (
@@ -192,13 +194,7 @@ export const SelfieCapture = ({ onCapture, onBack, autoOpenCamera }: SelfieCaptu
           type="file"
           accept="image/*"
           capture="user" // מפעיל את המצלמה הקדמית (סלפי)
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              // בצע כאן טיפול כמו הצגה או העלאה
-              console.log(file);
-            }
-          }}
+      
         />
 
         )}
@@ -232,7 +228,14 @@ export const SelfieCapture = ({ onCapture, onBack, autoOpenCamera }: SelfieCaptu
         onChange={handleFileSelect}
         className="hidden"
       />
-
+      <input
+        ref={fileInputRef1}
+        type="file"
+        accept="image/*"
+        capture="user"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
       {/* Action buttons */}
       <div className="flex gap-3">
         {isCapturing && (

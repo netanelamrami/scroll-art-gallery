@@ -32,6 +32,7 @@ interface GalleryProps {
   onImageSelect?: (imageId: string) => void;
   columns?: number;
   onAuthComplete?: (userData: { contact: string; otp: string; selfieData: string; notifications: boolean }) => void;
+  onViewMyPhotos: () => void;
 }
 
 export const Gallery = ({ 
@@ -46,7 +47,8 @@ export const Gallery = ({
   selectedImages: externalSelectedImages,
   onImageSelect,
   columns: externalColumns,
-  onAuthComplete
+  onAuthComplete,
+  onViewMyPhotos
 }: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -116,11 +118,8 @@ export const Gallery = ({
             currentImages = images.filter(img => favoriteImages.has(img.id));
           } else {
             currentImages = getImagesByAlbum(selectedAlbum);
-            console.log(selectedAlbum)
           }
         }
-        console.log('Current images:', currentImages, 'Displayed count:', displayedImagesCount, 'Is loading more:', isLoadingMore);
-        
         if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < currentImages.length) {
 
           setIsLoadingMore(true);
@@ -393,6 +392,7 @@ export const Gallery = ({
         isSelectionMode={isSelectionMode}
         selectedCount={selectedImages.size}
         onAuthComplete={onAuthComplete}
+        onViewMyPhotos={onViewMyPhotos}
       />
     
       {!isSelectionMode && (

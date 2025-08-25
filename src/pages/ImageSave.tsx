@@ -30,6 +30,10 @@ export const ImageSave = () => {
     const returnState = searchParams.get('returnState');
     const lightboxIndex = searchParams.get('lightboxIndex');
     const scrollPosition = searchParams.get('scrollPosition');
+    const eventLink = searchParams.get('eventLink');
+    
+    // Determine the correct path to return to
+    const returnPath = eventLink ? `/${eventLink}` : '/';
     
     if (returnState) {
       try {
@@ -37,7 +41,7 @@ export const ImageSave = () => {
         
         // If we came from a lightbox, restore it
         if (lightboxIndex !== null && state.fromLightbox) {
-          navigate('/', { 
+          navigate(returnPath, { 
             replace: true,
             state: { 
               openLightbox: true, 
@@ -47,7 +51,7 @@ export const ImageSave = () => {
           });
         } else {
           // Just restore scroll position
-          navigate('/', { 
+          navigate(returnPath, { 
             replace: true,
             state: { 
               scrollPosition: scrollPosition ? parseInt(scrollPosition) : 0
@@ -55,10 +59,10 @@ export const ImageSave = () => {
           });
         }
       } catch (e) {
-        navigate(-1);
+        navigate(returnPath, { replace: true });
       }
     } else {
-      navigate(-1);
+      navigate(returnPath, { replace: true });
     }
   };
 

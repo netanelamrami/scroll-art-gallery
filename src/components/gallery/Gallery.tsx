@@ -361,10 +361,10 @@ export const Gallery = ({
           const params = new URLSearchParams({
             url: image.largeSrc,
             name: `${image.id}.jpg`,
-            returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
-            // lightboxIndex: 0,
+            returnState: encodeURIComponent(JSON.stringify({ fromLightbox: false })),
             scrollPosition: scrollPosition.toString(),
-            eventLink: eventLink || ''
+            eventLink: eventLink || '',
+            galleryType: galleryType || localGalleryType
           });
           navigate(`/image-save?${params.toString()}`);
           return;

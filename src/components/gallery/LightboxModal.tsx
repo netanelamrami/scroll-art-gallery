@@ -127,7 +127,8 @@ export const LightboxModal = ({
         returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
         lightboxIndex: currentIndex.toString(),
         scrollPosition: scrollPosition.toString(),
-        eventLink: eventLink || ''
+        eventLink: eventLink || '',
+        galleryType: window.location.search.includes('my') ? 'my' : 'all'
       });
       navigate(`/image-save?${params.toString()}`);
       return;

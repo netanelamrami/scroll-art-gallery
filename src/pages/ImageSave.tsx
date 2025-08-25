@@ -26,43 +26,42 @@ export const ImageSave = () => {
   }
 
   const handleBack = () => {
-    // Get return state from URL params
-    const returnState = searchParams.get('returnState');
-    const lightboxIndex = searchParams.get('lightboxIndex');
     const scrollPosition = searchParams.get('scrollPosition');
     const eventLink = searchParams.get('eventLink');
+    const lightboxIndex = searchParams.get('lightboxIndex');
+    const returnState = searchParams.get('returnState');
+    const galleryType = searchParams.get('galleryType');
     
-    // Determine the correct path to return to
-    const returnPath = eventLink ? `/${eventLink}` : '/';
-    
-    if (returnState) {
-      try {
-        const state = JSON.parse(decodeURIComponent(returnState));
-        
-        // If we came from a lightbox, restore it
-        if (lightboxIndex !== null && state.fromLightbox) {
-          navigate(returnPath, { 
-            replace: true,
-            state: { 
-              openLightbox: true, 
-              lightboxIndex: parseInt(lightboxIndex),
-              scrollPosition: scrollPosition ? parseInt(scrollPosition) : 0
-            } 
-          });
-        } else {
-          // Just restore scroll position
-          navigate(returnPath, { 
-            replace: true,
-            state: { 
-              scrollPosition: scrollPosition ? parseInt(scrollPosition) : 0
-            } 
-          });
+    if (eventLink) {
+      const baseUrl = `/${eventLink}`;
+      const urlWithGallery = galleryType === 'my' ? `${baseUrl}?my` : baseUrl;
+      
+      if (returnState && lightboxIndex) {
+        try {
+          const state = JSON.parse(decodeURIComponent(returnState));
+          if (state.fromLightbox) {
+            // Return to lightbox with specific state
+            navigate(urlWithGallery, {
+              state: {
+                externalLightbox: { isOpen: true, currentIndex: parseInt(lightboxIndex) },
+                scrollPosition: scrollPosition ? parseInt(scrollPosition) : 0
+              }
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('Error parsing return state:', error);
         }
-      } catch (e) {
-        navigate(returnPath, { replace: true });
       }
+      
+      // Regular return with scroll position
+      navigate(urlWithGallery, {
+        state: {
+          scrollPosition: scrollPosition ? parseInt(scrollPosition) : 0
+        }
+      });
     } else {
-      navigate(returnPath, { replace: true });
+      navigate(-1);
     }
   };
 

@@ -26,7 +26,40 @@ export const ImageSave = () => {
   }
 
   const handleBack = () => {
-    navigate(-1);
+    // Get return state from URL params
+    const returnState = searchParams.get('returnState');
+    const lightboxIndex = searchParams.get('lightboxIndex');
+    const scrollPosition = searchParams.get('scrollPosition');
+    
+    if (returnState) {
+      try {
+        const state = JSON.parse(decodeURIComponent(returnState));
+        
+        // If we came from a lightbox, restore it
+        if (lightboxIndex !== null && state.fromLightbox) {
+          navigate('/', { 
+            replace: true,
+            state: { 
+              openLightbox: true, 
+              lightboxIndex: parseInt(lightboxIndex),
+              scrollPosition: scrollPosition ? parseInt(scrollPosition) : 0
+            } 
+          });
+        } else {
+          // Just restore scroll position
+          navigate('/', { 
+            replace: true,
+            state: { 
+              scrollPosition: scrollPosition ? parseInt(scrollPosition) : 0
+            } 
+          });
+        }
+      } catch (e) {
+        navigate(-1);
+      }
+    } else {
+      navigate(-1);
+    }
   };
 
   return (

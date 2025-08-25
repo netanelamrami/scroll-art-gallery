@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { WeddingHero } from "@/components/wedding/WeddingHero";
 import { Gallery } from "@/components/gallery/Gallery";
 import { NotificationSubscription } from "@/components/notifications/NotificationSubscription";
@@ -17,6 +17,7 @@ type NotificationStep = "collapsed" | "contact" | "otp" | "complete" | "hidden";
 const Index = () => {
   const { eventLink } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showGallery, setShowGallery] = useState(false);
   const [galleryType, setGalleryType] = useState<'all' | 'my' >('all');
   // const [showFloatingNavbar, setShowFloatingNavbar] = useState(true);
@@ -36,9 +37,10 @@ const Index = () => {
   const [initialStepNotification, setInitialStepNotification] = useState<NotificationStep>("collapsed");
   const [shouldLoadUserImages, setShouldLoadUserImages] = useState(false);
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
+  const [lightboxState, setLightboxState] = useState<{isOpen: boolean, currentIndex: number} | null>(null);
 
   const [galleryImages, setGalleryImages] = useState([]);
-  const [userImages, setUserImages] = useState([]); 
+  const [userImages, setUserImages] = useState([]);
   
   // Use multi-user auth system
   const { isAuthenticated, addUser,  currentUser, setUsers } = useMultiUserAuth();
@@ -80,6 +82,30 @@ const Index = () => {
         }));
         setGalleryImages(formattedImages);
         setIsLoading(false);
+        
+        // Handle return from ImageSave page
+        if (location.state?.openLightbox && location.state?.lightboxIndex !== undefined) {
+          setTimeout(() => {
+            setShowGallery(true);
+            setLightboxState({
+              isOpen: true,
+              currentIndex: location.state.lightboxIndex
+            });
+            
+            // Restore scroll position
+            if (location.state.scrollPosition) {
+              window.scrollTo(0, location.state.scrollPosition);
+            }
+            
+            // Clear the state
+            navigate(location.pathname, { replace: true, state: {} });
+          }, 100);
+        } else if (location.state?.scrollPosition) {
+          setTimeout(() => {
+            window.scrollTo(0, location.state.scrollPosition);
+            navigate(location.pathname, { replace: true, state: {} });
+          }, 100);
+        }
       })
       .catch(error => {
         console.error('Error loading data:', error);
@@ -442,6 +468,8 @@ const handleAuthComplete = async (user: User) => {
             }}
             columns={columns}
             onViewMyPhotos={handleViewMyPhotos}
+            lightboxState={lightboxState}
+            onLightboxStateChange={setLightboxState}
           />
 
         </div>

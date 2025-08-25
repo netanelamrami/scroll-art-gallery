@@ -116,9 +116,15 @@ export const LightboxModal = ({
 
     // Check if iOS - redirect to image save page
     if (isIOS()) {
+      // Get current scroll position
+      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      
       const params = new URLSearchParams({
         url: currentImage.largeSrc,
-        name: `image-${currentImage.id}.jpg`
+        name: `image-${currentImage.id}.jpg`,
+        returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
+        lightboxIndex: currentIndex.toString(),
+        scrollPosition: scrollPosition.toString()
       });
       navigate(`/image-save?${params.toString()}`);
       return;

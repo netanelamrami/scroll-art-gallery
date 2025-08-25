@@ -28,6 +28,8 @@ interface GalleryProps {
   onAlbumClick?: (albumId: string) => void;
   selectedAlbum?: string | null;
   selectionMode?: boolean;
+  lightboxState?: {isOpen: boolean, currentIndex: number} | null;
+  onLightboxStateChange?: (state: {isOpen: boolean, currentIndex: number} | null) => void;
   selectedImages?: Set<string>;
   onImageSelect?: (imageId: string) => void;
   columns?: number;
@@ -48,7 +50,9 @@ export const Gallery = ({
   onImageSelect,
   columns: externalColumns,
   onAuthComplete,
-  onViewMyPhotos
+  onViewMyPhotos,
+  lightboxState,
+  onLightboxStateChange
 }: GalleryProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -86,6 +90,15 @@ export const Gallery = ({
       setSelectedImages(externalSelectedImages);
     }
   }, [externalSelectedImages]);
+
+  // Handle external lightbox state
+  useEffect(() => {
+    if (lightboxState?.isOpen && lightboxState?.currentIndex !== undefined) {
+      setSelectedImageIndex(lightboxState.currentIndex);
+      setIsLightboxOpen(true);
+      onLightboxStateChange?.(null); // Clear the external state after applying
+    }
+  }, [lightboxState, onLightboxStateChange]);
 
 
 
@@ -188,6 +201,7 @@ export const Gallery = ({
   const handleCloseLightbox = () => {
     setIsLightboxOpen(false);
     setSelectedImageIndex(null);
+    onLightboxStateChange?.(null);
   };
 
   // Get filtered images based on selected album

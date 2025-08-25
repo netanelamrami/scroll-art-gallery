@@ -77,7 +77,7 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                     variant="ghost"
                     className="w-full h-auto p-2 justify-start hover:bg-muted/50"
                     onClick={() => {
-                      onDownloadAll(true);
+                      onDownloadAll();
                       setIsOpen(false);
                     }}
                   >
@@ -201,7 +201,7 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                 variant="ghost"
                 className="w-full h-auto p-2 justify-start hover:bg-muted/50"
                 onClick={() => {
-                  onDownloadAll(true);
+                  onDownloadAll();
                   setIsOpen(false);
                 }}
               >

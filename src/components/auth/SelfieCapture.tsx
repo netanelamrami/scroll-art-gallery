@@ -232,7 +232,6 @@ export const SelfieCapture = ({ onCapture, onBack, autoOpenCamera }: SelfieCaptu
         ref={fileInputRef1}
         type="file"
         accept="image/*"
-        capture="user"
         onChange={handleFileSelect}
         className="hidden"
       />

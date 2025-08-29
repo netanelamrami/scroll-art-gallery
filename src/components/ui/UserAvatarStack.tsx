@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { UserCircle, Plus, LogOut, CheckSquare, MoreVertical, Download } from 'lucide-react';
+import { UserCircle, Plus, LogOut, CheckSquare, MoreVertical, Download, MessageCircle } from 'lucide-react';
 import { useMultiUserAuth } from '@/contexts/AuthContext';
 import { AddUserModal } from '@/components/users/AddUserModal';
 import { AuthModal } from '@/components/auth/AuthModal';
@@ -10,6 +10,8 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { FAQSupportDialog } from '../gallery/FAQSupportDialog';
+import { faqData } from '@/data/faqData';
 
 interface UserAvatarStackProps {
   totalImages: number;
@@ -26,6 +28,8 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
   const [isOpen, setIsOpen] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
     const isMobile = useIsMobile();
+    const [isSupportOpen, setIsSupportOpen] = useState(false);
+    const questions = faqData[language] || faqData.he;
   
   // const [showAuthModal, setShowAuthModal] = useState(false);
   // const [forceUpdate, setForceUpdate] = useState(0);
@@ -99,6 +103,15 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                           {language === 'he' ? 'בחר תמונות' : 'Select Images'}
                       </span>
                   </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsSupportOpen(true)}
+                        className="rounded-full px-2 py-2"
+                      >
+                        <MessageCircle className="h-3 w-3 mr-1" />
+                        <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
+                    </Button>
                 </>
             )}
 
@@ -111,12 +124,18 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                 }}
               >
                 <UserCircle className="w-4 h-4 mr-2" />
-                {language === 'he' ? 'הירשם לאירוע' : 'Register'}
+                {language === 'he' ? 'מצא אותי' : 'Find me'}
               </Button>
             </PopoverContent>
           </Popover>
         </div>
 
+      <FAQSupportDialog
+          isOpen={isSupportOpen}
+          setIsOpen={setIsSupportOpen}
+          questions={questions}
+          event={event}
+        />
         {/* {event && (
           <AuthModal 
             isOpen={showAuthModal}
@@ -223,6 +242,15 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                       {language === 'he' ? 'בחר תמונות' : 'Select Images'}
                   </span>
               </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsSupportOpen(true)}
+                        className="rounded-full px-2 py-2"
+                      >
+                        <MessageCircle className="h-3 w-3 mr-1" />
+                        <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
+                    </Button>
                 </>
             )}
               {/* Current User */}
@@ -311,6 +339,13 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
           </PopoverContent>
         </Popover>
       </div>
+
+      <FAQSupportDialog
+          isOpen={isSupportOpen}
+          setIsOpen={setIsSupportOpen}
+          questions={questions}
+          event={event}
+        />
 
       <AddUserModal 
         isOpen={showAddUser}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronDown } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -26,6 +26,10 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
     setFaq(questions);
   }, [questions, language]);
 
+  useEffect(() =>{
+    console.log(isOpen)
+  },[isOpen])
+  
   const toggleAnswer = (idx: number) => {
     setFaq(faq =>
       faq.map((q, i) =>

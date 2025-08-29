@@ -83,28 +83,38 @@ const Index = () => {
         setIsLoading(false);
         
         // Handle return from ImageSave page
-        if (location.state?.openLightbox && location.state?.lightboxIndex !== undefined) {
+        if (location.state?.externalLightbox && location.state?.externalLightbox.currentIndex !== undefined) {
           setTimeout(() => {
+            if(location.search == '?my' ){
+              handleAuthComplete(currentUser) 
+            }
+            console.log(location)
             setShowGallery(true);
             setLightboxState({
               isOpen: true,
-              currentIndex: location.state.lightboxIndex
+              currentIndex: location.state?.externalLightbox.currentIndex 
             });
-            
             // Restore scroll position
             if (location.state.scrollPosition) {
-              window.scrollTo(0, location.state.scrollPosition);
+                 setTimeout(() => {
+                    window.scrollTo(0, location.state.scrollPosition);
+                    navigate(location.pathname, { replace: true, state: {} });
+                  }, 500);
             }
             
             // Clear the state
             navigate(location.pathname, { replace: true, state: {} });
           }, 100);
         } else if (location.state?.scrollPosition) {
-          
+        
+          if(location.search == '?my' ){
+            handleAuthComplete(currentUser) 
+          }
+          setShowGallery(true);
           setTimeout(() => {
             window.scrollTo(0, location.state.scrollPosition);
             navigate(location.pathname, { replace: true, state: {} });
-          }, 100);
+          }, 1000);
         }
       })
       .catch(error => {

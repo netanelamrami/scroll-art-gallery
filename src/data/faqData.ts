@@ -2,57 +2,62 @@ export const faqData = {
   he: [
     {
       title: "איך נרשמים?",
-      answer: "במסך הכניסה לחצו על כפתור ההרשמה, העלו סלפי וקבלו גלריה אישית. אם צריך, הזינו טלפון וקוד אימות והעלו סלפי. בסיום יופיע תג 'וי' ירוק ליד שם האירוע.",
+      answer: "במסך הכניסה לחץ על *התמונות שלי* והעלה סלפי. אם נדרש, השלם הרשמה במייל או בטלפון.",
       isExpanded: false
     },
     {
       title: "האם מקבלים התראה כשיש תמונות חדשות?",
-      answer: "כן, אם האירוע דורש הרשמה עם מספר טלפון, תקבל הודעת SMS על תמונות חדשות. אנחנו לא נעמיס בהודעות, הממשק יעדכן אותך באופן אוטומטי בזמן הנכון.",
+      answer: "כן. ניתן לאשר התראות בהרשמה ולנהל אותן דרך אייקון הפעמון בכל עת.",
       isExpanded: false
     },
     {
       title: "הצטלמתי ואין תמונות / רואה רק חלק מהתמונות",
-      answer: "התמונות מופיעות לאחר שהמנהל מעלה אותן ידנית. ייתכן שהמנהל עדיין לא העלה את כל התמונות או שהצלם באירוע לא עובד עם הפלטפורמה. אל דאגה, לאחר שיעלו תקבל אותן היישר לכאן.",
+      answer: "התמונות מופיעות לאחר שמנהל האירוע מעלה אותן. הירשם להתראות כדי לדעת מתי האלבום שלך מוכן.",
       isExpanded: false
     },
     {
       title: "איך מורידים את התמונות לטלפון?",
-      answer: "ניתן להוריד תמונות נבחרות על ידי כניסה לתמונה ולחיצה ארוכה כדי להוריד באיכות רגילה או ללחוץ על כפתור ההורדה בתוך התמונה. להורדה באיכות גבוהה יש גם אפשרות להוריד את כל התמונות בבת אחת בלחיצה על 3 הנקודות ובחירה באפשרות ההורדה. שימו לב שכמות גדולה של תמונות עשויה לקחת זמן עקב תהליך דחיסת קובץ.",
+      answer: "להורדת תמונה בודדת – היכנס לתמונה ולחץ על אייקון ההורדה. להורדת כל התמונות – בחר *הורד הכל*, הכנס מייל או טלפון, ונשלח לך קובץ מוכן.",
+      isExpanded: false
+    },
+    {
+      title: "האם התמונות באיכות גבוהה?",
+      answer: "כן. חשוב לנו לספק לכם את האיכות המקסימלית המגיעה מהצלם. הורידו באמצעות כלי ההורדה בממשק.",
       isExpanded: false
     },
     {
       title: "אפשר לראות את כל התמונות?",
-      answer: "כן, אנחנו מאפשרים צפייה בכל התמונות, אך ההחלטה נמצאת בידיו של מנהל האירוע.",
+      answer: "רק אם מנהל האירוע מאפשר זאת. המנהל יכול גם לבחור תמונות שיוצגו לכולם.",
       isExpanded: false
     },
     {
       title: "לכמה זמן התמונות זמינות?",
-      answer: "התמונות זמינות לצפייה והורדה במשך חודש, ומנהל האירוע יכול לסגור או להאריך את התקופה.",
+      answer: "180 יום. לפינוי מוקדם – פנה לתמיכה.",
       isExpanded: false
     },
     {
-      title: "איך לשתף את הגלריה למי שלידי",
-      answer: "על ידי סריקת ברקוד האירוע ישירות ממכשיר זה באמצעות כפתור 'שתף QR' בצד ימין למטה או על ידי שליחת הלינק של הגלריה שאתה נמצא בה.",
+      title: "איך לשתף את הגלריה למי שלידי?",
+      answer: "לחץ *שתף* להצגת ברקוד או שלח את לינק הגלריה.",
       isExpanded: false
     },
     {
       title: "הוספת משתמש נוסף על המכשיר שלי",
-      answer: "אם אין אימות עם SMS, התנתק והעלה סלפי של המשתמש החדש. אם האירוע דרש ממך להכניס מספר טלפון, תוכל להוסיף עד 4 משתמשים דרך המכשיר שלך. לחץ על 3 נקודות > 'הוספת משתמש' > תן לו שם והעלה סלפי. כך תוכל לעבור בין הגלריות בקליק.",
+      answer: "ניתן להוסיף עד 5 משתמשים: לחצו על המשתמש שלכם → הוסף משתמש → שם וסלפי. במידה ואין אפשרות התנתקו והעלו סלפי שלו",
       isExpanded: false
     },
     {
       title: "איך זה עובד?",
-      answer: "באירוע הזה מקבלים גלריה אישית - כל אחד רואה רק את התמונות שהוא מופיע בהם. בעזרת זיהוי פנים, אנו נאתר אותך בכל התמונות שעלו למערכת ונייצר לך אלבום אישי בתוך שניות.",
+      answer: "זיהוי פנים מבוסס AI מזהה אותך בתמונות ויוצר אלבום אישי להורדה ולשיתוף.",
       isExpanded: false
     },
     {
       title: "האם זה מאובטח?",
-      answer: "אבטחת המידע והפרטים שלך חשובה לנו מאוד. אנו עובדים בפרוטוקולים מאובטחים ולא נשתמש במידע שלך לרעה. ניתן למחוק כל פרט מידע שלך באמצעות פנייה לתמיכה. למידע נוסף ניתן לעיין בתקנון ובהצהרת הפרטיות.",
+      answer: "אבטחת המידע והפרטים שלך חשובה לנו מאוד. אנו עובדים בפרוטוקולים מאובטחים ולא נשתמש במידע שלך לרעה. למידע נוסף ניתן לעיין בתקנון ובהצהרת הפרטיות.",
       isExpanded: false
     },
     {
       title: "האם התמונות מגיעות לכאן ישירות לאחר הצילום?",
-      answer: "התמונות עולות לכאן זמן קצר לאחר שמנהל האירוע מבצע העלאה ידנית, והתמונות שמועלות נמצאות תחת אחריותו.",
+      answer: "התמונות מופיעות לאחר שמנהל האירוע מעלה אותן. באירוע המוגדר לייב תקבל אותן במהלך האירוע. הירשם להתראות או רענן אם לא קיבלת.",
       isExpanded: false
     },
     {
@@ -72,84 +77,89 @@ export const faqData = {
     },
     {
       title: "קצת עלינו",
-      answer: "'פיקצ'ר' היא פלטפורמה חכמה לשיתוף תמונות ויצירת גלריות אישיות באירועים. אנו חברת צילום ישראלית ייחודי המציע פתרון יעיל, חווייתי, מהיר ואקולוגי.",
+      answer: "'פיקסשר היא פלטפורמה חכמה המחברת בין תמונות לאנשים באמצעות בינה מלאכותית ויוצרת פתרונות דיגיטליים מתקדמים בעולם האירועים.",
       isExpanded: false
     }
   ],
   en: [
     {
       title: "How to register?",
-      answer: "On the login screen, click the registration button, upload a selfie and get a personal gallery. If needed, enter phone number and verification code and upload a selfie. At the end, a green 'V' tag will appear next to the event name.",
+      answer: "Click My Photos on the login screen and upload a selfie. If required, complete email or phone registration first.",
       isExpanded: false
     },
     {
       title: "Do you get notifications when there are new photos?",
-      answer: "Yes, if the event requires registration with a phone number, you will receive an SMS message about new photos. We won't overload you with messages, the interface will update you automatically at the right time.",
+      answer: "Yes. You can enable notifications by mail/SMS during registration and manage them anytime via the bell icon.",
       isExpanded: false
     },
     {
-      title: "I was photographed but there are no photos / I only see some of the photos",
-      answer: "Photos appear after the manager uploads them manually. It's possible that the manager hasn't uploaded all the photos yet or that the photographer at the event doesn't work with the platform. Don't worry, once they upload you'll get them right here.",
+      title: "There are no photos / I only see some photos",
+      answer: "Photos appear after the event manager uploads them. Register for notifications to know when your photos are ready.",
       isExpanded: false
     },
     {
-      title: "How to download photos to phone?",
-      answer: "You can download selected photos by entering the photo and long-pressing to download in regular quality or clicking the download button within the photo. For high-quality download, there's also an option to download all photos at once by clicking the 3 dots and selecting the download option. Note that a large number of photos may take time due to the file compression process.",
+      title: "How to download photos to my phone?",
+      answer: "Download selected photos via the photo page or the download icon. To download all, tap the user icon, choose Download All, enter email or phone, and we’ll notify you when ready.",
+      isExpanded: false
+    },
+    {
+      title: "Are the photos high quality?",
+      answer: "Yes. We provide the maximum quality from the photographer. Download via the interface tools.",
       isExpanded: false
     },
     {
       title: "Can you see all the photos?",
-      answer: "Yes, we allow viewing all photos, but the decision is in the hands of the event manager.",
+      answer: "Only if the event manager allows it. The manager can also select photos to show everyone.",
       isExpanded: false
     },
     {
       title: "For how long are the photos available?",
-      answer: "Photos are available for viewing and downloading for a month, and the event manager can close or extend the period.",
+      answer: "Photos are available for 180 days. Contact support to remove them sooner.",
       isExpanded: false
     },
     {
-      title: "How to share the gallery with someone next to me",
-      answer: "By scanning the event barcode directly from this device using the 'Share QR' button on the bottom right or by sending the link of the gallery you are in.",
+      title: "How to share the gallery with someone nearby?",
+      answer: "Click Share to show a QR code or send the gallery link.",
       isExpanded: false
     },
     {
       title: "Adding another user on my device",
-      answer: "If there's no SMS authentication, log out and upload a selfie of the new user. If the event required you to enter a phone number, you can add up to 4 users through your device. Click 3 dots > 'Add User' > give them a name and upload a selfie. This way you can switch between galleries with a click.",
+      answer: "Add up to 5 users: click your user → Add User → name and take selfie of them.",
       isExpanded: false
     },
     {
       title: "How does it work?",
-      answer: "In this event you get a personal gallery - everyone sees only the photos they appear in. Using facial recognition, we will locate you in all photos uploaded to the system and create a personal album for you within seconds.",
+      answer: "AI facial recognition finds you in photos and creates a personal album ready to download or share.",
       isExpanded: false
     },
     {
       title: "Is it secure?",
-      answer: "The security of your information and details is very important to us. We work with secure protocols and will not misuse your information. You can delete any detail of your information by contacting support. For more information, you can review the terms and privacy statement.",
+      answer: "We protect your data with secure protocols. You can delete any detail by contacting support. For more info, review our privacy policy.",
       isExpanded: false
     },
     {
-      title: "Do photos come here directly after shooting?",
-      answer: "Photos are uploaded here shortly after the event manager performs a manual upload, and the uploaded photos are under their responsibility.",
+      title: "Do photos appear here immediately after shooting?",
+      answer: "Photos appear after the event manager uploads them. For live events, you get them during the event. Register for notifications or refresh if needed.",
       isExpanded: false
     },
     {
       title: "Is my selfie saved? And can it be changed?",
-      answer: "Your selfie is saved and displayed only to you, but it cannot be changed. It is deleted after a month.",
+      answer: "Your selfie is saved only for you and cannot be changed.",
       isExpanded: false
     },
     {
       title: "Can guests upload photos?",
-      answer: "No, in Pix the photos come from the photographers at the event, and the event manager is responsible for uploading the photos.",
+      answer: "No. Photos come only from the event photographers; the manager handles uploads.",
       isExpanded: false
     },
     {
       title: "I have photos that are not mine",
-      answer: "Our algorithm is very accurate, but sometimes technical problems occur. If you encounter a problem, contact us so we can take care of it as soon as possible.",
+      answer: "Technical issues can happen sometimes. Contact us to resolve them.",
       isExpanded: false
     },
     {
-      title: "A little about us",
-      answer: "'Pixshare' is a smart platform for sharing photos and creating personal galleries at events. We are a unique Israeli photography company that offers an efficient, experiential, fast and ecological solution.",
+      title: "About us",
+      answer: "Pixshare connects people with their photos via a smart, efficient, and eco-friendly solution for events.",
       isExpanded: false
     }
   ]

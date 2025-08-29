@@ -38,7 +38,7 @@ export const GalleryHeader = ({
   isSelectionMode,
   selectedCount,
   onAuthComplete,
-  onViewMyPhotos
+  onViewMyPhotos,
 }: GalleryHeaderProps) => {
   const { t, language } = useLanguage();
   const { currentUser } = useMultiUserAuth();

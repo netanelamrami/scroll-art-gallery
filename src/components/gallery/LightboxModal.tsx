@@ -18,6 +18,7 @@ interface LightboxModalProps {
   onPrevious: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  galleryType: string
 }
 
 export const LightboxModal = ({
@@ -29,6 +30,7 @@ export const LightboxModal = ({
   onPrevious,
   isFavorite = false,
   onToggleFavorite,
+  galleryType
 }: LightboxModalProps) => {
   const navigate = useNavigate();
   const [isZoomed, setIsZoomed] = useState(false);
@@ -123,12 +125,13 @@ export const LightboxModal = ({
       
       const params = new URLSearchParams({
         url: currentImage.largeSrc,
-        name: `${currentImage.id}.jpg`,
+        name: `${currentImage.id}`,
         returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
         lightboxIndex: currentIndex.toString(),
         scrollPosition: scrollPosition.toString(),
         eventLink: eventLink || '',
-        galleryType: window.location.search.includes('my') ? 'my' : 'all'
+        galleryType: galleryType,
+
       });
       navigate(`/image-save?${params.toString()}`);
       return;

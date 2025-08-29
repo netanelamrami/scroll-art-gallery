@@ -53,7 +53,6 @@ export const ImageSave = () => {
           console.error('Error parsing return state:', error);
         }
       }
-      
       // Regular return with scroll position
       navigate(urlWithGallery, {
         state: {

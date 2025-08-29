@@ -34,7 +34,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
       const defaultLang = event.eventLanguage === 'HE' ? 'he' : 'en';
       const savedLanguage = localStorage.getItem('language') as Language;
 
-      setLanguage(savedLanguage ?? defaultLang)
+      setLanguage(defaultLang)
     }
   }, [event?.eventLanguage]);
 
@@ -224,6 +224,13 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           </p>
         </div>
 
+
+      {/* Pix Image */}
+{/* <div className="sticky fixed  top-[100vh]">
+  <img className="w-24" src="../../../public/whitepixlogo.png" alt="" />
+</div> */}
+
+
         {/* Scroll Indicator */}
         {/* <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
@@ -231,7 +238,6 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           </div>
         </div> */}
       </div>
-
     </div>
   );
 };

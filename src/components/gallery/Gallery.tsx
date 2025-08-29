@@ -15,10 +15,17 @@ import { downloadImage, downloadMultipleImages } from "@/utils/downloadUtils";
 import { EmptyPhotosState } from "./EmptyPhotosState";
 import { useAlbums } from "@/hooks/useAlbums";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Download, Heart, Link } from "lucide-react";
+import { Download, Heart, Link, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isIOS } from "@/utils/deviceUtils";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogHeader } from "../ui/dialog";
+import { Button } from "react-day-picker";
+
+import QRCode from 'qrcode';
+import { BackToTopButton } from "../ui/back-to-top";
+
 
 
 interface GalleryProps {
@@ -66,6 +73,8 @@ export const Gallery = ({
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
+ const [qrCode, setQrCode] = useState<string>('');
+  const [isQrOpen, setIsQrOpen] = useState(false);
   const [dropdownImage, setDropdownImage] = useState<{ id: string; position: { x: number; y: number } } | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -96,7 +105,9 @@ export const Gallery = ({
 
   // Handle external lightbox state
   useEffect(() => {
+    console.log(lightboxState)
     if (lightboxState?.isOpen && lightboxState?.currentIndex !== undefined) {
+      console.log(lightboxState)
       setSelectedImageIndex(lightboxState.currentIndex);
       setIsLightboxOpen(true);
       onLightboxStateChange?.(null); // Clear the external state after applying
@@ -206,6 +217,29 @@ export const Gallery = ({
     onLightboxStateChange?.(null);
   };
 
+  
+    const generateQRCode = async () => {
+      try {
+        const url = window.location.href;
+        const qrDataURL = await QRCode.toDataURL(url, {
+          width: 200,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF',
+          },
+        });
+        setQrCode(qrDataURL);
+        setIsQrOpen(true);
+      } catch (error) {
+        toast({
+          title: t('toast.error.title'),
+          description: t('toast.qrError.description'),
+          variant: "destructive",
+        });
+      }
+    };
+  
   // Get filtered images based on selected album
   const getFilteredImages = () => {
     if (selectedAlbum) {
@@ -356,15 +390,15 @@ export const Gallery = ({
       const scrollPosition = window.scrollY || document.documentElement.scrollTop;
       const currentPath = window.location.pathname;
       const eventLink = currentPath.startsWith('/') ? currentPath.slice(1) : currentPath;
-      console.log(scrollPosition.toString())
           
           const params = new URLSearchParams({
             url: image.largeSrc,
-            name: `${image.id}.jpg`,
+            name: `${image.id}`,
             returnState: encodeURIComponent(JSON.stringify({ fromLightbox: false })),
             scrollPosition: scrollPosition.toString(),
             eventLink: eventLink || '',
-            galleryType: galleryType || localGalleryType
+            galleryType: galleryType || localGalleryType,
+            
           });
           navigate(`/image-save?${params.toString()}`);
           return;
@@ -431,6 +465,7 @@ export const Gallery = ({
         selectedCount={selectedImages.size}
         onAuthComplete={onAuthComplete}
         onViewMyPhotos={onViewMyPhotos}
+        setIsQrOpen={setIsQrOpen}
       />
     
       {!isSelectionMode && (
@@ -536,6 +571,7 @@ export const Gallery = ({
           onPrevious={handlePreviousImage}
           isFavorite={selectedImageIndex !== null ? favoriteImages.has(filteredImages[selectedImageIndex]?.id) : false}
           onToggleFavorite={selectedImageIndex !== null ? () => onToggleFavorite(filteredImages[selectedImageIndex].id) : undefined}
+          galleryType={galleryType}
         />
       )}
 
@@ -560,6 +596,7 @@ export const Gallery = ({
         event={event}
       />
 
+      <BackToTopButton/>
      {/* Global Image Dropdown */}
 
       {dropdownImage && (
@@ -608,6 +645,9 @@ export const Gallery = ({
           </div>
         </>
       )}
+
+
+
     </div>
   );
 };

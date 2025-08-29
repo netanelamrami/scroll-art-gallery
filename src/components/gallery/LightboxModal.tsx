@@ -6,6 +6,7 @@ import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart, S
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
 import { shareImage } from "@/utils/shareUtils";
+import { ShareOptionsModal } from "./ShareOptionsModal";
 import { isIOS } from "@/utils/deviceUtils";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -37,6 +38,7 @@ export const LightboxModal = ({
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const { t, language } = useLanguage();
@@ -163,22 +165,19 @@ export const LightboxModal = ({
   const handleShare = async () => {
     if (!currentImage) return;
 
-    toast({
-      title: t('toast.shareStarting.title') || 'מתחיל שיתוף',
-      description: t('toast.shareStarting.description') || 'מכין את התמונה לשיתוף',
-    });
-
-    const success = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
+    const result = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
     
-    if (success) {
+    if (result.success && result.method === 'native') {
       toast({
-        title: t('toast.shareComplete.title') || 'שיתוף הושלם',
-        description: t('toast.shareComplete.description') || 'התמונה מוכנה לשיתוף',
+        title: 'שיתוף הושלם',
+        description: 'התמונה שותפה בהצלחה',
       });
+    } else if (result.success && result.method === 'options') {
+      setShowShareModal(true);
     } else {
       toast({
-        title: t('toast.error.title') || 'שגיאה',
-        description: t('toast.shareError.description') || 'שגיאה בשיתוף התמונה',
+        title: 'שגיאה',
+        description: 'שגיאה בשיתוף התמונה',
         variant: "destructive"
       });
     }
@@ -321,6 +320,16 @@ export const LightboxModal = ({
         className="absolute inset-0 cursor-pointer"
         onClick={onClose}
       />
+
+      {/* Share Options Modal */}
+      {currentImage && (
+        <ShareOptionsModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          imageUrl={currentImage.largeSrc}
+          imageName={`${currentImage.id}`}
+        />
+      )}
     </div>
   );
 };

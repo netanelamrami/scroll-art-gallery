@@ -13,6 +13,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
 import { downloadImage, downloadMultipleImages } from "@/utils/downloadUtils";
 import { shareImage } from "@/utils/shareUtils";
+import { ShareOptionsModal } from "./ShareOptionsModal";
 import { EmptyPhotosState } from "./EmptyPhotosState";
 import { useAlbums } from "@/hooks/useAlbums";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -76,6 +77,7 @@ export const Gallery = ({
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
  const [qrCode, setQrCode] = useState<string>('');
   const [isQrOpen, setIsQrOpen] = useState(false);
+  const [shareModalImage, setShareModalImage] = useState<{url: string, name: string} | null>(null);
   const [dropdownImage, setDropdownImage] = useState<{ id: string; position: { x: number; y: number } } | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -454,24 +456,24 @@ export const Gallery = ({
     const image = images.find(img => img.id === dropdownImage.id);
     if (!image) return;
 
-    toast({
-      title: t('toast.shareStarting.title') || 'מתחיל שיתוף',
-      description: t('toast.shareStarting.description') || 'מכין את התמונה לשיתוף',
-    });
-
     handleDropdownClose();
     
-    const success = await shareImage(image.largeSrc || image.src, image.id);
+    const result = await shareImage(image.largeSrc || image.src, image.id);
     
-    if (success) {
+    if (result.success && result.method === 'native') {
       toast({
-        title: t('toast.shareComplete.title') || 'שיתוף הושלם',
-        description: t('toast.shareComplete.description') || 'התמונה מוכנה לשיתוף',
+        title: 'שיתוף הושלם',
+        description: 'התמונה שותפה בהצלחה',
+      });
+    } else if (result.success && result.method === 'options') {
+      setShareModalImage({
+        url: image.largeSrc || image.src,
+        name: image.id
       });
     } else {
       toast({
-        title: t('toast.error.title') || 'שגיאה',
-        description: t('toast.shareError.description') || 'שגיאה בשיתוף התמונה',
+        title: 'שגיאה',
+        description: 'שגיאה בשיתוף התמונה',
         variant: "destructive"
       });
     }
@@ -565,26 +567,26 @@ export const Gallery = ({
               onImageDropdownClick={handleImageDropdown}
               onShare={async (imageId) => {
                 const image = images.find(img => img.id === imageId);
-                if (image) {
+                if (!image) return;
+                
+                const result = await shareImage(image.largeSrc || image.src, image.id);
+                
+                if (result.success && result.method === 'native') {
                   toast({
-                    title: t('toast.shareStarting.title') || 'מתחיל שיתוף',
-                    description: t('toast.shareStarting.description') || 'מכין את התמונה לשיתוף',
+                    title: 'שיתוף הושלם',
+                    description: 'התמונה שותפה בהצלחה',
                   });
-                  
-                  const success = await shareImage(image.largeSrc || image.src, image.id);
-                  
-                  if (success) {
-                    toast({
-                      title: t('toast.shareComplete.title') || 'שיתוף הושלם',
-                      description: t('toast.shareComplete.description') || 'התמונה מוכנה לשיתוף',
-                    });
-                  } else {
-                    toast({
-                      title: t('toast.error.title') || 'שגיאה',
-                      description: t('toast.shareError.description') || 'שגיאה בשיתוף התמונה',
-                      variant: "destructive"
-                    });
-                  }
+                } else if (result.success && result.method === 'options') {
+                  setShareModalImage({
+                    url: image.largeSrc || image.src,
+                    name: image.id
+                  });
+                } else {
+                  toast({
+                    title: 'שגיאה',
+                    description: 'שגיאה בשיתוף התמונה',
+                    variant: "destructive"
+                  });
                 }
               }}
             />
@@ -712,8 +714,15 @@ export const Gallery = ({
         </>
       )}
 
-
-
+      {/* Share Options Modal */}
+      {shareModalImage && (
+        <ShareOptionsModal
+          isOpen={!!shareModalImage}
+          onClose={() => setShareModalImage(null)}
+          imageUrl={shareModalImage.url}
+          imageName={shareModalImage.name}
+        />
+      )}
     </div>
   );
 };

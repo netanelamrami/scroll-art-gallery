@@ -13,6 +13,7 @@ interface MasonryColumnProps {
   favoriteImages?: Set<string>;
   onToggleFavorite?: (imageId: string) => void;
   onImageDropdownClick?: (imageId: string, position: { x: number; y: number }) => void;
+  onShare?: (imageId: string) => void;
 }
 
 export const MasonryColumn = ({
@@ -24,7 +25,8 @@ export const MasonryColumn = ({
   onImageSelection,
   favoriteImages = new Set(),
   onToggleFavorite,
-  onImageDropdownClick
+  onImageDropdownClick,
+  onShare
 }: MasonryColumnProps) => {
   return (
     <div className="flex flex-col gap-0.5">
@@ -41,6 +43,7 @@ export const MasonryColumn = ({
             isFavorite={favoriteImages.has(image.id)}
             onToggleFavorite={() => onToggleFavorite?.(image.id)}
             onImageDropdownClick={onImageDropdownClick}
+            onShare={() => onShare?.(image.id)}
           />
         );
       })}

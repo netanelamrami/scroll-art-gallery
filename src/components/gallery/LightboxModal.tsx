@@ -2,9 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
+import { shareImage } from "@/utils/shareUtils";
 import { isIOS } from "@/utils/deviceUtils";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -159,6 +160,30 @@ export const LightboxModal = ({
     }
   };
 
+  const handleShare = async () => {
+    if (!currentImage) return;
+
+    toast({
+      title: t('toast.shareStarting.title') || 'מתחיל שיתוף',
+      description: t('toast.shareStarting.description') || 'מכין את התמונה לשיתוף',
+    });
+
+    const success = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
+    
+    if (success) {
+      toast({
+        title: t('toast.shareComplete.title') || 'שיתוף הושלם',
+        description: t('toast.shareComplete.description') || 'התמונה מוכנה לשיתוף',
+      });
+    } else {
+      toast({
+        title: t('toast.error.title') || 'שגיאה',
+        description: t('toast.shareError.description') || 'שגיאה בשיתוף התמונה',
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[9999] bg-background/95 dark:bg-black/90 backdrop-blur-sm" dir={language === 'he' ? 'rtl' : 'ltr'}>
       {/* Header */}
@@ -187,6 +212,15 @@ export const LightboxModal = ({
               className="text-foreground hover:bg-accent"
             >
               <Download className="h-4 w-4" />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleShare}
+              className="text-foreground hover:bg-accent"
+            >
+              <Share2 className="h-4 w-4" />
             </Button>
             
             {onToggleFavorite && (

@@ -12,6 +12,7 @@ interface MasonryGridProps {
   favoriteImages?: Set<string>;
   onToggleFavorite?: (imageId: string) => void;
   onImageDropdownClick?: (imageId: string, position: { x: number; y: number }) => void;
+  onShare?: (imageId: string) => void;
 }
 
 export const MasonryGrid = ({
@@ -23,7 +24,8 @@ export const MasonryGrid = ({
   onImageSelection,
   favoriteImages = new Set(),
   onToggleFavorite,
-  onImageDropdownClick
+  onImageDropdownClick,
+  onShare
 }: MasonryGridProps) => {
   // אלגוריתם מאוזן משופר - מחשב גובה אמיתי ומאזן טוב יותר
   const distributeImagesBalanced = (images: GalleryImage[], numColumns: number) => {
@@ -59,7 +61,8 @@ export const MasonryGrid = ({
           onImageSelection={onImageSelection}
           favoriteImages={favoriteImages}
           onToggleFavorite={onToggleFavorite}
-          onImageDropdownClick={onImageDropdownClick}
+              onImageDropdownClick={onImageDropdownClick}
+              onShare={onShare}
         />
       ))}
     </div>

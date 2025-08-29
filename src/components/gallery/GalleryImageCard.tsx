@@ -4,7 +4,7 @@ import { GalleryImage } from "@/types/gallery";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -17,6 +17,7 @@ interface GalleryImageCardProps {
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
   onImageDropdownClick?: (imageId: string, position: { x: number; y: number }) => void;
+  onShare?: () => void;
 }
 
 export const GalleryImageCard = ({ 
@@ -27,7 +28,8 @@ export const GalleryImageCard = ({
   onSelectionChange,
   isFavorite = false,
   onToggleFavorite,
-  onImageDropdownClick
+  onImageDropdownClick,
+  onShare
 }: GalleryImageCardProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -82,6 +84,11 @@ export const GalleryImageCard = ({
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
     onImageDropdownClick?.(image.id, { x: rect.left, y: rect.bottom });
+  };
+
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onShare?.();
   };
 
   return (
@@ -147,19 +154,29 @@ export const GalleryImageCard = ({
         <>
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent transition-opacity duration-300" />
           
-          {/* Three dots menu */}
+          {/* Action buttons */}
           <div className={cn(
             "absolute top-2",
             'right-2'
           )}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
-              onClick={handleDropdownClick}
-            >
-              <MoreVertical className="h-4 w-4 text-white" />
-            </Button>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
+                onClick={handleShare}
+              >
+                <Share2 className="h-4 w-4 text-white" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
+                onClick={handleDropdownClick}
+              >
+                <MoreVertical className="h-4 w-4 text-white" />
+              </Button>
+            </div>
           </div>
           
           <div className="absolute bottom-2 right-2">

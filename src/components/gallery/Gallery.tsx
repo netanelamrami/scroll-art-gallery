@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
 import { downloadImage, downloadMultipleImages } from "@/utils/downloadUtils";
+import { shareImage } from "@/utils/shareUtils";
 import { EmptyPhotosState } from "./EmptyPhotosState";
 import { useAlbums } from "@/hooks/useAlbums";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -447,6 +448,35 @@ export const Gallery = ({
       handleDropdownClose();
   };
 
+  const handleImageShare = async () => {
+    if (!dropdownImage) return;
+    
+    const image = images.find(img => img.id === dropdownImage.id);
+    if (!image) return;
+
+    toast({
+      title: t('toast.shareStarting.title') || 'מתחיל שיתוף',
+      description: t('toast.shareStarting.description') || 'מכין את התמונה לשיתוף',
+    });
+
+    handleDropdownClose();
+    
+    const success = await shareImage(image.largeSrc || image.src, image.id);
+    
+    if (success) {
+      toast({
+        title: t('toast.shareComplete.title') || 'שיתוף הושלם',
+        description: t('toast.shareComplete.description') || 'התמונה מוכנה לשיתוף',
+      });
+    } else {
+      toast({
+        title: t('toast.error.title') || 'שגיאה',
+        description: t('toast.shareError.description') || 'שגיאה בשיתוף התמונה',
+        variant: "destructive"
+      });
+    }
+  };
+
   const displayedImages = filteredImages.slice(0, displayedImagesCount);
 
   return (
@@ -465,7 +495,6 @@ export const Gallery = ({
         selectedCount={selectedImages.size}
         onAuthComplete={onAuthComplete}
         onViewMyPhotos={onViewMyPhotos}
-        setIsQrOpen={setIsQrOpen}
       />
     
       {!isSelectionMode && (
@@ -534,6 +563,30 @@ export const Gallery = ({
               favoriteImages={favoriteImages}
               onToggleFavorite={onToggleFavorite}
               onImageDropdownClick={handleImageDropdown}
+              onShare={async (imageId) => {
+                const image = images.find(img => img.id === imageId);
+                if (image) {
+                  toast({
+                    title: t('toast.shareStarting.title') || 'מתחיל שיתוף',
+                    description: t('toast.shareStarting.description') || 'מכין את התמונה לשיתוף',
+                  });
+                  
+                  const success = await shareImage(image.largeSrc || image.src, image.id);
+                  
+                  if (success) {
+                    toast({
+                      title: t('toast.shareComplete.title') || 'שיתוף הושלם',
+                      description: t('toast.shareComplete.description') || 'התמונה מוכנה לשיתוף',
+                    });
+                  } else {
+                    toast({
+                      title: t('toast.error.title') || 'שגיאה',
+                      description: t('toast.shareError.description') || 'שגיאה בשיתוף התמונה',
+                      variant: "destructive"
+                    });
+                  }
+                }
+              }}
             />
             
             {/* Load More Trigger & Loader */}
@@ -627,6 +680,19 @@ export const Gallery = ({
                 )} />
                 
                 {t('gallery.downloadImage')}
+              </button>
+              <button
+                onClick={handleImageShare}
+                className={cn(
+                  "w-full px-4 py-2 text-sm hover:bg-accent cursor-pointer flex items-center",
+                  language === 'he' ? 'text-right' : 'text-left'
+                )}
+              >
+                <Share2 className={cn(
+                  "h-4 w-4",
+                  language === 'he' ? 'ml-2' : 'mr-2'
+                )} />
+                {t('gallery.shareImage') || 'שתף תמונה'}
               </button>
               <button
                 onClick={handleToggleImageFavorites}

@@ -120,47 +120,30 @@ export const LightboxModal = ({
   const handleDownload = async () => {
     if (!currentImage || isSharing) return;
 
-    // Check if iOS - use native share dialog for save option
-    if (isIOS()) {
-      try {
-        setIsSharing(true);
-        const response = await fetch(currentImage.largeSrc, { mode: 'cors' });
-        const blob = await response.blob();
-        const file = new File([blob], `${currentImage.id}.jpg`, { type: blob.type });
-        
-        if (navigator.share && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: currentImage.alt || 'תמונה מהגלריה',
-          });
-          return;
-        }
-      } catch (error) {
-        console.error('Error sharing image on iOS:', error);
-      } finally {
-        setIsSharing(false);
-      }
-    }
-
-    // For Android/Desktop - direct download
+    setIsSharing(true);
+    
     toast({
       title: t('toast.downloadStarting.title'),
       description: t('toast.downloadStarting.title'),
     });
 
-    const success = await downloadImage(currentImage.largeSrc, `${currentImage.id}`);
-    
-    if (success) {
-      toast({
-        title: t('toast.downloadComplete.title'),
-        description: t('toast.downloadImageComplete.description'),
-      });
-    } else {
-      toast({
-        title: t('toast.error.title'),
-        description: t('downloadModal.downloadError'),
-        variant: "destructive"
-      });
+    try {
+      const success = await downloadImage(currentImage.largeSrc, `${currentImage.id}`);
+      
+      if (success) {
+        toast({
+          title: t('toast.downloadComplete.title'),
+          description: t('toast.downloadImageComplete.description'),
+        });
+      } else {
+        toast({
+          title: t('toast.error.title'),
+          description: t('downloadModal.downloadError'),
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsSharing(false);
     }
   };
 

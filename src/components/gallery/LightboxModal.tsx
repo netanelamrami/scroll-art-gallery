@@ -119,25 +119,23 @@ export const LightboxModal = ({
   const handleDownload = async () => {
     if (!currentImage) return;
 
-    // Check if iOS - redirect to image save page
+    // Check if iOS - use native share dialog for save option
     if (isIOS()) {
-      // Get current scroll position and event link from URL
-      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-      const currentPath = window.location.pathname;
-      const eventLink = currentPath.startsWith('/') ? currentPath.slice(1) : currentPath;
-      
-      const params = new URLSearchParams({
-        url: currentImage.largeSrc,
-        name: `${currentImage.id}`,
-        returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
-        lightboxIndex: currentIndex.toString(),
-        scrollPosition: scrollPosition.toString(),
-        eventLink: eventLink || '',
-        galleryType: galleryType,
-
-      });
-      navigate(`/image-save?${params.toString()}`);
-      return;
+      try {
+        const response = await fetch(currentImage.largeSrc, { mode: 'cors' });
+        const blob = await response.blob();
+        const file = new File([blob], `${currentImage.id}.jpg`, { type: blob.type });
+        
+        if (navigator.share && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: currentImage.alt || 'תמונה מהגלריה',
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('Error sharing image on iOS:', error);
+      }
     }
 
     // For Android/Desktop - direct download

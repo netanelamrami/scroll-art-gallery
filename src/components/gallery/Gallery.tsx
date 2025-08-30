@@ -461,10 +461,10 @@ export const Gallery = ({
     const result = await shareImage(image.largeSrc || image.src, image.id);
     
     if (result.success && result.method === 'native') {
-      toast({
-        title: 'שיתוף הושלם',
-        description: 'התמונה שותפה בהצלחה',
-      });
+      // toast({
+      //   title: 'שיתוף הושלם',
+      //   description: 'התמונה שותפה בהצלחה',
+      // });
     } else if (result.success && result.method === 'options') {
       setShareModalImage({
         url: image.largeSrc || image.src,
@@ -572,10 +572,10 @@ export const Gallery = ({
                 const result = await shareImage(image.largeSrc || image.src, image.id);
                 
                 if (result.success && result.method === 'native') {
-                  toast({
-                    title: 'שיתוף הושלם',
-                    description: 'התמונה שותפה בהצלחה',
-                  });
+                  // toast({
+                  //   title: 'שיתוף הושלם',
+                  //   description: 'התמונה שותפה בהצלחה',
+                  // });
                 } else if (result.success && result.method === 'options') {
                   setShareModalImage({
                     url: image.largeSrc || image.src,
@@ -584,7 +584,7 @@ export const Gallery = ({
                 } else {
                   toast({
                     title: 'שגיאה',
-                    description: 'שגיאה בשיתוף התמונה',
+                    description: 'שיתוף בוטל',
                     variant: "destructive"
                   });
                 }
@@ -694,7 +694,7 @@ export const Gallery = ({
                   "h-4 w-4",
                   language === 'he' ? 'ml-2' : 'mr-2'
                 )} />
-                {t('gallery.shareImage') || 'שתף תמונה'}
+                {language === 'he' ?'שתף תמונה' :'Share photo'}
               </button>
               <button
                 onClick={handleToggleImageFavorites}

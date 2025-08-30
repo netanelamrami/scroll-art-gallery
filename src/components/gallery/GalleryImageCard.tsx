@@ -160,14 +160,14 @@ export const GalleryImageCard = ({
             'right-2'
           )}>
             <div className="flex gap-1">
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="h-8 w-8 rounded-full bg-black/50 hover:bg-black/70 border-0 p-0 z-50"
                 onClick={handleShare}
               >
                 <Share2 className="h-4 w-4 text-white" />
-              </Button>
+              </Button> */}
               <Button
                 variant="ghost"
                 size="sm"

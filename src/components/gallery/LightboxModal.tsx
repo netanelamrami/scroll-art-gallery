@@ -168,18 +168,18 @@ export const LightboxModal = ({
     const result = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
     
     if (result.success && result.method === 'native') {
-      toast({
-        title: 'שיתוף הושלם',
-        description: 'התמונה שותפה בהצלחה',
-      });
+      // toast({
+      //   title: 'שיתוף הושלם',
+      //   description: 'התמונה שותפה בהצלחה',
+      // });
     } else if (result.success && result.method === 'options') {
       setShowShareModal(true);
     } else {
-      toast({
-        title: 'שגיאה',
-        description: 'שגיאה בשיתוף התמונה',
-        variant: "destructive"
-      });
+      // toast({
+      //   title: 'שגיאה',
+      //   description: 'שגיאה בשיתוף התמונה',
+      //   variant: "destructive"
+      // });
     }
   };
 

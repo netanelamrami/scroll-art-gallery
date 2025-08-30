@@ -6,13 +6,13 @@ export const shareImage = async (imageUrl: string, imageName: string) => {
     if (navigator.share && navigator.canShare) {
       const response = await fetch(imageUrl, { mode: 'cors' });
       const blob = await response.blob();
-      const file = new File([blob], `${imageName}.jpg`, { type: blob.type });
+      const file = new File([blob], `${imageName}`, { type: blob.type });
       
       if (navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: 'תמונה מהגלריה',
-          text: 'שתף תמונה זו'
+          // title: 'תמונה מהגלריה',
+          // text: 'שתף תמונה זו'
         });
         return { success: true, method: 'native' };
       }

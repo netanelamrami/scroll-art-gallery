@@ -39,6 +39,7 @@ export const LightboxModal = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const { t, language } = useLanguage();
@@ -117,11 +118,12 @@ export const LightboxModal = ({
   if (!isOpen || !currentImage) return null;
 
   const handleDownload = async () => {
-    if (!currentImage) return;
+    if (!currentImage || isSharing) return;
 
     // Check if iOS - use native share dialog for save option
     if (isIOS()) {
       try {
+        setIsSharing(true);
         const response = await fetch(currentImage.largeSrc, { mode: 'cors' });
         const blob = await response.blob();
         const file = new File([blob], `${currentImage.id}.jpg`, { type: blob.type });
@@ -135,6 +137,8 @@ export const LightboxModal = ({
         }
       } catch (error) {
         console.error('Error sharing image on iOS:', error);
+      } finally {
+        setIsSharing(false);
       }
     }
 

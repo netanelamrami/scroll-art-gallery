@@ -126,7 +126,7 @@ export const LightboxModal = ({
         setIsSharing(true);
         const response = await fetch(currentImage.largeSrc, { mode: 'cors' });
         const blob = await response.blob();
-        const file = new File([blob], `${currentImage.id}.jpg`, { type: blob.type });
+        const file = new File([blob], `${currentImage.id}`, { type: blob.type });
         
         if (navigator.share && navigator.canShare({ files: [file] })) {
           await navigator.share({

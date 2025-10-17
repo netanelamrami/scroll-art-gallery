@@ -1,7 +1,8 @@
 import { User } from "@/types/auth";
+import { statistic } from "@/types/event";
 
 const BASE_URL = "https://api.pixshare.live/PixApi/api";
-// const BASE_URL = "http://localhost:5050/api";
+//const BASE_URL = "http://localhost:5050/api";
 
 export const apiService = {
   async sendSMS(phoneNumber: string, message: string, otp: boolean = true) {
@@ -144,8 +145,8 @@ export const apiService = {
     const message = `היי, הגלריה האישית שלך כאן🎉
 אם אין תמונות כרגע, תקבל/י התראה כשהן יעלו 🔔
 לצפייה מהירה בגלריה 👇🏼
-https://www.pixshare.live/gallery/${eventLink}?userid=${userId}
-הגלריה זמינה כחודש.
+https://gallery.pixshare.live/${eventLink}?userid=${userId}
+
 בברכה, Pixshare AI`;      
 
       const smsData = {
@@ -270,16 +271,6 @@ https://www.pixshare.live/gallery/${eventLink}?userid=${userId}
 
   async getEvent(eventLink: string) {
     try {
-      // דמה לאירוע נמחק - לבדיקה בלבד
-      if (eventLink === 'deleted-event-test') {
-        return {
-          id: '123',
-          name: 'אירוע נמחק',
-          isDeleted: true,
-          isActive: false
-        };
-      }
-
       const res = await fetch(`${BASE_URL}/Event/getByEventLink?eventLink=${eventLink}`);
       if (!res.ok) {
         if (res.status === 404) {
@@ -297,7 +288,6 @@ https://www.pixshare.live/gallery/${eventLink}?userid=${userId}
 
   async getEventImagesFullData(eventLink: string) {
     try {
-      // קודם נקבל את ה-event כדי לחלץ את ה-eventId
       const eventData = await this.getEvent(eventLink);
       if (!eventData) {
         throw new Error("Event not found");
@@ -339,8 +329,62 @@ https://www.pixshare.live/gallery/${eventLink}?userid=${userId}
 
     const data = await res.json();
     return data; 
-  }
+  },
+   async getEventStatistic(eventId: number) {
+    const url = `${BASE_URL}/Event/GetStatisticsForEvent?eventId=${eventId}`;
 
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed updating user');
+    }
+
+    if (res.status === 204) {
+      const emptyStats: statistic = {
+        id: 0,
+        eventId: eventId,
+        downloadClickSum: 0,
+        sharePhotoClickSum: 0,
+        downloadAllPhoto: 0,
+        favoritesPhotosSum: 0,
+        enterToGallery: 0
+      };
+      return emptyStats;
+    }
+      const data = await res.json();
+      return data; 
+    },
   
+  async saveEventStatistic(statistics: statistic) {
+    const url = `${BASE_URL}/Event/saveStatisticsForEvent`;
+
+    const res = await fetch(url, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(statistics),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed updating user');
+    }
+
+    const data = await res.json();
+    return data; 
+  },
+  async updateStatistic(eventId: number, actionType: string)  {
+    await fetch(`${BASE_URL}/Event/UpdateStatistic`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ eventId, actionType })
+    });
+  },
+
 }
 

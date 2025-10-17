@@ -8,6 +8,7 @@ import { event } from "@/types/event";
 import { EventLockModal } from "./EventLockModal";
 import {Language} from '../../types/gallery'
 import { isMobile } from "@/utils/deviceUtils";
+import { apiService } from "@/data/services/apiService";
 
 interface WeddingHeroProps {
   event: event;
@@ -23,21 +24,33 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
   const [eventPhoto, setEventPhoto] = useState('');
 
-  // Set default language based on event language
   useEffect(() => {
-  if (!isMobile() && !event?.isEventPhotoSame) {
+    // Set event photo based on device type
+    if (!isMobile() && !event?.isEventPhotoSame) {
       setEventPhoto(event?.eventPhotoComp);
     } else {
       setEventPhoto(event?.eventPhoto);
     }
+    // Set default language based on event language
     if (event?.eventLanguage) {
       const defaultLang = event.eventLanguage === 'HE' ? 'he' : 'en';
       const savedLanguage = localStorage.getItem('language') as Language;
 
       setLanguage(defaultLang)
     }
+      updateEnterToGallery();
   }, [event?.eventLanguage]);
 
+
+  const updateEnterToGallery = () => {
+    const now = Date.now();
+    const lastVisit = localStorage.getItem("lastGalleryVisit");
+
+    if (!lastVisit || now - parseInt(lastVisit) > 3 * 60 * 1000) {
+      apiService.updateStatistic(event.id, "EnterToGallery");
+      localStorage.setItem("lastGalleryVisit", now.toString());
+    }
+  };
   // Handle My Photos button click
   const handleMyPhotosClick = () => {
     if (isAuthenticated && currentUser) {

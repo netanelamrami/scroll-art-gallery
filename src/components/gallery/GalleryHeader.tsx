@@ -82,7 +82,6 @@ export const GalleryHeader = ({
               onAuthComplete={onAuthComplete}
               onViewMyPhotos={onViewMyPhotos}
             />
-
           </div>
 
 

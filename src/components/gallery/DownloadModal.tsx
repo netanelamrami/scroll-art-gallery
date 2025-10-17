@@ -102,12 +102,13 @@ export const DownloadModal = ({ isOpen, onClose, imageCount, images = [], autoDo
           EventId: event.id,
           Email: formData.email,
           Phone: phoneData,
-          Quality: formData.quality == 'high' ? true : false, // "high" or "web"
+          HighQuality: formData.quality == 'high' ? true : false, // "high" or "web"
           DownloadAllPhotos: galleryType === 'all' // true אם זה כל התמונות, false אם זה התמונות שלי
         };
         
         
         try {
+          apiService.updateStatistic(event.id, "DownloadAllPhoto");
           await apiService.downloadUserImg(downloadRequest);
           
           toast({

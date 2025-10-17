@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart, Share2 } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart, Share2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
 import { shareImage } from "@/utils/shareUtils";
@@ -10,9 +10,12 @@ import { ShareOptionsModal } from "./ShareOptionsModal";
 import { isIOS } from "@/utils/deviceUtils";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
+import { ClipLoader } from "react-spinners";
+import { apiService } from "@/data/services/apiService";
 
 interface LightboxModalProps {
   isOpen: boolean;
+  event: any;
   images: GalleryImage[];
   currentIndex: number;
   onClose: () => void;
@@ -25,6 +28,7 @@ interface LightboxModalProps {
 
 export const LightboxModal = ({
   isOpen,
+  event,
   images,
   currentIndex,
   onClose,
@@ -42,6 +46,8 @@ export const LightboxModal = ({
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const { t, language } = useLanguage();
+  const [shareIsLoading, setShareIsLoading] = useState(false);
+  const [downloadIsLoading, setDownloadIsLoading] = useState(false);
 
   const currentImage = images[currentIndex];
 
@@ -118,6 +124,7 @@ export const LightboxModal = ({
 
   const handleDownload = async () => {
     if (!currentImage) return;
+      apiService.updateStatistic(event.id, "DownloadClick");
 
     // Check if iOS - redirect to image save page
     if (isIOS()) {
@@ -145,9 +152,10 @@ export const LightboxModal = ({
       title: t('toast.downloadStarting.title'),
       description: t('toast.downloadStarting.title'),
     });
-
+    setDownloadIsLoading(true);
     const success = await downloadImage(currentImage.largeSrc, `${currentImage.id}`);
-    
+    setDownloadIsLoading(false);
+
     if (success) {
       toast({
         title: t('toast.downloadComplete.title'),
@@ -165,8 +173,10 @@ export const LightboxModal = ({
   const handleShare = async () => {
     if (!currentImage) return;
 
-    const result = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
-    
+      apiService.updateStatistic(event.id, "SharePhotoClick");
+      setShareIsLoading(true);
+      const result = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
+      setShareIsLoading(false);
     if (result.success && result.method === 'native') {
       // toast({
       //   title: 'שיתוף הושלם',
@@ -175,11 +185,11 @@ export const LightboxModal = ({
     } else if (result.success && result.method === 'options') {
       setShowShareModal(true);
     } else {
-      // toast({
-      //   title: 'שגיאה',
-      //   description: 'שגיאה בשיתוף התמונה',
-      //   variant: "destructive"
-      // });
+      toast({
+        title: 'שגיאה',
+        description: 'שגיאה בשיתוף התמונה',
+        variant: "destructive"
+      });
     }
   };
 
@@ -210,8 +220,8 @@ export const LightboxModal = ({
               onClick={handleDownload}
               className="text-foreground hover:bg-accent"
             >
-              <Download className="h-4 w-4" />
-            </Button>
+            {downloadIsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="h-4 w-4" />}
+          </Button>
             
             <Button
               variant="ghost"
@@ -219,9 +229,8 @@ export const LightboxModal = ({
               onClick={handleShare}
               className="text-foreground hover:bg-accent"
             >
-              <Share2 className="h-4 w-4" />
-            </Button>
-            
+            {shareIsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
+          </Button>
             {onToggleFavorite && (
               <Button
                 variant="ghost"

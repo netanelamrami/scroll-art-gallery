@@ -21,12 +21,10 @@ import { Download, Heart, Link, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isIOS } from "@/utils/deviceUtils";
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
-import { DialogHeader } from "../ui/dialog";
-import { Button } from "react-day-picker";
 
 import QRCode from 'qrcode';
 import { BackToTopButton } from "../ui/back-to-top";
+import { apiService } from "@/data/services/apiService";
 
 
 
@@ -82,7 +80,7 @@ export const Gallery = ({
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t, language } = useLanguage();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   
   // Use albums hook
   const { albums, getImagesByAlbum, firstAlbum } = useAlbums(event.id.toString(), images);
@@ -108,9 +106,7 @@ export const Gallery = ({
 
   // Handle external lightbox state
   useEffect(() => {
-    console.log(lightboxState)
     if (lightboxState?.isOpen && lightboxState?.currentIndex !== undefined) {
-      console.log(lightboxState)
       setSelectedImageIndex(lightboxState.currentIndex);
       setIsLightboxOpen(true);
       onLightboxStateChange?.(null); // Clear the external state after applying
@@ -221,28 +217,6 @@ export const Gallery = ({
   };
 
   
-    const generateQRCode = async () => {
-      try {
-        const url = window.location.href;
-        const qrDataURL = await QRCode.toDataURL(url, {
-          width: 200,
-          margin: 2,
-          color: {
-            dark: '#000000',
-            light: '#FFFFFF',
-          },
-        });
-        setQrCode(qrDataURL);
-        setIsQrOpen(true);
-      } catch (error) {
-        toast({
-          title: t('toast.error.title'),
-          description: t('toast.qrError.description'),
-          variant: "destructive",
-        });
-      }
-    };
-  
   // Get filtered images based on selected album
   const getFilteredImages = () => {
     if (selectedAlbum) {
@@ -295,6 +269,9 @@ export const Gallery = ({
     );
 
     if (success) {
+      for (let index = 0; index < selectedImages.size; index++) {
+        await apiService.updateStatistic(event.id, "DownloadClick");
+      }
       toast({
         title: t('toast.downloadComplete.title'),
         description: t('toast.downloadComplete.description').replace('{count}', selectedImages.size.toString()),
@@ -312,7 +289,9 @@ export const Gallery = ({
   const handleToggleFavorites = () => {
     Array.from(selectedImages).forEach(imageId => {
       onToggleFavorite(imageId);
+      apiService.updateStatistic(event.id, "FavoritesPhotos");
     });
+
     handleCancelSelection();
   };
 
@@ -339,6 +318,7 @@ export const Gallery = ({
 
   const handleShare = () => {
     if (navigator.share) {
+
       navigator.share({
         title: t('hero.title'),
         text: t('hero.subtitle'),
@@ -373,7 +353,7 @@ export const Gallery = ({
 
   const handleImageDropdown = (imageId: string, position: { x: number; y: number }) => {
     setDropdownImage({ id: imageId, position });
-      document.body.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
 
   };
 
@@ -387,7 +367,8 @@ export const Gallery = ({
     
     const image = images.find(img => img.id === dropdownImage.id);
     if (!image) return;
-    
+    //for statistic
+     apiService.updateStatistic(event.id, "DownloadClick");
     if (isIOS()) {
       // Get current scroll position and event link from URL
       const scrollPosition = window.scrollY || document.documentElement.scrollTop;
@@ -446,8 +427,9 @@ export const Gallery = ({
   // };
 
   const handleToggleImageFavorites = () => {
-      onToggleFavorite(dropdownImage?.id );
-      handleDropdownClose();
+    apiService.updateStatistic(event.id, "FavoritesPhotos");
+    onToggleFavorite(dropdownImage?.id );
+    handleDropdownClose();
   };
 
   const handleImageShare = async () => {
@@ -455,7 +437,7 @@ export const Gallery = ({
     
     const image = images.find(img => img.id === dropdownImage.id);
     if (!image) return;
-
+    apiService.updateStatistic(event.id, "SharePhotoClick");
     handleDropdownClose();
     
     const result = await shareImage(image.largeSrc || image.src, image.id);
@@ -557,6 +539,7 @@ export const Gallery = ({
           <>
             <MasonryGrid
               images={displayedImages}
+              event={event}
               onImageClick={handleImageClick}
               columns={columns}
               isSelectionMode={isSelectionMode}
@@ -619,6 +602,7 @@ export const Gallery = ({
       {!isSelectionMode && (
         <LightboxModal
           isOpen={isLightboxOpen}
+          event={event}
           images={filteredImages}
           currentIndex={selectedImageIndex || 0}
           onClose={handleCloseLightbox}

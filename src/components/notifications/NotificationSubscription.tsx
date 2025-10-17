@@ -5,7 +5,7 @@ import { EmailInput } from "@/components/auth/EmailInput";
 import { OTPVerification } from "@/components/auth/OTPVerification";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
-import { Bell, Mail, Phone, X } from "lucide-react";
+import { Bell, Mail, Phone, X, Copy, Check } from "lucide-react";
 import { apiService } from "@/data/services/apiService";
 import { toast } from "../ui/use-toast";
 import { useMultiUserAuth } from "@/contexts/AuthContext";
@@ -39,6 +39,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
     phone: "",
     countryCode: "+972"
   });
+  const [copied, setCopied] = useState(false);
   // setIsEmailMode(event?.registerBy === "Email");
 useEffect(() => {
   setCurrentStep(initialStep);
@@ -366,6 +367,35 @@ const validatePhoneNumber = (number: string, countryCode: string): boolean => {
               <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg mb-4">
                 <div className="text-green-600 dark:text-green-400 text-sm">
                   ✓ {t('notifications.subscribeSuccess')}
+                </div>
+              </div>
+
+              <div className="bg-muted/50 p-4 rounded-lg mb-4 space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  {language === 'he' ? 'העתק את הקישור האישי שלך' : 'Copy your personal link'}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={`https://gallery.pixshare.live/${event.eventLink}?userid=${currentUser.id}`}
+                    readOnly
+                    className="flex-1 text-xs bg-background"
+                    dir="ltr"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://gallery.pixshare.live/${event.eventLink}?userid=${currentUser.id}`);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                      toast({
+                        title: language === 'he' ? 'הקישור הועתק' : 'Link copied',
+                        description: language === 'he' ? 'הקישור האישי שלך הועתק ללוח' : 'Your personal link has been copied to clipboard',
+                      });
+                    }}
+                  >
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </Button>
                 </div>
               </div>
             

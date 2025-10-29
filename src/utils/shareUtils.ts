@@ -83,6 +83,20 @@ export const shareToInstagram = async (imageUrl: string, imageName: string) => {
 
 export const downloadImageForSharing = async (imageUrl: string, imageName: string) => {
   try {
+    // Try native share first (better for iOS)
+    if (navigator.share) {
+      const response = await fetch(imageUrl, { mode: 'cors' });
+      const blob = await response.blob();
+      const file = new File([blob], `${imageName}.jpg`, { type: blob.type });
+      
+      await navigator.share({
+        files: [file],
+        title: imageName,
+      });
+      return true;
+    }
+    
+    // Fallback to traditional download
     const response = await fetch(imageUrl, { mode: 'cors' });
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);

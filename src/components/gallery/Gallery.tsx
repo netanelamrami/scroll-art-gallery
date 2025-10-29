@@ -68,6 +68,7 @@ export const Gallery = ({
   const [columns, setColumns] = useState(externalColumns || 4);
   const [isSelectionMode, setIsSelectionMode] = useState(selectionMode || false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(externalSelectedImages || new Set());
+  const [loadedAlbums, setLoadedAlbums] = useState<string[]>([]); // אלבומים שנטענו
   // const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
@@ -115,25 +116,31 @@ export const Gallery = ({
 
 
 
-  // Reset displayed images count when images change
+  // Reset displayed images count when images or selected album changes
   useEffect(() => {
     setDisplayedImagesCount(30);
-  }, [images]);
+    // רק אם זה אלבום חדש שהמשתמש בחר ידנית, נאפס את רשימת האלבומים הנטענים
+    if (selectedAlbum && !loadedAlbums.includes(selectedAlbum)) {
+      setLoadedAlbums([selectedAlbum]);
+    }
+  }, [images, selectedAlbum]);
 
   useEffect(() => {
     if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
       onAlbumClick(firstAlbum);
+      setLoadedAlbums([firstAlbum]); // התחל עם האלבום הראשון
     }
   }, [firstAlbum, albums, selectedAlbum, onAlbumClick]);
 
     useEffect(() => {
     if (firstAlbum != null) {
       onAlbumClick(firstAlbum);
+      setLoadedAlbums([firstAlbum]); // התחל עם האלבום הראשון
     }
   }, [firstAlbum]);
   // Reset displayed images count when images change
 
-  // Infinite scroll effect - updated to use filtered images
+  // Infinite scroll effect - updated to use filtered images and auto-switch albums
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -146,14 +153,70 @@ export const Gallery = ({
             currentImages = getImagesByAlbum(selectedAlbum);
           }
         }
-        if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < currentImages.length) {
-
-          setIsLoadingMore(true);
-          // Simulate loading delay
-          setTimeout(() => {
-            setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
-            setIsLoadingMore(false);
-          }, 1000);
+        
+        console.log('IntersectionObserver triggered:', {
+          isIntersecting: entries[0].isIntersecting,
+          isLoadingMore,
+          displayedImagesCount,
+          currentImagesLength: currentImages.length,
+          selectedAlbum,
+          albumsCount: albums.length
+        });
+        
+        if (entries[0].isIntersecting && !isLoadingMore) {
+          // אם יש עוד תמונות באלבום הנוכחי
+          if (displayedImagesCount < currentImages.length) {
+            console.log('Loading more images in current album');
+            setIsLoadingMore(true);
+            setTimeout(() => {
+              setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
+              setIsLoadingMore(false);
+            }, 1000);
+          } 
+          // אם הגענו לסוף האלבום, עבור לאלבום הבא
+          else if (selectedAlbum && selectedAlbum !== 'favorites' && albums.length > 0) {
+            const currentAlbumIndex = albums.findIndex(album => album.id === selectedAlbum);
+            const nextAlbumIndex = currentAlbumIndex + 1;
+            
+            console.log('End of album reached:', {
+              currentAlbumIndex,
+              nextAlbumIndex,
+              totalAlbums: albums.length,
+              nextAlbum: albums[nextAlbumIndex],
+              nextAlbumImageCount: albums[nextAlbumIndex]?.imageCount,
+              allAlbums: albums.map(a => ({ id: a.id, name: a.name, imageCount: a.imageCount }))
+            });
+            
+            // אם יש אלבום הבא
+            if (nextAlbumIndex < albums.length) {
+              const nextAlbum = albums[nextAlbumIndex];
+              const nextAlbumImages = getImagesByAlbum(nextAlbum.id);
+              
+              console.log('Next album details:', {
+                nextAlbumId: nextAlbum.id,
+                nextAlbumName: nextAlbum.name,
+                storedImageCount: nextAlbum.imageCount,
+                actualImageCount: nextAlbumImages.length
+              });
+              
+              // בדוק אם יש תמונות בפועל באלבום הבא
+              if (nextAlbumImages.length > 0) {
+                console.log('Adding next album to loaded albums:', nextAlbum.id);
+                setIsLoadingMore(true);
+                setTimeout(() => {
+                  // הוסף את האלבום הבא לרשימת האלבומים הנטענים במקום להחליף
+                  setLoadedAlbums(prev => [...prev, nextAlbum.id]);
+                  onAlbumClick?.(nextAlbum.id); // עדכן את הסימון בלבד
+                  setDisplayedImagesCount(prev => prev + Math.min(30, nextAlbumImages.length)); // הוסף תמונות מהאלבום הבא
+                  setIsLoadingMore(false);
+                }, 300);
+              } else {
+                console.log('Next album is empty, skipping');
+              }
+            } else {
+              console.log('No next album available');
+            }
+          }
         }
       },
       { threshold: 0.1 }
@@ -163,7 +226,7 @@ export const Gallery = ({
     }
 
     return () => observer.disconnect();
-  }, [displayedImagesCount, images, selectedAlbum, favoriteImages, getImagesByAlbum, isLoadingMore]);
+  }, [displayedImagesCount, images, selectedAlbum, favoriteImages, getImagesByAlbum, isLoadingMore, albums, onAlbumClick]);
 
   // Responsive columns based on screen size
   useEffect(() => {
@@ -218,15 +281,49 @@ export const Gallery = ({
 
   
   // Get filtered images based on selected album
-  const getFilteredImages = () => {
-    if (selectedAlbum) {
-      if (selectedAlbum === 'favorites') {
-        return images.filter(img => favoriteImages.has(img.id));
-      } else {
-        return getImagesByAlbum(selectedAlbum);
+    const generateQRCode = async () => {
+      try {
+        const url = window.location.href;
+        const qrDataURL = await QRCode.toDataURL(url, {
+          width: 200,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF',
+          },
+        });
+        setQrCode(qrDataURL);
+        setIsQrOpen(true);
+      } catch (error) {
+        toast({
+          title: t('toast.error.title'),
+          description: t('toast.qrError.description'),
+          variant: "destructive",
+        });
       }
+    };
+  
+  // Get filtered images based on loaded albums
+  const getFilteredImages = () => {
+    if (!selectedAlbum) {
+      return images;
     }
-    return images;
+    
+    if (selectedAlbum === 'favorites') {
+      return images.filter(img => favoriteImages.has(img.id));
+    }
+    
+    // אם יש אלבומים נטענים, החזר את כל התמונות מכל האלבומים
+    if (loadedAlbums.length > 0) {
+      const allLoadedImages: GalleryImage[] = [];
+      loadedAlbums.forEach(albumId => {
+        const albumImages = getImagesByAlbum(albumId);
+        allLoadedImages.push(...albumImages);
+      });
+      return allLoadedImages;
+    }
+    
+    return getImagesByAlbum(selectedAlbum);
   };
 
   const filteredImages = getFilteredImages();
@@ -586,14 +683,135 @@ export const Gallery = ({
                       Powered by Pixshare AI
                       </span>
                       <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-black"></div>
+            {/* תצוגת תמונות לפי אלבומים עם מפרידים */}
+            {loadedAlbums.length > 0 && selectedAlbum !== 'favorites' ? (
+              <div className="space-y-6">
+                {loadedAlbums.map((albumId, albumIndex) => {
+                  const albumImages = getImagesByAlbum(albumId);
+                  const album = albums.find(a => a.id === albumId);
+                  const displayedAlbumImages = albumImages.slice(
+                    0,
+                    albumIndex === loadedAlbums.length - 1 
+                      ? displayedImagesCount - loadedAlbums.slice(0, albumIndex).reduce((sum, id) => sum + getImagesByAlbum(id).length, 0)
+                      : albumImages.length
+                  );
+                  
+                  if (displayedAlbumImages.length === 0) return null;
+                  
+                  return (
+                    <div key={albumId}>
+                      {/* Album Header */}
+                      {albumIndex > 0 && (
+                        <div className="flex items-center gap-3 px-4 py-6 mb-2">
+                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 backdrop-blur-sm border">
+                            <span className="text-sm font-medium">{album?.name || albumId}</span>
+                            <span className="text-xs text-muted-foreground">({albumImages.length})</span>
+                          </div>
+                          <div className="flex-1 h-px bg-gradient-to-r from-border via-transparent to-transparent" />
+                        </div>
+                      )}
+                      
+                      <MasonryGrid
+                        images={displayedAlbumImages}
+                        onImageClick={(image, index) => {
+                          // חשב את האינדקס הגלובלי
+                          const globalIndex = loadedAlbums.slice(0, albumIndex).reduce((sum, id) => sum + getImagesByAlbum(id).length, 0) + index;
+                          handleImageClick(image, globalIndex);
+                        }}
+                        columns={columns}
+                        isSelectionMode={isSelectionMode}
+                        selectedImages={selectedImages}
+                        onImageSelection={handleImageSelection}
+                        favoriteImages={favoriteImages}
+                        onToggleFavorite={onToggleFavorite}
+                        onImageDropdownClick={handleImageDropdown}
+                        onShare={async (imageId) => {
+                          const image = images.find(img => img.id === imageId);
+                          if (!image) return;
+                          
+                          const result = await shareImage(image.largeSrc || image.src, image.id);
+                          
+                          if (result.success && result.method === 'native') {
+                            // toast({
+                            //   title: 'שיתוף הושלם',
+                            //   description: 'התמונה שותפה בהצלחה',
+                            // });
+                          } else if (result.success && result.method === 'options') {
+                            setShareModalImage({
+                              url: image.largeSrc || image.src,
+                              name: image.id
+                            });
+                          } else {
+                            toast({
+                              title: 'שגיאה',
+                              description: 'שיתוף בוטל',
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                      />
                     </div>
-
-                  </div>
-                ) : (
-                  <div className="h-4" />
-                )}
+                  );
+                })}
               </div>
+            ) : (
+              // תצוגה רגילה לנבחרות או ללא אלבום נבחר
+              <MasonryGrid
+                images={displayedImages}
+                onImageClick={handleImageClick}
+                columns={columns}
+                isSelectionMode={isSelectionMode}
+                selectedImages={selectedImages}
+                onImageSelection={handleImageSelection}
+                favoriteImages={favoriteImages}
+                onToggleFavorite={onToggleFavorite}
+                onImageDropdownClick={handleImageDropdown}
+                onShare={async (imageId) => {
+                  const image = images.find(img => img.id === imageId);
+                  if (!image) return;
+                  
+                  const result = await shareImage(image.largeSrc || image.src, image.id);
+                  
+                  if (result.success && result.method === 'native') {
+                    // toast({
+                    //   title: 'שיתוף הושלם',
+                    //   description: 'התמונה שותפה בהצלחה',
+                    // });
+                  } else if (result.success && result.method === 'options') {
+                    setShareModalImage({
+                      url: image.largeSrc || image.src,
+                      name: image.id
+                    });
+                  } else {
+                    toast({
+                      title: 'שגיאה',
+                      description: 'שיתוף בוטל',
+                      variant: "destructive"
+                    });
+                  }
+                }}
+              />
             )}
+            
+            {/* Load More Trigger & Loader */}
+            <div ref={loadMoreRef} className="w-full py-4 flex justify-center">
+              {isLoadingMore ? (
+                <div className="flex items-center justify-center">
+                <div className={`flex  flex-col  items-center gap-3 `}>
+                  <span className="text-muted-foreground text-sm ">
+                    {/* animate-pulse */}
+                    {/* {t('auth.loading')} */}
+                    Powered by Pixshare AI
+                    </span>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-black"></div>
+                  </div>
+
+                </div>
+              ) : displayedImagesCount < filteredImages.length ? (
+                <div className="h-4" />
+              ) : null}
+            </div>
           </>
         )}
       </div>

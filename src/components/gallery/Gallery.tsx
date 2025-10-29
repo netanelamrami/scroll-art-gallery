@@ -179,20 +179,37 @@ export const Gallery = ({
               currentAlbumIndex,
               nextAlbumIndex,
               totalAlbums: albums.length,
-              nextAlbum: albums[nextAlbumIndex]
+              nextAlbum: albums[nextAlbumIndex],
+              nextAlbumImageCount: albums[nextAlbumIndex]?.imageCount,
+              allAlbums: albums.map(a => ({ id: a.id, name: a.name, imageCount: a.imageCount }))
             });
             
-            // אם יש אלבום הבא ויש בו תמונות
-            if (nextAlbumIndex < albums.length && albums[nextAlbumIndex].imageCount > 0) {
-              console.log('Switching to next album:', albums[nextAlbumIndex].id);
-              setIsLoadingMore(true);
-              setTimeout(() => {
-                onAlbumClick?.(albums[nextAlbumIndex].id);
-                setDisplayedImagesCount(30); // התחל עם 30 תמונות ראשונות מהאלבום הבא
-                setIsLoadingMore(false);
-              }, 500);
+            // אם יש אלבום הבא
+            if (nextAlbumIndex < albums.length) {
+              const nextAlbum = albums[nextAlbumIndex];
+              const nextAlbumImages = getImagesByAlbum(nextAlbum.id);
+              
+              console.log('Next album details:', {
+                nextAlbumId: nextAlbum.id,
+                nextAlbumName: nextAlbum.name,
+                storedImageCount: nextAlbum.imageCount,
+                actualImageCount: nextAlbumImages.length
+              });
+              
+              // בדוק אם יש תמונות בפועל באלבום הבא
+              if (nextAlbumImages.length > 0) {
+                console.log('Switching to next album:', nextAlbum.id);
+                setIsLoadingMore(true);
+                setTimeout(() => {
+                  onAlbumClick?.(nextAlbum.id);
+                  setDisplayedImagesCount(30); // התחל עם 30 תמונות ראשונות מהאלבום הבא
+                  setIsLoadingMore(false);
+                }, 500);
+              } else {
+                console.log('Next album is empty, skipping');
+              }
             } else {
-              console.log('No next album available or next album is empty');
+              console.log('No next album available');
             }
           }
         }

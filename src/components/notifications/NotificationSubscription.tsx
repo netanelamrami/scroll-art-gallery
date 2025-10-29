@@ -40,7 +40,6 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
     phone: "",
     countryCode: "+972"
   });
-  const [copied, setCopied] = useState(false);
   // setIsEmailMode(event?.registerBy === "Email");
 
 useEffect(() => {
@@ -384,35 +383,6 @@ const validatePhoneNumber = (number: string, countryCode: string): boolean => {
                   {language === 'he' ? 'העתק ושמור את הקישור' : 'Copy and save your link'}
                   <br />
                   {language === 'he' ? 'לצפייה ישירה בגלריה האישית שלך' : 'to view your personal gallery directly'}
-                </p>
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={`https://gallery.pixshare.live/${event.eventLink}?userid=${currentUser.id}`}
-                    readOnly
-                    className="flex-1 text-xs bg-background"
-                    dir="ltr"
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      navigator.clipboard.writeText(`https://gallery.pixshare.live/${event.eventLink}?userid=${currentUser.id}`);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                      toast({
-                        title: language === 'he' ? 'הקישור הועתק' : 'Link copied',
-                        description: language === 'he' ? 'הקישור האישי שלך הועתק ללוח' : 'Your personal link has been copied to clipboard',
-                      });
-                    }}
-                  >
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-muted/50 p-4 rounded-lg mb-4 space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  {language === 'he' ? 'העתק את הקישור האישי שלך' : 'Copy your personal link'}
                 </p>
                 <div className="flex items-center gap-2">
                   <Input

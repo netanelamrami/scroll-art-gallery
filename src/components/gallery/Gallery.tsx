@@ -151,9 +151,19 @@ export const Gallery = ({
           }
         }
         
+        console.log('IntersectionObserver triggered:', {
+          isIntersecting: entries[0].isIntersecting,
+          isLoadingMore,
+          displayedImagesCount,
+          currentImagesLength: currentImages.length,
+          selectedAlbum,
+          albumsCount: albums.length
+        });
+        
         if (entries[0].isIntersecting && !isLoadingMore) {
           // אם יש עוד תמונות באלבום הנוכחי
           if (displayedImagesCount < currentImages.length) {
+            console.log('Loading more images in current album');
             setIsLoadingMore(true);
             setTimeout(() => {
               setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
@@ -165,14 +175,24 @@ export const Gallery = ({
             const currentAlbumIndex = albums.findIndex(album => album.id === selectedAlbum);
             const nextAlbumIndex = currentAlbumIndex + 1;
             
+            console.log('End of album reached:', {
+              currentAlbumIndex,
+              nextAlbumIndex,
+              totalAlbums: albums.length,
+              nextAlbum: albums[nextAlbumIndex]
+            });
+            
             // אם יש אלבום הבא ויש בו תמונות
             if (nextAlbumIndex < albums.length && albums[nextAlbumIndex].imageCount > 0) {
+              console.log('Switching to next album:', albums[nextAlbumIndex].id);
               setIsLoadingMore(true);
               setTimeout(() => {
                 onAlbumClick?.(albums[nextAlbumIndex].id);
                 setDisplayedImagesCount(30); // התחל עם 30 תמונות ראשונות מהאלבום הבא
                 setIsLoadingMore(false);
               }, 500);
+            } else {
+              console.log('No next album available or next album is empty');
             }
           }
         }

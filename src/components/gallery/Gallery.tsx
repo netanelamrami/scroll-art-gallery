@@ -119,10 +119,10 @@ export const Gallery = ({
 
 
 
-  // Reset displayed images count when images change
+  // Reset displayed images count when images or selected album changes
   useEffect(() => {
     setDisplayedImagesCount(30);
-  }, [images]);
+  }, [images, selectedAlbum]);
 
   useEffect(() => {
     if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
@@ -137,7 +137,7 @@ export const Gallery = ({
   }, [firstAlbum]);
   // Reset displayed images count when images change
 
-  // Infinite scroll effect - updated to use filtered images
+  // Infinite scroll effect - updated to use filtered images and auto-switch albums
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -150,14 +150,31 @@ export const Gallery = ({
             currentImages = getImagesByAlbum(selectedAlbum);
           }
         }
-        if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < currentImages.length) {
-
-          setIsLoadingMore(true);
-          // Simulate loading delay
-          setTimeout(() => {
-            setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
-            setIsLoadingMore(false);
-          }, 1000);
+        
+        if (entries[0].isIntersecting && !isLoadingMore) {
+          // אם יש עוד תמונות באלבום הנוכחי
+          if (displayedImagesCount < currentImages.length) {
+            setIsLoadingMore(true);
+            setTimeout(() => {
+              setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
+              setIsLoadingMore(false);
+            }, 1000);
+          } 
+          // אם הגענו לסוף האלבום, עבור לאלבום הבא
+          else if (selectedAlbum && selectedAlbum !== 'favorites' && albums.length > 0) {
+            const currentAlbumIndex = albums.findIndex(album => album.id === selectedAlbum);
+            const nextAlbumIndex = currentAlbumIndex + 1;
+            
+            // אם יש אלבום הבא ויש בו תמונות
+            if (nextAlbumIndex < albums.length && albums[nextAlbumIndex].imageCount > 0) {
+              setIsLoadingMore(true);
+              setTimeout(() => {
+                onAlbumClick?.(albums[nextAlbumIndex].id);
+                setDisplayedImagesCount(30); // התחל עם 30 תמונות ראשונות מהאלבום הבא
+                setIsLoadingMore(false);
+              }, 500);
+            }
+          }
         }
       },
       { threshold: 0.1 }
@@ -167,7 +184,7 @@ export const Gallery = ({
     }
 
     return () => observer.disconnect();
-  }, [displayedImagesCount, images, selectedAlbum, favoriteImages, getImagesByAlbum, isLoadingMore]);
+  }, [displayedImagesCount, images, selectedAlbum, favoriteImages, getImagesByAlbum, isLoadingMore, albums, onAlbumClick]);
 
   // Responsive columns based on screen size
   useEffect(() => {

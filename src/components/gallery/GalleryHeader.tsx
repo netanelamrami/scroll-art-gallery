@@ -61,7 +61,9 @@ export const GalleryHeader = ({
         <div className="flex items-center justify-between left-0">
           <div className="flex ">
             <h1 className="text-lg font-bold text-foreground left-0" dir="ltr">
-              {event.name} 
+            {event?.id === 694
+              ? (language === 'he' ? 'הקונגרס הציוני הל״ט' : 'The 39th Zionist Congress')
+              : event?.name}
             </h1>
           </div>
           <div className="flex items-center gap-1">

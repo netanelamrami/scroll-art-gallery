@@ -2,7 +2,7 @@ import { User } from "@/types/auth";
 import { statistic } from "@/types/event";
 
 const BASE_URL = "https://api.pixshare.live/PixApi/api";
-//const BASE_URL = "http://localhost:5050/api";
+// const BASE_URL = "http://localhost:5050/api";
 
 export const apiService = {
   async sendSMS(phoneNumber: string, message: string, otp: boolean = true) {
@@ -196,6 +196,31 @@ https://gallery.pixshare.live/${eventLink}?userid=${userId}
     }
   },
 
+ async sendWelcomeEmail(email: string, eventLink: string, userId: string) {
+  try {
+    const res = await fetch(`${BASE_URL}/User/send-welcome-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        email, 
+        eventLink, 
+        userId: userId.toString() // 👈 הופך למחרוזת
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to send welcome email");
+    }
+
+    const responseText = await res.text();
+    return responseText ? JSON.parse(responseText) : null;
+  } catch (error) {
+    console.error("Send Welcome Email Error:", error);
+    throw error;
+  }
+},
 
   async loginUser(userId: number): Promise<any> {
     try {

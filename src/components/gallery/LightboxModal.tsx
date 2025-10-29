@@ -314,16 +314,49 @@ export const LightboxModal = ({
           />
         </div>
       </div>
+        
 
-      {/* Bottom Info */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
-        <div className={`text-foreground ${language === 'he' ? 'text-center' : 'text-center'}`}>
-          <p className="text-sm opacity-80">
+
+
+        
+    {/* Bottom Info */}
+    <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
+      <div className={`text-foreground ${language === 'he' ? 'text-center' : 'text-center'}`}>
+       {event.id == "691" && (
+        <>
+          <button
+            className=" mb-3 sm:w-auto mx-auto flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:opacity-90 transition-all duration-300"
+            onClick={() => {
+              try {
+                const photoUrl = currentImage.mediumSrc; 
+                const encodedPhotoUrl = btoa(photoUrl); 
+                const url = `https://plugos888.com/profile?eventid=68f1211cb0eacc6dff325195&photoUrl=${encodeURIComponent(encodedPhotoUrl)}`;
+                window.open(url, '_blank'); 
+              } catch (error) {
+                console.error('Error encoding URL to base64', error);
+              }
+            }}
+            >
+        
+            {language === 'he' ? 'שתפו ב-Plugos והרוויחו מטבעות 💎' : 'Share on Plugos & earn coins !💎'}
+              {/* <img src="https://www.plugos888.com/_next/image?url=%2Fassets%2Fplugos.png&w=32&q=20" alt="" /> */}
+          </button>
+          <p className="text-sm opacity-80 mb-6">
+          {language === 'he' ? 'המטבעות שלכם יהפכו לכסף אמיתי לבילוי הבא שלכם 🎉' : 'Your coins turn into real money for your next night out 🎉'}
+          </p>
+          </>
+        )}
+         {event.id != "691" && (
+          <>
+          <p className="text-sm opacity-80 mb-3">
             {currentImage.alt} • {t('common.imageSize')}: {currentImage.size}
           </p>
-        </div>
+          </>
+         )}
       </div>
-
+    </div>
+    
+    
       {/* Click outside to close overlay */}
       <div 
         className="absolute inset-0 cursor-pointer"

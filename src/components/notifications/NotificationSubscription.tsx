@@ -5,7 +5,7 @@ import { EmailInput } from "@/components/auth/EmailInput";
 import { OTPVerification } from "@/components/auth/OTPVerification";
 import { useLanguage } from "@/hooks/useLanguage";
 import { event } from "@/types/event";
-import { Bell, Mail, Phone, X } from "lucide-react";
+import { Bell, Mail, Phone, X, Copy, Check } from "lucide-react";
 import { apiService } from "@/data/services/apiService";
 import { toast } from "../ui/use-toast";
 import { useMultiUserAuth } from "@/contexts/AuthContext";
@@ -33,6 +33,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [isEmailMode, setIsEmailMode] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -40,6 +41,7 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
     countryCode: "+972"
   });
   // setIsEmailMode(event?.registerBy === "Email");
+
 useEffect(() => {
   setCurrentStep(initialStep);
 
@@ -131,10 +133,16 @@ useEffect(() => {
     //change notification preference
     const content = isEmailMode ? formData.email : `${formData.countryCode}${formData.phone}`;
     setSendNotification(currentUser.id, true, content, isEmailMode);
-       setTimeout(() => {
+    if(isEmailMode){
+      await apiService.sendWelcomeEmail(content,event.eventLink, currentUser.id)
+    }else{
+      await apiService.sendWelcomeSMS(content,event.eventLink , currentUser.id.toString())
+    }
+
+    setTimeout(() => {
         setCurrentStep("hidden");
         onSubscribe(contactInfo, notifications); 
-      }, 3000);
+      }, 20000);
     };
 
 const validatePhoneNumber = (number: string, countryCode: string): boolean => {
@@ -363,9 +371,41 @@ const validatePhoneNumber = (number: string, countryCode: string): boolean => {
 
           {currentStep === "complete" && (
             <div className="text-center">
-              <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg mb-4">
+              {/* <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg mb-4">
                 <div className="text-green-600 dark:text-green-400 text-sm">
                   ✓ {t('notifications.subscribeSuccess')}
+                </div>
+              </div> */}
+
+              
+              <div className="bg-muted/50 p-4 rounded-lg mb-4 space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  {language === 'he' ? 'העתק ושמור את הקישור' : 'Copy and save your link'}
+                  <br />
+                  {language === 'he' ? 'לצפייה ישירה בגלריה האישית שלך' : 'to view your personal gallery directly'}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={`https://gallery.pixshare.live/${event.eventLink}?userid=${currentUser.id}`}
+                    readOnly
+                    className="flex-1 text-xs bg-background"
+                    dir="ltr"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`https://gallery.pixshare.live/${event.eventLink}?userid=${currentUser.id}`);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                      toast({
+                        title: language === 'he' ? 'הקישור הועתק' : 'Link copied',
+                        description: language === 'he' ? 'הקישור האישי שלך הועתק ללוח' : 'Your personal link has been copied to clipboard',
+                      });
+                    }}
+                  >
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </Button>
                 </div>
               </div>
             

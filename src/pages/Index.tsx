@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useMultiUserAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/auth";
 import { EventLockModal } from "@/components/wedding/EventLockModal";
+import { useLanguage } from "@/hooks/useLanguage";
 
 type NotificationStep = "collapsed" | "contact" | "otp" | "complete" | "hidden";
 
@@ -38,10 +39,12 @@ const Index = () => {
   const [shouldLoadUserImages, setShouldLoadUserImages] = useState(false);
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
   const [lightboxState, setLightboxState] = useState<{isOpen: boolean, currentIndex: number} | null>(null);
+  const [showAllPhotosBt, setshowAllPhotosBt] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
   const [userImages, setUserImages] = useState([]);
     const [eventId, setEventId] = useState<number | null>(null);
+  const { language, t ,setLanguage} = useLanguage();
 
   // Use multi-user auth system
   const { isAuthenticated, addUser,  currentUser, setUsers } = useMultiUserAuth();
@@ -144,10 +147,32 @@ const Index = () => {
   // Load favorite images from localStorage on mount
   useEffect(() => {
     const savedFavorites = sessionStorage.getItem('favoriteImages');
-
     if (savedFavorites) {
       setFavoriteImages(new Set(JSON.parse(savedFavorites)));
     }
+  }, []);
+
+  useEffect(() => {
+    
+      const url = window.location.href;
+      const baseUrl = url.split('?')[0]; // כתובת בלי query params
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang');
+
+      if (langParam) {
+        
+        setLanguage(langParam as 'en' | 'he');
+        console.log("Detected language:", langParam);
+        localStorage.setItem('appLanguage', langParam);
+      }
+      
+      const keyParam = params.get('access');
+      if (!keyParam) return;
+
+        const decoded = atob(keyParam); // פענוח מ־Base64
+        if(decoded === baseUrl){
+            setshowAllPhotosBt(true);
+          }
   }, []);
 
   useEffect(() => {
@@ -161,7 +186,7 @@ const Index = () => {
   const handleViewAllPhotos = () => {
     setIsLoadingAllPhotos(true);
     setGalleryType('all');
-
+    console.log('Viewing all photos');
     setTimeout(() => {
       setShowGallery(true);
       setIsLoadingAllPhotos(false);
@@ -436,7 +461,7 @@ const handleAuthComplete = async (user: User) => {
       baseImages = userImages; // שימוש בתמונות המשתמש שנטענו מהשרת
       return baseImages
     }
-    if(event?.withPhotos){
+    if(event?.withPhotos || showAllPhotosBt){
       return baseImages;
     }
  
@@ -471,6 +496,7 @@ const handleAuthComplete = async (user: User) => {
         onViewMyPhotos={handleViewMyPhotos}
         isLoadingAllPhotos={isLoadingAllPhotos}
         isLoadingMyPhotos={isLoadingMyPhotos}
+        showAllPhotosBt={showAllPhotosBt}
       />
       
       {showGallery && (

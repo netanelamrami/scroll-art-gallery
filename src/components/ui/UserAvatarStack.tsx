@@ -103,18 +103,19 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                           {language === 'he' ? 'בחר תמונות' : 'Select Images'}
                       </span>
                   </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsSupportOpen(true)}
-                        className="rounded-full px-2 py-2"
-                      >
-                        <MessageCircle className="h-3 w-3 mr-1" />
-                        <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
-                    </Button>
                 </>
             )}
-
+              {isMobile &&  (
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsSupportOpen(true)}
+                    className="rounded-full px-2 py-2"
+                  >
+                    <MessageCircle className="h-3 w-3 mr-1" />
+                    <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
+                </Button>
+                )}
               <Button
                 variant="ghost"
                 className="w-full h-auto p-2 justify-start hover:bg-muted/50"
@@ -171,8 +172,10 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
   return (
     <>
       <div className={cn("relative", className)}>
+        
         <Popover open={isOpen} onOpenChange={setIsOpen} >
           <PopoverTrigger asChild >
+            
             <Button
               variant="ghost"
               size="sm"
@@ -210,6 +213,7 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                 )}
               </div>
             </Button>
+                     
           </PopoverTrigger>
           <PopoverContent align="end" className="w-48 p-2"  dir={language === 'he' ? 'rtl' : 'ltr'}>
 
@@ -242,17 +246,21 @@ export const UserAvatarStack = ({totalImages, onDownloadAll, event, onAuthComple
                       {language === 'he' ? 'בחר תמונות' : 'Select Images'}
                   </span>
               </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsSupportOpen(true)}
-                        className="rounded-full px-2 py-2"
-                      >
-                        <MessageCircle className="h-3 w-3 mr-1" />
-                        <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
-                    </Button>
                 </>
             )}
+            
+            {isMobile &&  (
+              <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsSupportOpen(true)}
+                  className="rounded-full px-2 py-2"
+                >
+                  <MessageCircle className="h-3 w-3 mr-1" />
+                  <span>{language === 'he' ? 'תמיכה' : 'Support'}</span>
+              </Button>
+            )}
+
               {/* Current User */}
               <div className="px-2 py-2 bg-muted/50 rounded-md">
                 <p className="text-xs text-muted-foreground mb-1">

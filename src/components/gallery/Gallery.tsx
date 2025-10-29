@@ -70,6 +70,7 @@ export const Gallery = ({
   const [columns, setColumns] = useState(externalColumns || 4);
   const [isSelectionMode, setIsSelectionMode] = useState(selectionMode || false);
   const [selectedImages, setSelectedImages] = useState<Set<string>>(externalSelectedImages || new Set());
+  const [loadedAlbums, setLoadedAlbums] = useState<string[]>([]); // אלבומים שנטענו
   // const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
@@ -122,17 +123,23 @@ export const Gallery = ({
   // Reset displayed images count when images or selected album changes
   useEffect(() => {
     setDisplayedImagesCount(30);
+    // רק אם זה אלבום חדש שהמשתמש בחר ידנית, נאפס את רשימת האלבומים הנטענים
+    if (selectedAlbum && !loadedAlbums.includes(selectedAlbum)) {
+      setLoadedAlbums([selectedAlbum]);
+    }
   }, [images, selectedAlbum]);
 
   useEffect(() => {
     if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
       onAlbumClick(firstAlbum);
+      setLoadedAlbums([firstAlbum]); // התחל עם האלבום הראשון
     }
   }, [firstAlbum, albums, selectedAlbum, onAlbumClick]);
 
     useEffect(() => {
     if (firstAlbum != null) {
       onAlbumClick(firstAlbum);
+      setLoadedAlbums([firstAlbum]); // התחל עם האלבום הראשון
     }
   }, [firstAlbum]);
   // Reset displayed images count when images change
@@ -198,13 +205,15 @@ export const Gallery = ({
               
               // בדוק אם יש תמונות בפועל באלבום הבא
               if (nextAlbumImages.length > 0) {
-                console.log('Switching to next album:', nextAlbum.id);
+                console.log('Adding next album to loaded albums:', nextAlbum.id);
                 setIsLoadingMore(true);
                 setTimeout(() => {
-                  onAlbumClick?.(nextAlbum.id);
-                  setDisplayedImagesCount(30); // התחל עם 30 תמונות ראשונות מהאלבום הבא
+                  // הוסף את האלבום הבא לרשימת האלבומים הנטענים במקום להחליף
+                  setLoadedAlbums(prev => [...prev, nextAlbum.id]);
+                  onAlbumClick?.(nextAlbum.id); // עדכן את הסימון בלבד
+                  setDisplayedImagesCount(prev => prev + Math.min(30, nextAlbumImages.length)); // הוסף תמונות מהאלבום הבא
                   setIsLoadingMore(false);
-                }, 500);
+                }, 300);
               } else {
                 console.log('Next album is empty, skipping');
               }
@@ -297,16 +306,27 @@ export const Gallery = ({
       }
     };
   
-  // Get filtered images based on selected album
+  // Get filtered images based on loaded albums
   const getFilteredImages = () => {
-    if (selectedAlbum) {
-      if (selectedAlbum === 'favorites') {
-        return images.filter(img => favoriteImages.has(img.id));
-      } else {
-        return getImagesByAlbum(selectedAlbum);
-      }
+    if (!selectedAlbum) {
+      return images;
     }
-    return images;
+    
+    if (selectedAlbum === 'favorites') {
+      return images.filter(img => favoriteImages.has(img.id));
+    }
+    
+    // אם יש אלבומים נטענים, החזר את כל התמונות מכל האלבומים
+    if (loadedAlbums.length > 0) {
+      const allLoadedImages: GalleryImage[] = [];
+      loadedAlbums.forEach(albumId => {
+        const albumImages = getImagesByAlbum(albumId);
+        allLoadedImages.push(...albumImages);
+      });
+      return allLoadedImages;
+    }
+    
+    return getImagesByAlbum(selectedAlbum);
   };
 
   const filteredImages = getFilteredImages();
@@ -609,41 +629,116 @@ export const Gallery = ({
           <EmptyPhotosState type={galleryType === 'all' ? 'allPhotos' : 'myPhotos'} />
         ) : (
           <>
-            <MasonryGrid
-              images={displayedImages}
-              onImageClick={handleImageClick}
-              columns={columns}
-              isSelectionMode={isSelectionMode}
-              selectedImages={selectedImages}
-              onImageSelection={handleImageSelection}
-              favoriteImages={favoriteImages}
-              onToggleFavorite={onToggleFavorite}
-              onImageDropdownClick={handleImageDropdown}
-              onShare={async (imageId) => {
-                const image = images.find(img => img.id === imageId);
-                if (!image) return;
-                
-                const result = await shareImage(image.largeSrc || image.src, image.id);
-                
-                if (result.success && result.method === 'native') {
-                  // toast({
-                  //   title: 'שיתוף הושלם',
-                  //   description: 'התמונה שותפה בהצלחה',
-                  // });
-                } else if (result.success && result.method === 'options') {
-                  setShareModalImage({
-                    url: image.largeSrc || image.src,
-                    name: image.id
-                  });
-                } else {
-                  toast({
-                    title: 'שגיאה',
-                    description: 'שיתוף בוטל',
-                    variant: "destructive"
-                  });
-                }
-              }}
-            />
+            {/* תצוגת תמונות לפי אלבומים עם מפרידים */}
+            {loadedAlbums.length > 0 && selectedAlbum !== 'favorites' ? (
+              <div className="space-y-6">
+                {loadedAlbums.map((albumId, albumIndex) => {
+                  const albumImages = getImagesByAlbum(albumId);
+                  const album = albums.find(a => a.id === albumId);
+                  const displayedAlbumImages = albumImages.slice(
+                    0,
+                    albumIndex === loadedAlbums.length - 1 
+                      ? displayedImagesCount - loadedAlbums.slice(0, albumIndex).reduce((sum, id) => sum + getImagesByAlbum(id).length, 0)
+                      : albumImages.length
+                  );
+                  
+                  if (displayedAlbumImages.length === 0) return null;
+                  
+                  return (
+                    <div key={albumId}>
+                      {/* Album Header */}
+                      {albumIndex > 0 && (
+                        <div className="flex items-center gap-3 px-4 py-6 mb-2">
+                          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 backdrop-blur-sm border">
+                            <span className="text-sm font-medium">{album?.name || albumId}</span>
+                            <span className="text-xs text-muted-foreground">({albumImages.length})</span>
+                          </div>
+                          <div className="flex-1 h-px bg-gradient-to-r from-border via-transparent to-transparent" />
+                        </div>
+                      )}
+                      
+                      <MasonryGrid
+                        images={displayedAlbumImages}
+                        onImageClick={(image, index) => {
+                          // חשב את האינדקס הגלובלי
+                          const globalIndex = loadedAlbums.slice(0, albumIndex).reduce((sum, id) => sum + getImagesByAlbum(id).length, 0) + index;
+                          handleImageClick(image, globalIndex);
+                        }}
+                        columns={columns}
+                        isSelectionMode={isSelectionMode}
+                        selectedImages={selectedImages}
+                        onImageSelection={handleImageSelection}
+                        favoriteImages={favoriteImages}
+                        onToggleFavorite={onToggleFavorite}
+                        onImageDropdownClick={handleImageDropdown}
+                        onShare={async (imageId) => {
+                          const image = images.find(img => img.id === imageId);
+                          if (!image) return;
+                          
+                          const result = await shareImage(image.largeSrc || image.src, image.id);
+                          
+                          if (result.success && result.method === 'native') {
+                            // toast({
+                            //   title: 'שיתוף הושלם',
+                            //   description: 'התמונה שותפה בהצלחה',
+                            // });
+                          } else if (result.success && result.method === 'options') {
+                            setShareModalImage({
+                              url: image.largeSrc || image.src,
+                              name: image.id
+                            });
+                          } else {
+                            toast({
+                              title: 'שגיאה',
+                              description: 'שיתוף בוטל',
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              // תצוגה רגילה לנבחרות או ללא אלבום נבחר
+              <MasonryGrid
+                images={displayedImages}
+                onImageClick={handleImageClick}
+                columns={columns}
+                isSelectionMode={isSelectionMode}
+                selectedImages={selectedImages}
+                onImageSelection={handleImageSelection}
+                favoriteImages={favoriteImages}
+                onToggleFavorite={onToggleFavorite}
+                onImageDropdownClick={handleImageDropdown}
+                onShare={async (imageId) => {
+                  const image = images.find(img => img.id === imageId);
+                  if (!image) return;
+                  
+                  const result = await shareImage(image.largeSrc || image.src, image.id);
+                  
+                  if (result.success && result.method === 'native') {
+                    // toast({
+                    //   title: 'שיתוף הושלם',
+                    //   description: 'התמונה שותפה בהצלחה',
+                    // });
+                  } else if (result.success && result.method === 'options') {
+                    setShareModalImage({
+                      url: image.largeSrc || image.src,
+                      name: image.id
+                    });
+                  } else {
+                    toast({
+                      title: 'שגיאה',
+                      description: 'שיתוף בוטל',
+                      variant: "destructive"
+                    });
+                  }
+                }}
+              />
+            )}
             
             {/* Load More Trigger & Loader */}
             <div ref={loadMoreRef} className="w-full py-4 flex justify-center">

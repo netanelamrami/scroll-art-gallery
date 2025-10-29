@@ -233,7 +233,8 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
       
       formData.append('image', compressedFile);
       formData.append('eventid', event.id.toString());
-      
+      formData.append('AuthenticateBy', !event.needDetect ? 'Selfie' : isEmailMode ? 'Email' : 'PhoneNumber');
+      console.log(formData.getAll('AuthenticateBy'))
       if (event.needDetect) {
         setLoadingMessage(t('auth.registeringNewUser'));
         
@@ -242,7 +243,6 @@ export const AuthFlow = ({ event, onComplete, onCancel, setUsers }: AuthFlowProp
         formData.append('fullname', 'Anonymous');
         formData.append('sendNotification', notifications.toString());
         formData.append('email', isEmailMode ? contactInfo : '');
-        formData.append('AuthenticateBy', isEmailMode ? 'Email' : 'PhoneNumber');
         
         const registrationResponse = await apiService.registerUser(formData);
         

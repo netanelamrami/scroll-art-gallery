@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useStatistics } from "@/hooks/useStatistics";
+import { event } from "@/types/event";
 
 interface GalleryImageCardProps {
   image: GalleryImage;
+  event: event;
   onClick: () => void;
   isSelectionMode?: boolean;
   isSelected?: boolean;
@@ -22,6 +25,7 @@ interface GalleryImageCardProps {
 
 export const GalleryImageCard = ({ 
   image, 
+  event,
   onClick, 
   isSelectionMode = false,
   isSelected = false,
@@ -36,6 +40,7 @@ export const GalleryImageCard = ({
   const [showOverlay, setShowOverlay] = useState(false);
   const { toast } = useToast();
   const { t, language } = useLanguage();
+  const canHover = typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches;
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -101,22 +106,26 @@ export const GalleryImageCard = ({
         "hover:z-30", // הוספת z-index גבוה בהובר
         isSelectionMode && "ring-2 ring-transparent",
         isSelected && "ring-1 ring-primary  ring-offset-background"
-      )}
-      onClick={handleClick}
-      onMouseEnter={() => setShowOverlay(true)}
-      onMouseLeave={() => setShowOverlay(false)}
-    >
+    )}
+    onClick={handleClick}
+    onMouseEnter={() => {
+      if (canHover) setShowOverlay(true);
+    }}
+    onMouseLeave={() => {
+      if (canHover) setShowOverlay(false);
+    }}
+  >
       {!isLoaded && (
         <div 
           className="w-full bg-muted animate-pulse rounded-none "
-          style={{ height: `${image.height}px` }}
+          style={{ height: `${image.photoHeight}px` }}
         />
       )}
       
       {hasError ? (
         <div 
           className="w-full bg-muted flex items-center justify-center text-muted-foreground rounded-none "
-          style={{ height: `${image.height}px` }}
+          style={{ height: `${image.photoHeight}px` }}
         >
           <span>{t('toast.error.title')}</span>
         </div>

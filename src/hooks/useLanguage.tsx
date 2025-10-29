@@ -251,7 +251,7 @@ const translations = {
     'notifications.subscribe': 'הרשמה',
     'notifications.getUpdates': 'קבלת עדכונים',
     'notifications.subscribeTo': 'הרשמה להתראות',
-    'notifications.subscribeSuccess': 'נרשמת בהצלחה להתראות!',
+    'notifications.subscribeSuccess': 'נרשמת בהצלחה להתראות',
     'notifications.enterPhone': 'הכנס מספר טלפון',
     'notifications.enterEmail': 'הכנס כתובת מייל',
     'notifications.sendCode': 'שלח קוד',
@@ -273,10 +273,10 @@ const translations = {
     // Empty states - מצבים ריקים
     'empty.allPhotos.title': 'אין תמונות זמינות עדיין',
     'empty.allPhotos.description': 'התמונות נטענות ומעובדות. חזרו בקרוב לראות את כל התמונות מהאירוע!',
-    'empty.myPhotos.title': 'לא נמצאו תמונות שלכם',
-    'empty.myPhotos.description': 'אולי התמונות שלכם עדיין לא הועלו, או שהן בתהליך זיהוי. נסו שוב מאוחר יותר!',
+    'empty.myPhotos.title': 'לא נמצאו תמונות שלך',
+    'empty.myPhotos.description': 'אולי התמונות שלך עדיין לא הועלו, או שהן בתהליך זיהוי. נסה שוב מאוחר יותר!',
     'empty.allPhotos.clock':'בקרוב יהיו כאן תמונות מהאירוע',
-    'empty.myPhotos.clock': 'בקרוב יהיו כאן התמונות שלכם',
+    'empty.myPhotos.clock': 'בקרוב יהיו כאן התמונות שלך',
     
     // Users - משתמשים
     'users.addUser': 'הוסף משתמש',
@@ -532,7 +532,7 @@ const translations = {
     'notifications.subscribe': 'Subscribe',
     'notifications.getUpdates': 'Get Updates',
     'notifications.subscribeTo': 'Subscribe to notifications',
-    'notifications.subscribeSuccess': 'Successfully subscribed to notifications!',
+    'notifications.subscribeSuccess': 'Successfully subscribed to notifications',
     'notifications.enterPhone': 'Enter phone number',
     'notifications.enterEmail': 'Enter email address',
     'notifications.sendCode': 'Send code',

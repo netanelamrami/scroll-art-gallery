@@ -156,9 +156,7 @@ export const AddUserModal = ({ isOpen, onClose , event}: AddUserModalProps) => {
       eventId: event?.id || 0,
       faceId: ''
     });
-    console.log(newUser)
 
-    console.log('New user added from AddUserModal:', newUser);
     setStep('complete');
     
     setTimeout(() => {

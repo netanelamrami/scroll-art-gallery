@@ -1,9 +1,11 @@
 import React from "react";
 import { GalleryImage } from "@/types/gallery";
 import { MasonryColumn } from "./MasonryColumn";
+import { event } from "@/types/event";
 
 interface MasonryGridProps {
   images: GalleryImage[];
+  event?: event;
   onImageClick: (image: GalleryImage, index: number) => void;
   columns: number;
   isSelectionMode?: boolean;
@@ -17,6 +19,7 @@ interface MasonryGridProps {
 
 export const MasonryGrid = ({
   images,
+  event,
   onImageClick,
   columns,
   isSelectionMode = false,
@@ -39,7 +42,7 @@ export const MasonryGrid = ({
       columnArrays[shortestColumnIndex].push(image);
       columnHeights[shortestColumnIndex] += (image.photoHeight || 0) + 4;
     });
-
+    console.log(columnArrays)
     return columnArrays;
   };
 
@@ -54,6 +57,7 @@ export const MasonryGrid = ({
         <MasonryColumn
           key={columnIndex}
           images={columnImages}
+          event={event}
           onImageClick={onImageClick}
           allImages={images}
           isSelectionMode={isSelectionMode}

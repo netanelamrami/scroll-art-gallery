@@ -224,7 +224,6 @@ export const BottomMenu = ({ onViewAllPhotos, onShareEvent, onDownloadAll, onTog
                 faceId: ''
               });
               
-              console.log('New user added from BottomMenu:', newUser);
               setShowAuthModal(false);
               onAuthComplete?.(authData);
               

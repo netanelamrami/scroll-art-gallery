@@ -398,31 +398,31 @@ export const FloatingNavbar = ({ event, galleryType, onToggleGalleryType, onDown
 
 
 
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onToggleGalleryType}
+            className="rounded-full px-4 py-2"
+          >
+              {/* <Users className="h-3 w-3 mr-1" /> */}
+              {galleryType === 'all' ? <Users className="h-4 w-4" /> : <Images className="h-4 w-4" />}
+
+              <span>
+                {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') :t ('navbar.allPhotos')}
+              </span>
+          </Button>
+
+          {imageCount > 0 && (
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              onClick={onToggleGalleryType}
-              className="rounded-full px-4 py-2"
+              onClick={onToggleSelectionMode}
+              className="rounded-full hover:bg-accent px-4 py-2 text-sm"
             >
-                {/* <Users className="h-3 w-3 mr-1" /> */}
-                {galleryType === 'all' ? <Users className="h-4 w-4" /> : <Images className="h-4 w-4" />}
-
-                <span>
-                  {galleryType === 'all' && isConnect ? t('navbar.myPhotos') : galleryType === 'all' && !isConnect ? t('navbar.findMe') :t ('navbar.allPhotos')}
-                </span>
+              <CheckSquare className="h-4 w-4 me-1" />
+              <span>{language === 'he' ? 'בחר' : 'Select'}</span>
             </Button>
-
-              {imageCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onToggleSelectionMode}
-                  className="rounded-full hover:bg-accent px-4 py-2 text-sm"
-                >
-                  <CheckSquare className="h-4 w-4 me-1" />
-                  <span>{language === 'he' ? 'בחר' : 'Select'}</span>
-                </Button>
-                )}
+          )}
 
           {imageCount == 0 && (
             <Button

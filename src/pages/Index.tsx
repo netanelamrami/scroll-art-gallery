@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useMultiUserAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/auth";
 import { EventLockModal } from "@/components/wedding/EventLockModal";
+import { useLanguage } from "@/hooks/useLanguage";
 
 type NotificationStep = "collapsed" | "contact" | "otp" | "complete" | "hidden";
 
@@ -38,18 +39,23 @@ const Index = () => {
   const [shouldLoadUserImages, setShouldLoadUserImages] = useState(false);
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
   const [lightboxState, setLightboxState] = useState<{isOpen: boolean, currentIndex: number} | null>(null);
+  const [showAllPhotosBt, setshowAllPhotosBt] = useState(false);
 
   const [galleryImages, setGalleryImages] = useState([]);
   const [userImages, setUserImages] = useState([]);
-  
+    const [eventId, setEventId] = useState<number | null>(null);
+  const { language, t ,setLanguage} = useLanguage();
+
   // Use multi-user auth system
   const { isAuthenticated, addUser,  currentUser, setUsers } = useMultiUserAuth();
-  
+
   // Force re-render when authentication state changes
-  const [, forceUpdate] = useState({});
+  const [,forceUpdate] = useState({});
+  const queryParams = new URLSearchParams(location.search);
+  const urlUserId = queryParams.get("userid");
 
   useEffect(() => {
-    const currentEventLink = eventLink ;
+    const currentEventLink = eventLink;
     apiService.getEvent(currentEventLink)
       .then(eventData => {        
         if (!eventData) {
@@ -61,8 +67,8 @@ const Index = () => {
           navigate('/event-inactive/' + currentEventLink);
           return null; 
         }
-        
         setEvent(eventData);
+      setEventId(eventData.id);
         return apiService.getEventImagesFullData(currentEventLink);
       })
       .then(imagesData => {
@@ -77,7 +83,7 @@ const Index = () => {
           width: 400,
           height: 300,
           albumId: imageData.albomId?.toString() || 'main',
-          photoHeight: imageData.photoHeight || 0 
+          photoHeight: imageData.photoHeight == 100 ? 150 : 350 
         }));
         setGalleryImages(formattedImages);
         setIsLoading(false);
@@ -88,7 +94,6 @@ const Index = () => {
             if(location.search == '?my' ){
               handleAuthComplete(currentUser) 
             }
-            console.log(location)
             setShowGallery(true);
             setLightboxState({
               isOpen: true,
@@ -142,10 +147,32 @@ const Index = () => {
   // Load favorite images from localStorage on mount
   useEffect(() => {
     const savedFavorites = sessionStorage.getItem('favoriteImages');
-
     if (savedFavorites) {
       setFavoriteImages(new Set(JSON.parse(savedFavorites)));
     }
+  }, []);
+
+  useEffect(() => {
+    
+      const url = window.location.href;
+      const baseUrl = url.split('?')[0]; // כתובת בלי query params
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang');
+
+      if (langParam) {
+        
+        setLanguage(langParam as 'en' | 'he');
+        console.log("Detected language:", langParam);
+        localStorage.setItem('appLanguage', langParam);
+      }
+      
+      const keyParam = params.get('access');
+      if (!keyParam) return;
+
+        const decoded = atob(keyParam); // פענוח מ־Base64
+        if(decoded === baseUrl){
+            setshowAllPhotosBt(true);
+          }
   }, []);
 
   useEffect(() => {
@@ -159,7 +186,7 @@ const Index = () => {
   const handleViewAllPhotos = () => {
     setIsLoadingAllPhotos(true);
     setGalleryType('all');
-
+    console.log('Viewing all photos');
     setTimeout(() => {
       setShowGallery(true);
       setIsLoadingAllPhotos(false);
@@ -171,6 +198,22 @@ const Index = () => {
       }, 300);
     }, 1000);
   };
+
+useEffect(() => {
+  const fetchUserAndImages = async () => {
+   
+    if (urlUserId && event) {
+      try {
+        const { user } = await apiService.loginUser(Number(urlUserId));
+        handleAuthComplete(user)
+      } catch (err) {
+        console.error("Error logging in user and loading images", err);
+      }
+    }
+  };
+  fetchUserAndImages();
+}, [urlUserId, event]);
+
 
   const handleViewMyPhotos = () => {
     setIsLoadingMyPhotos(true);
@@ -191,12 +234,9 @@ const onUserClickedLoadImages = () => {
     try {
       const userId = Number(user.id)//parseInt(sessionStorage.getItem('userid') || '0');
       const eventId = event?.id;
-    
-      console.log(userId, event)
       if (userId && eventId) {
-
+        
         const userImagesData = await apiService.getImages(userId, eventId);
-        console.log( userImagesData)
         const formattedUserImages = userImagesData?.map((imageData: any, index: number) => ({
           id: imageData.name || `user-image-${index}`,
           src: imageData.smallUrl,
@@ -207,7 +247,7 @@ const onUserClickedLoadImages = () => {
           width: 400,
           height: 300,
           albumId: imageData.albomId?.toString() || 'main',
-          photoHeight: imageData.photoHeight || 0 
+          photoHeight: imageData.photoHeight == 100 ? 150 : 350 
         })) || [];
         
         setUserImages(formattedUserImages);
@@ -252,8 +292,11 @@ const handleToggleFavorite = (imageId: string) => {
 
     if (newFavorites.has(imageId)) {
       newFavorites.delete(imageId);
+      // statistic.favoritesPhotosSum--;
+      // SaveStatisticsForEvent(statistic);
     } else {
       newFavorites.add(imageId);
+
     }
 
     const arrayFavorites = Array.from(newFavorites);
@@ -328,6 +371,7 @@ const handleAuthComplete = async (user: User) => {
 
 
     const handleSwitchToMyPhotos = async (event) => {
+
       const user = event.detail;
       if (!isAuthenticated) {
           setShowAuthFlow(true);
@@ -335,6 +379,7 @@ const handleAuthComplete = async (user: User) => {
         }
 
         // await loadUserImages(user ?? currentUser);
+
         onUserClickedLoadImages();
 
         setGalleryType('my');
@@ -413,11 +458,10 @@ const handleAuthComplete = async (user: User) => {
   const filteredImages = (() => {
     let baseImages = galleryImages;    
     if (galleryType === 'my' && isAuthenticated) {
-      console.log(userImages)
       baseImages = userImages; // שימוש בתמונות המשתמש שנטענו מהשרת
       return baseImages
     }
-    if(event?.withPhotos){
+    if(event?.withPhotos || showAllPhotosBt){
       return baseImages;
     }
  
@@ -452,6 +496,7 @@ const handleAuthComplete = async (user: User) => {
         onViewMyPhotos={handleViewMyPhotos}
         isLoadingAllPhotos={isLoadingAllPhotos}
         isLoadingMyPhotos={isLoadingMyPhotos}
+        showAllPhotosBt={showAllPhotosBt}
       />
       
       {showGallery && (

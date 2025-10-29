@@ -2,9 +2,11 @@
 import React from "react";
 import { GalleryImage } from "@/types/gallery";
 import { GalleryImageCard } from "./GalleryImageCard";
+import { event } from "@/types/event";
 
 interface MasonryColumnProps {
   images: GalleryImage[];
+  event?: event;
   onImageClick: (image: GalleryImage, index: number) => void;
   allImages: GalleryImage[];
   isSelectionMode?: boolean;
@@ -18,6 +20,7 @@ interface MasonryColumnProps {
 
 export const MasonryColumn = ({
   images,
+  event,
   onImageClick,
   allImages,
   isSelectionMode = false,
@@ -36,6 +39,7 @@ export const MasonryColumn = ({
           <GalleryImageCard
             key={image.id}
             image={image}
+            event={event}
             onClick={() => onImageClick(image, globalIndex)}
             isSelectionMode={isSelectionMode}
             isSelected={selectedImages.has(image.id)}

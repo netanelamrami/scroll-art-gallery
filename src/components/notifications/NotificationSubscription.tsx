@@ -33,14 +33,15 @@ export const NotificationSubscription = ({ event, onSubscribe, onClose, initialS
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [isEmailMode, setIsEmailMode] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
     countryCode: "+972"
   });
-  const [copied, setCopied] = useState(false);
   // setIsEmailMode(event?.registerBy === "Email");
+
 useEffect(() => {
   setCurrentStep(initialStep);
 
@@ -132,10 +133,16 @@ useEffect(() => {
     //change notification preference
     const content = isEmailMode ? formData.email : `${formData.countryCode}${formData.phone}`;
     setSendNotification(currentUser.id, true, content, isEmailMode);
-       setTimeout(() => {
+    if(isEmailMode){
+      await apiService.sendWelcomeEmail(content,event.eventLink, currentUser.id)
+    }else{
+      await apiService.sendWelcomeSMS(content,event.eventLink , currentUser.id.toString())
+    }
+
+    setTimeout(() => {
         setCurrentStep("hidden");
         onSubscribe(contactInfo, notifications); 
-      }, 3000);
+      }, 20000);
     };
 
 const validatePhoneNumber = (number: string, countryCode: string): boolean => {
@@ -364,15 +371,18 @@ const validatePhoneNumber = (number: string, countryCode: string): boolean => {
 
           {currentStep === "complete" && (
             <div className="text-center">
-              <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg mb-4">
+              {/* <div className="bg-green-100 dark:bg-green-900/30 p-4 rounded-lg mb-4">
                 <div className="text-green-600 dark:text-green-400 text-sm">
                   ✓ {t('notifications.subscribeSuccess')}
                 </div>
-              </div>
+              </div> */}
 
+              
               <div className="bg-muted/50 p-4 rounded-lg mb-4 space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  {language === 'he' ? 'העתק את הקישור האישי שלך' : 'Copy your personal link'}
+                  {language === 'he' ? 'העתק ושמור את הקישור' : 'Copy and save your link'}
+                  <br />
+                  {language === 'he' ? 'לצפייה ישירה בגלריה האישית שלך' : 'to view your personal gallery directly'}
                 </p>
                 <div className="flex items-center gap-2">
                   <Input

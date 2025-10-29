@@ -1,3 +1,4 @@
+// import { event } from '@/types/event';
 
 // import { BusinessCard } from "./businessCard";
 // import { RegisterByEnum, EventLockEnum, EventLanguageEnum } from "./enums"; // אם יש לך enums
@@ -44,4 +45,15 @@ export interface event {
   eventLanguage: "HE" | "EN";
   galleryGridSize: number;
   eventPhotoLockType?: string;
+}
+
+
+export interface statistic {
+  id: number;
+  eventId?: number;
+  downloadClickSum? : number;
+  sharePhotoClickSum?: number;
+  downloadAllPhoto?: number;
+  favoritesPhotosSum?: number;
+  enterToGallery?: number;
 }

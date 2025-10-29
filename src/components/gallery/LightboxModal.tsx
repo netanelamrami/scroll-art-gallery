@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { GalleryImage } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart, Share2 } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut, Star, Heart, Share2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { downloadImage } from "@/utils/downloadUtils";
 import { shareImage } from "@/utils/shareUtils";
@@ -10,9 +10,12 @@ import { ShareOptionsModal } from "./ShareOptionsModal";
 import { isIOS } from "@/utils/deviceUtils";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
+import { ClipLoader } from "react-spinners";
+import { apiService } from "@/data/services/apiService";
 
 interface LightboxModalProps {
   isOpen: boolean;
+  event: any;
   images: GalleryImage[];
   currentIndex: number;
   onClose: () => void;
@@ -25,6 +28,7 @@ interface LightboxModalProps {
 
 export const LightboxModal = ({
   isOpen,
+  event,
   images,
   currentIndex,
   onClose,
@@ -39,10 +43,11 @@ export const LightboxModal = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const { t, language } = useLanguage();
+  const [shareIsLoading, setShareIsLoading] = useState(false);
+  const [downloadIsLoading, setDownloadIsLoading] = useState(false);
 
   const currentImage = images[currentIndex];
 
@@ -118,40 +123,60 @@ export const LightboxModal = ({
   if (!isOpen || !currentImage) return null;
 
   const handleDownload = async () => {
-    if (!currentImage || isSharing) return;
+    if (!currentImage) return;
+      apiService.updateStatistic(event.id, "DownloadClick");
 
-    setIsSharing(true);
-    
+    // Check if iOS - redirect to image save page
+    if (isIOS()) {
+      // Get current scroll position and event link from URL
+      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      const currentPath = window.location.pathname;
+      const eventLink = currentPath.startsWith('/') ? currentPath.slice(1) : currentPath;
+      
+      const params = new URLSearchParams({
+        url: currentImage.largeSrc,
+        name: `${currentImage.id}`,
+        returnState: encodeURIComponent(JSON.stringify({ fromLightbox: true })),
+        lightboxIndex: currentIndex.toString(),
+        scrollPosition: scrollPosition.toString(),
+        eventLink: eventLink || '',
+        galleryType: galleryType,
+
+      });
+      navigate(`/image-save?${params.toString()}`);
+      return;
+    }
+
+    // For Android/Desktop - direct download
     toast({
       title: t('toast.downloadStarting.title'),
       description: t('toast.downloadStarting.title'),
     });
+    setDownloadIsLoading(true);
+    const success = await downloadImage(currentImage.largeSrc, `${currentImage.id}`);
+    setDownloadIsLoading(false);
 
-    try {
-      const success = await downloadImage(currentImage.largeSrc, `${currentImage.id}`);
-      
-      if (success) {
-        toast({
-          title: t('toast.downloadComplete.title'),
-          description: t('toast.downloadImageComplete.description'),
-        });
-      } else {
-        toast({
-          title: t('toast.error.title'),
-          description: t('downloadModal.downloadError'),
-          variant: "destructive"
-        });
-      }
-    } finally {
-      setIsSharing(false);
+    if (success) {
+      toast({
+        title: t('toast.downloadComplete.title'),
+        description: t('toast.downloadImageComplete.description'),
+      });
+    } else {
+      toast({
+        title: t('toast.error.title'),
+        description: t('downloadModal.downloadError'),
+        variant: "destructive"
+      });
     }
   };
 
   const handleShare = async () => {
     if (!currentImage) return;
 
-    const result = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
-    
+      apiService.updateStatistic(event.id, "SharePhotoClick");
+      setShareIsLoading(true);
+      const result = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
+      setShareIsLoading(false);
     if (result.success && result.method === 'native') {
       // toast({
       //   title: 'שיתוף הושלם',
@@ -160,11 +185,11 @@ export const LightboxModal = ({
     } else if (result.success && result.method === 'options') {
       setShowShareModal(true);
     } else {
-      // toast({
-      //   title: 'שגיאה',
-      //   description: 'שגיאה בשיתוף התמונה',
-      //   variant: "destructive"
-      // });
+      toast({
+        title: 'שגיאה',
+        description: 'שגיאה בשיתוף התמונה',
+        variant: "destructive"
+      });
     }
   };
 
@@ -195,8 +220,8 @@ export const LightboxModal = ({
               onClick={handleDownload}
               className="text-foreground hover:bg-accent"
             >
-              <Download className="h-4 w-4" />
-            </Button>
+            {downloadIsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="h-4 w-4" />}
+          </Button>
             
             <Button
               variant="ghost"
@@ -204,9 +229,8 @@ export const LightboxModal = ({
               onClick={handleShare}
               className="text-foreground hover:bg-accent"
             >
-              <Share2 className="h-4 w-4" />
-            </Button>
-            
+            {shareIsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
+          </Button>
             {onToggleFavorite && (
               <Button
                 variant="ghost"
@@ -290,16 +314,49 @@ export const LightboxModal = ({
           />
         </div>
       </div>
+        
 
-      {/* Bottom Info */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
-        <div className={`text-foreground ${language === 'he' ? 'text-center' : 'text-center'}`}>
-          <p className="text-sm opacity-80">
+
+
+        
+    {/* Bottom Info */}
+    <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
+      <div className={`text-foreground ${language === 'he' ? 'text-center' : 'text-center'}`}>
+       {event.id == "691" && (
+        <>
+          <button
+            className=" mb-3 sm:w-auto mx-auto flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:opacity-90 transition-all duration-300"
+            onClick={() => {
+              try {
+                const photoUrl = currentImage.mediumSrc; 
+                const encodedPhotoUrl = btoa(photoUrl); 
+                const url = `https://plugos888.com/profile?eventid=68f1211cb0eacc6dff325195&photoUrl=${encodeURIComponent(encodedPhotoUrl)}`;
+                window.open(url, '_blank'); 
+              } catch (error) {
+                console.error('Error encoding URL to base64', error);
+              }
+            }}
+            >
+        
+            {language === 'he' ? 'שתפו ב-Plugos והרוויחו מטבעות 💎' : 'Share on Plugos & earn coins !💎'}
+              {/* <img src="https://www.plugos888.com/_next/image?url=%2Fassets%2Fplugos.png&w=32&q=20" alt="" /> */}
+          </button>
+          <p className="text-sm opacity-80 mb-6">
+          {language === 'he' ? 'המטבעות שלכם יהפכו לכסף אמיתי לבילוי הבא שלכם 🎉' : 'Your coins turn into real money for your next night out 🎉'}
+          </p>
+          </>
+        )}
+         {event.id != "691" && (
+          <>
+          <p className="text-sm opacity-80 mb-3">
             {currentImage.alt} • {t('common.imageSize')}: {currentImage.size}
           </p>
-        </div>
+          </>
+         )}
       </div>
-
+    </div>
+    
+    
       {/* Click outside to close overlay */}
       <div 
         className="absolute inset-0 cursor-pointer"

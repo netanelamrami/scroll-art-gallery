@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthState } from '@/types/auth';
 import { apiService } from '@/data/services/apiService';
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AUTH_STORAGE_KEY = 'pixshare_auth_state';
 
@@ -45,7 +46,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           users: users
         };
         setAuthState(initialState);
-        console.log('AuthProvider - New user added:', authState);
       } catch (e) {
         setAuthState({ isAuthenticated: false, currentUser: null, users: [] });
       }
@@ -108,7 +108,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
     
     setAuthState(newState);
-    console.log('AuthProvider - New user added:', newState);
     setfirstLogin(true);
     
     return newUser;
@@ -146,9 +145,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       sessionStorage.removeItem('jwtUser');
       sessionStorage.removeItem('photourl');
    
-      window.location.reload();
+      handleLogout();
     }, 100);
   };
+
+  const handleLogout = () => {
+  
+  // צור כתובת URL ללא ה-userid
+  const url = new URL(window.location.href);
+  url.searchParams.delete("userid");
+
+  // מעדכן את כתובת ה-URL בדפדפן ללא רענון מיותר
+  window.history.replaceState({}, document.title, url.pathname + url.search);
+
+  // עכשיו תרענן (ה-URL כבר בלי userid)
+  window.location.reload();
+};
 
   const deleteUser = (userId: string) => {
     const updatedUsers = authState.users.filter(u => u.id !== userId);

@@ -8,6 +8,7 @@ import { event } from "@/types/event";
 import { EventLockModal } from "./EventLockModal";
 import {Language} from '../../types/gallery'
 import { isMobile } from "@/utils/deviceUtils";
+import { PhotographerCard } from "@/components/gallery/PhotographerCard";
 
 interface WeddingHeroProps {
   event: event;
@@ -22,6 +23,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
   const { isAuthenticated, currentUser } = useMultiUserAuth();
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
   const [eventPhoto, setEventPhoto] = useState('');
+  const [isPhotographerCardOpen, setIsPhotographerCardOpen] = useState(false);
 
   // Set default language based on event language
   useEffect(() => {
@@ -106,6 +108,22 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
       >
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/25 backdrop-blur-[0px]" />
+        
+        {/* Photographer Logo - Top Center */}
+        {event?.businessCard?.logo && (
+          <div 
+            className="absolute top-4 left-1/2 -translate-x-1/2 cursor-pointer z-10 hover:scale-105 transition-transform"
+            onClick={() => setIsPhotographerCardOpen(true)}
+          >
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-white/90 shadow-lg border-2 border-white/50">
+              <img 
+                src={event.businessCard.logo} 
+                alt={event.businessCard.photographerName}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -238,6 +256,15 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           </div>
         </div> */}
       </div>
+
+      {/* Photographer Card Modal */}
+      {event?.businessCard && (
+        <PhotographerCard
+          businessCard={event.businessCard}
+          isOpen={isPhotographerCardOpen}
+          onClose={() => setIsPhotographerCardOpen(false)}
+        />
+      )}
     </div>
   );
 };

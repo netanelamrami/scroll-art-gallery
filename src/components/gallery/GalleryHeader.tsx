@@ -66,13 +66,13 @@ export const GalleryHeader = ({
               {event.name} 
             </h1>
             {/* Photographer Name */}
-            {event?.businessCard?.photographerName && (
+            {event?.businessCard?.name && (
               <button
                 onClick={() => setIsPhotographerCardOpen(true)}
                 className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors group"
               >
                 <Camera className="h-3 w-3" />
-                <span className="group-hover:underline">{event.businessCard.photographerName}</span>
+                <span className="group-hover:underline">{event.businessCard.name}</span>
               </button>
             )}
           </div>

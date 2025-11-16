@@ -1,12 +1,12 @@
 export interface BusinessCard {
-  id: number;
-  photographerName: string;
-  logo: string;
+  name: string;
+  icon: string;
   description: string;
-  phone: string;
-  email: string;
-  website: string;
-  instagram: string;
+  phoneNumber: string;
+  gmail: string;
+  web: string;
+  instegram: string;
   facebook: string;
-  whatsapp: string;
+  wathLink: string;
+  isVisible: boolean;
 }

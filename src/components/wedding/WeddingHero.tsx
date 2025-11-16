@@ -110,15 +110,15 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
         <div className="absolute inset-0 bg-black/25 backdrop-blur-[0px]" />
         
         {/* Photographer Logo - Top Center */}
-        {event?.businessCard?.logo && (
+        {event?.businessCard?.icon && (
           <div 
             className="absolute top-4 left-1/2 -translate-x-1/2 cursor-pointer z-10 hover:scale-105 transition-transform"
             onClick={() => setIsPhotographerCardOpen(true)}
           >
             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-white/90 shadow-lg border-2 border-white/50">
               <img 
-                src={event.businessCard.logo} 
-                alt={event.businessCard.photographerName}
+                src={event.businessCard.icon} 
+                alt={event.businessCard.name}
                 className="w-full h-full object-cover"
               />
             </div>

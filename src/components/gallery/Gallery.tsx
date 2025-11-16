@@ -27,6 +27,7 @@ import { Button } from "react-day-picker";
 
 import QRCode from 'qrcode';
 import { BackToTopButton } from "../ui/back-to-top";
+import { set } from "date-fns";
 
 
 
@@ -36,7 +37,7 @@ interface GalleryProps {
   favoriteImages: Set<string>;
   onToggleFavorite: (imageId: string) => void;
   galleryType?: 'all' | 'my';
-  onAlbumClick?: (albumId: string) => void;
+  onAlbumClick?: (albumId: string, isAlbumSelected: boolean) => void;
   selectedAlbum?: string | null;
   selectionMode?: boolean;
   lightboxState?: {isOpen: boolean, currentIndex: number} | null;
@@ -77,6 +78,7 @@ export const Gallery = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
  const [qrCode, setQrCode] = useState<string>('');
+ const [tempSelectedAlbum , setTempSelectedAlbum]= useState<string>('');
   const [isQrOpen, setIsQrOpen] = useState(false);
   const [shareModalImage, setShareModalImage] = useState<{url: string, name: string} | null>(null);
   const [dropdownImage, setDropdownImage] = useState<{ id: string; position: { x: number; y: number } } | null>(null);
@@ -87,7 +89,6 @@ export const Gallery = ({
   
   // Use albums hook
   const { albums, getImagesByAlbum, firstAlbum } = useAlbums(event.id.toString(), images);
-
   // Sync external props with internal state
   useEffect(() => {
     if (externalColumns !== undefined) {
@@ -125,20 +126,21 @@ export const Gallery = ({
     setDisplayedImagesCount(30);
     // רק אם זה אלבום חדש שהמשתמש בחר ידנית, נאפס את רשימת האלבומים הנטענים
     if (selectedAlbum && !loadedAlbums.includes(selectedAlbum)) {
+      console.log('Resetting loaded albums for new selection:', selectedAlbum);
       setLoadedAlbums([selectedAlbum]);
     }
   }, [images, selectedAlbum]);
 
   useEffect(() => {
     if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
-      onAlbumClick(firstAlbum);
+      onAlbumClick(firstAlbum,true );
       setLoadedAlbums([firstAlbum]); // התחל עם האלבום הראשון
     }
   }, [firstAlbum, albums, selectedAlbum, onAlbumClick]);
 
     useEffect(() => {
     if (firstAlbum != null) {
-      onAlbumClick(firstAlbum);
+      onAlbumClick(firstAlbum,true);
       setLoadedAlbums([firstAlbum]); // התחל עם האלבום הראשון
     }
   }, [firstAlbum]);
@@ -158,15 +160,18 @@ export const Gallery = ({
           }
         }
         
-        console.log('IntersectionObserver triggered:', {
-          isIntersecting: entries[0].isIntersecting,
-          isLoadingMore,
-          displayedImagesCount,
-          currentImagesLength: currentImages.length,
-          selectedAlbum,
-          albumsCount: albums.length
-        });
-        
+        // console.log('IntersectionObserver triggered:', {
+        //   isIntersecting: entries[0].isIntersecting,
+        //   isLoadingMore,
+        //   displayedImagesCount,
+        //   currentImagesLength: currentImages.length,
+        //   selectedAlbum,
+        //   albumsCount: albums.length
+        // });
+        console.log('Temp vs Selected Album:', {tempSelectedAlbum, selectedAlbum});
+        if(tempSelectedAlbum  === selectedAlbum){
+          return;
+        }
         if (entries[0].isIntersecting && !isLoadingMore) {
           // אם יש עוד תמונות באלבום הנוכחי
           if (displayedImagesCount < currentImages.length) {
@@ -180,37 +185,43 @@ export const Gallery = ({
           // אם הגענו לסוף האלבום, עבור לאלבום הבא
           else if (selectedAlbum && selectedAlbum !== 'favorites' && albums.length > 0) {
             const currentAlbumIndex = albums.findIndex(album => album.id === selectedAlbum);
+            console.log('Current album index:', selectedAlbum);
             const nextAlbumIndex = currentAlbumIndex + 1;
             
-            console.log('End of album reached:', {
-              currentAlbumIndex,
-              nextAlbumIndex,
-              totalAlbums: albums.length,
-              nextAlbum: albums[nextAlbumIndex],
-              nextAlbumImageCount: albums[nextAlbumIndex]?.imageCount,
-              allAlbums: albums.map(a => ({ id: a.id, name: a.name, imageCount: a.imageCount }))
-            });
+            // console.log('End of album reached:', {
+            //   currentAlbumIndex,
+            //   nextAlbumIndex,
+            //   totalAlbums: albums.length,
+            //   nextAlbum: albums[nextAlbumIndex],
+            //   nextAlbumImageCount: albums[nextAlbumIndex]?.imageCount,
+            //   allAlbums: albums.map(a => ({ id: a.id, name: a.name, imageCount: a.imageCount }))
+            // });
             
             // אם יש אלבום הבא
+
+            console.log('Attempting to load next album',nextAlbumIndex);
             if (nextAlbumIndex < albums.length) {
               const nextAlbum = albums[nextAlbumIndex];
               const nextAlbumImages = getImagesByAlbum(nextAlbum.id);
               
-              console.log('Next album details:', {
-                nextAlbumId: nextAlbum.id,
-                nextAlbumName: nextAlbum.name,
-                storedImageCount: nextAlbum.imageCount,
-                actualImageCount: nextAlbumImages.length
-              });
+              // console.log('Next album details:', {
+              //   nextAlbumId: nextAlbum.id,
+              //   nextAlbumName: nextAlbum.name,
+              //   storedImageCount: nextAlbum.imageCount,
+              //   actualImageCount: nextAlbumImages.length
+              // });
               
               // בדוק אם יש תמונות בפועל באלבום הבא
               if (nextAlbumImages.length > 0) {
-                console.log('Adding next album to loaded albums:', nextAlbum.id);
+                // console.log('Adding next album to loaded albums:', nextAlbum.id);
                 setIsLoadingMore(true);
                 setTimeout(() => {
                   // הוסף את האלבום הבא לרשימת האלבומים הנטענים במקום להחליף
                   setLoadedAlbums(prev => [...prev, nextAlbum.id]);
-                  onAlbumClick?.(nextAlbum.id); // עדכן את הסימון בלבד
+                  onAlbumClick?.('', false); // עדכן את הסימון בלבד
+                  onAlbumClick?.(tempSelectedAlbum ? tempSelectedAlbum : nextAlbum.id, false); // עדכן את הסימון בלבד
+                  setTempSelectedAlbum('');
+                  console.log('Next album loaded:',tempSelectedAlbum);
                   setDisplayedImagesCount(prev => prev + Math.min(30, nextAlbumImages.length)); // הוסף תמונות מהאלבום הבא
                   setIsLoadingMore(false);
                 }, 300);
@@ -230,7 +241,8 @@ export const Gallery = ({
     }
 
     return () => observer.disconnect();
-  }, [displayedImagesCount, images, selectedAlbum, favoriteImages, getImagesByAlbum, isLoadingMore, albums, onAlbumClick]);
+  }, []);
+  // }, [displayedImagesCount, images, selectedAlbum, favoriteImages, getImagesByAlbum, isLoadingMore, albums, onAlbumClick]);
 
   // Responsive columns based on screen size
   useEffect(() => {
@@ -429,7 +441,10 @@ export const Gallery = ({
 
   const handleAlbumClick = (albumId: string) => {
     if (onAlbumClick) {
-      onAlbumClick(albumId);
+      setLoadedAlbums([]);
+      setTempSelectedAlbum(selectedAlbum);
+      onAlbumClick('',true)
+      onAlbumClick(albumId,true);
     } else if (albumId === 'favorites') {
       // Fallback handling
       toast({

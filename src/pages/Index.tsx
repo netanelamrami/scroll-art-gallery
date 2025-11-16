@@ -229,20 +229,24 @@ const onUserClickedLoadImages = () => {
     }, 300);
   };
 
-  const handleAlbumClick = (albumId: string) => {
+  const handleAlbumClick = (albumId: string, isAlbumSelected = true) => {
     setSelectedAlbum(albumId);
+    console.log('Album clicked:', albumId, isAlbumSelected);
     if (albumId === 'favorites') {
       handleViewFavorites();
     } else {
       // For other albums, show all images for now
       //setGalleryType('all');
       setShowGallery(true);
-      setTimeout(() => {
-        document.getElementById('gallery')?.scrollIntoView({
-          behavior: 'smooth'
-        });
-            setSelectedAlbum(albumId);
-      }, 300);
+      
+      if(isAlbumSelected){
+
+        setTimeout(() => {
+          document.getElementById('gallery')?.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }, 300);
+      }
     }
   };
 
@@ -413,7 +417,6 @@ const handleAuthComplete = async (user: User) => {
   const filteredImages = (() => {
     let baseImages = galleryImages;    
     if (galleryType === 'my' && isAuthenticated) {
-      console.log(userImages)
       baseImages = userImages; // שימוש בתמונות המשתמש שנטענו מהשרת
       return baseImages
     }

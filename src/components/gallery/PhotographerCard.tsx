@@ -41,11 +41,11 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md" dir={language === 'he' ? 'rtl' : 'ltr'}>
-        <DialogHeader>
+        {/* <DialogHeader>
           <DialogTitle className="text-center">
             {language === 'he' ? 'כרטיס ביקור' : 'Business Card'}
           </DialogTitle>
-        </DialogHeader>
+        </DialogHeader> */}
         
         <div className="flex flex-col items-center gap-4 py-4">
           {/* Logo */}

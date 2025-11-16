@@ -53,7 +53,8 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   };
 
   return (
-    <div className="sticky top-10 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full" dir={language === 'he' ? 'ltr' : 'rtl'}>
+    <div   className={`sticky ${event.isBussinessCardVisible && event?.businessCard?.name ? 'top-14' : 'top-10'} z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full`}
+ dir={language === 'he' ? 'ltr' : 'rtl'}>
       {/* Collapsed view - horizontal bar */}
       <div className="flex items-center justify-between gap-2 mb-1 overflow-x-auto pt-2">
         {/* Favorites album on the left */}

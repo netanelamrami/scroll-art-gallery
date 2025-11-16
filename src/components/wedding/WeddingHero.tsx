@@ -8,6 +8,7 @@ import { event } from "@/types/event";
 import { EventLockModal } from "./EventLockModal";
 import {Language} from '../../types/gallery'
 import { isMobile } from "@/utils/deviceUtils";
+import { apiService } from "@/data/services/apiService";
 import { PhotographerCard } from "@/components/gallery/PhotographerCard";
 
 interface WeddingHeroProps {
@@ -16,30 +17,50 @@ interface WeddingHeroProps {
   onViewMyPhotos: () => void;
   isLoadingAllPhotos?: boolean;
   isLoadingMyPhotos?: boolean;
+  showAllPhotosBt?: boolean;
 }
 
-export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false }: WeddingHeroProps) => {
+export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingAllPhotos = false, isLoadingMyPhotos = false, showAllPhotosBt = false }: WeddingHeroProps) => {
   const { t, setLanguage, language } = useLanguage();
   const { isAuthenticated, currentUser } = useMultiUserAuth();
   const [isEventLockModalOpen, setIsEventLockModalOpen] = useState(false);
   const [eventPhoto, setEventPhoto] = useState('');
   const [isPhotographerCardOpen, setIsPhotographerCardOpen] = useState(false);
 
-  // Set default language based on event language
   useEffect(() => {
-  if (!isMobile() && !event?.isEventPhotoSame) {
+    // Set event photo based on device type
+    if (!isMobile() && !event?.isEventPhotoSame) {
       setEventPhoto(event?.eventPhotoComp);
     } else {
       setEventPhoto(event?.eventPhoto);
     }
+    // Set default language based on event language
     if (event?.eventLanguage) {
       const defaultLang = event.eventLanguage === 'HE' ? 'he' : 'en';
-      const savedLanguage = localStorage.getItem('language') as Language;
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang');
 
+      if (langParam) {
+        
+        setLanguage(langParam as 'en' | 'he');
+        return;
+      }
+      
       setLanguage(defaultLang)
     }
+      updateEnterToGallery();
   }, [event?.eventLanguage]);
 
+
+  const updateEnterToGallery = () => {
+    const now = Date.now();
+    const lastVisit = localStorage.getItem("lastGalleryVisit");
+
+    if (!lastVisit || now - parseInt(lastVisit) > 3 * 60 * 1000) {
+      apiService.updateStatistic(event.id, "EnterToGallery");
+      localStorage.setItem("lastGalleryVisit", now.toString());
+    }
+  };
   // Handle My Photos button click
   const handleMyPhotosClick = () => {
     if (isAuthenticated && currentUser) {
@@ -110,21 +131,44 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
         <div className="absolute inset-0 bg-black/25 backdrop-blur-[0px]" />
         
         {/* Photographer Logo - Top Center */}
-        {event?.businessCard?.icon && (
-          <div 
-            className="absolute top-4 left-1/2 -translate-x-1/2 cursor-pointer z-10 hover:scale-105 transition-transform"
-            onClick={() => setIsPhotographerCardOpen(true)}
+        {/* {event?.businessCard?.icon &&  event.isBussinessCardVisible &&(
+          <div  style={{ zIndex: 9999, position: 'absolute' }}
+            className="absolute top-4 left-1/2  -translate-x-1/2 cursor-pointer z-100 hover:scale-105 transition-transform"
+            onClick={() =>{
+              setIsPhotographerCardOpen(true)}
+
+            } 
           >
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-white/90 shadow-lg border-2 border-white/50">
-              <img 
+            <img 
                 src={event.businessCard.icon} 
                 alt={event.businessCard.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover max-w-[200px]"
               />
-            </div>
           </div>
-        )}
+        )} */}
       </div>
+
+      {event?.id === 694 && (
+        <button
+          onClick={() =>
+            window.open(
+              language === 'he'
+                ? 'https://www.wzo.org.il/sub/39th-zionist-congress/utilities'
+                : 'https://www.wzo.org.il/sub/39th-zionist-congress/utilities/en',
+              '_blank'
+            )
+          }
+          className="absolute left-0 top-1/2 -translate-y-[90%] z-30"
+        >
+          <img
+            src={language === 'he' ? '/public/BtHe694.jpg' : '/public/BtEn694.jpg'}
+            alt="Custom Button"
+            className="w-52 hover:scale-110 transition-transform duration-300 rounded-lg"
+          />
+        </button>
+      )}
+
+
 
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col items-center justify-end text-center px-4 pb-24">
@@ -133,20 +177,34 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           <Heart className="w-12 h-12 text-white fill-white" />
         </div> */}
 
-        {/* Names */}
-        <div className="mb-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-1 tracking-wide">
-            {event?.name || 'Loading...'}
-          </h1>
+      {/* Names */}
+      <div className="mb-4">
+        {event?.id === 694 ? (
+          <>
+            <h3 className="md:text-xl font-semibold text-white mb-1 tracking-wide">
+               {language === 'he' ? 'מעלים סלפי ומקבלים אלבום אישי' : 'Take a selfie & Get your photos'}
+            </h3>
+          </>
+        ) : (
+        <>
+          <h1
+            className="text-3xl md:text-4xl font-bold text-white mb-1 tracking-wide"
+            dangerouslySetInnerHTML={{
+              __html: event?.name || 'Loading...'
+            }}
+          />
           {event?.description && (
-              <h3 className=" md:text-xl font-semibold text-white mb-1 tracking-wide" >
-                {event?.description }
-              </h3>
-            )}
-          {/* <p className="text-xl md:text-2xl text-white/90 font-light">
-            15.06.2024
-          </p> */}
-        </div>
+            <h3
+              className="md:text-xl font-semibold text-white mb-1 tracking-wide"
+              dangerouslySetInnerHTML={{ __html: event.description }}
+            />
+          )}
+        </>
+
+
+        )}
+      </div>
+
 
         {/* Subtitle */}
         {/* <p className="text-lg md:text-xl text-white/80 mb-12 max-w-2xl leading-relaxed">
@@ -192,7 +250,7 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
           </Button>
 
           {/* Show All Photos button only if withPhotos is true */}
-          {event?.withPhotos && (
+          {(event?.withPhotos || showAllPhotosBt) && (
             <Button
               onClick={handleAllPhotosClick}
               size="lg"
@@ -228,14 +286,17 @@ export const WeddingHero = ({ event, onViewAllPhotos, onViewMyPhotos, isLoadingA
             {t('privacy.agreement.prefix')}{' '}
             <button
               className="underline hover:text-white/90 transition-colors"
-              onClick={() => window.open("https://www.pixshare.live/takanon?lang=" + event.eventLanguage === 'HE' ? 'he' : 'en', "_blank")}
+              onClick={() =>{
+                console.log(localStorage.getItem('language'))
+                 window.open("https://www.pixshare.live/takanon?lang=" + (localStorage.getItem('language') === 'he' ? 'he' : 'en'), "_blank")
+}}
             >
               {t('privacy.terms')}
             </button>
             {' '}{t('privacy.agreement.and')}{' '}
             <button
               className="underline hover:text-white/90 transition-colors"
-              onClick={() => window.open("https://www.pixshare.live/privacy?lang=" + event.eventLanguage === 'HE' ? 'he' : 'en' , "_blank")}
+              onClick={() => window.open("https://www.pixshare.live/privacy?lang=" + (localStorage.getItem('language') === 'he' ? 'he' : 'en') , "_blank")}
             >
               {t('privacy.policy')}
             </button>

@@ -63,10 +63,12 @@ export const GalleryHeader = ({
         <div className="flex items-center justify-between left-0">
           <div className="flex flex-col gap-0.5">
             <h1 className="text-lg font-bold text-foreground left-0" dir="ltr">
-              {event.name} 
+              {event?.id === 694
+                ? (language === 'he' ? 'הקונגרס הציוני הל״ט' : 'The 39th Zionist Congress')
+                : event?.name.replace(/<br\s*\/?>|\n/g, ' ')}
             </h1>
             {/* Photographer Name */}
-            {event?.businessCard?.name && (
+            {event?.businessCard?.name && event.isBussinessCardVisible &&(
               <button
                 onClick={() => setIsPhotographerCardOpen(true)}
                 className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors group"

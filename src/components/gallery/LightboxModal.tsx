@@ -10,9 +10,11 @@ import { ShareOptionsModal } from "./ShareOptionsModal";
 import { isIOS } from "@/utils/deviceUtils";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
+import { apiService } from "@/data/services/apiService";
 
 interface LightboxModalProps {
   isOpen: boolean;
+  event: any;
   images: GalleryImage[];
   currentIndex: number;
   onClose: () => void;
@@ -25,6 +27,7 @@ interface LightboxModalProps {
 
 export const LightboxModal = ({
   isOpen,
+  event,
   images,
   currentIndex,
   onClose,
@@ -119,6 +122,7 @@ export const LightboxModal = ({
 
   const handleDownload = async () => {
     if (!currentImage || isSharing) return;
+        apiService.updateStatistic(event.id, "DownloadClick");
 
     setIsSharing(true);
     
@@ -149,7 +153,7 @@ export const LightboxModal = ({
 
   const handleShare = async () => {
     if (!currentImage) return;
-
+    apiService.updateStatistic(event.id, "SharePhotoClick");
     const result = await shareImage(currentImage.largeSrc, `${currentImage.id}`);
     
     if (result.success && result.method === 'native') {

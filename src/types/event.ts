@@ -22,6 +22,7 @@ export interface event {
   withSmartSms: boolean;
   photoUploaded: number;
   photoDetected: number;
+  isBussinessCardVisible: boolean;
   registerUser: number;
   // statusPhotosUploadeds: any;
   withCompress: boolean;
@@ -44,4 +45,14 @@ export interface event {
   eventLanguage: "HE" | "EN";
   galleryGridSize: number;
   eventPhotoLockType?: string;
+}
+
+export interface statistic {
+  id: number;
+  eventId?: number;
+  downloadClickSum? : number;
+  sharePhotoClickSum?: number;
+  downloadAllPhoto?: number;
+  favoritesPhotosSum?: number;
+  enterToGallery?: number;
 }

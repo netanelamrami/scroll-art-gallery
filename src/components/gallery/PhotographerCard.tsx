@@ -21,20 +21,20 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
   };
 
   const handleWhatsApp = () => {
-    if (businessCard.whatsapp) {
-      window.open(`https://wa.me/${businessCard.whatsapp.replace(/\D/g, '')}`, '_blank');
+    if (businessCard.wathLink) {
+      window.open(businessCard.wathLink, '_blank');
     }
   };
 
   const handleEmail = () => {
-    if (businessCard.email) {
-      window.location.href = `mailto:${businessCard.email}`;
+    if (businessCard.gmail) {
+      window.location.href = `mailto:${businessCard.gmail}`;
     }
   };
 
   const handlePhone = () => {
-    if (businessCard.phone) {
-      window.location.href = `tel:${businessCard.phone}`;
+    if (businessCard.phoneNumber) {
+      window.location.href = `tel:${businessCard.phoneNumber}`;
     }
   };
 
@@ -49,11 +49,11 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
         
         <div className="flex flex-col items-center gap-4 py-4">
           {/* Logo */}
-          {businessCard.logo && (
+          {businessCard.icon && (
             <div className="w-24 h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center">
               <img 
-                src={businessCard.logo} 
-                alt={businessCard.photographerName}
+                src={businessCard.icon} 
+                alt={businessCard.name}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -61,7 +61,7 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
 
           {/* Name */}
           <h3 className="text-xl font-semibold text-center">
-            {businessCard.photographerName}
+            {businessCard.name}
           </h3>
 
           {/* Description */}
@@ -73,11 +73,11 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
 
           {/* Contact Links */}
           <div className="flex flex-wrap gap-2 justify-center w-full mt-2">
-            {businessCard.instagram && (
+            {businessCard.instegram && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleLink(businessCard.instagram)}
+                onClick={() => handleLink(businessCard.instegram)}
                 className="gap-2"
               >
                 <Instagram className="h-4 w-4" />
@@ -97,11 +97,11 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
               </Button>
             )}
 
-            {businessCard.website && (
+            {businessCard.web && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleLink(businessCard.website)}
+                onClick={() => handleLink(businessCard.web)}
                 className="gap-2"
               >
                 <Globe className="h-4 w-4" />
@@ -109,7 +109,7 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
               </Button>
             )}
 
-            {businessCard.email && (
+            {businessCard.gmail && (
               <Button
                 variant="outline"
                 size="sm"
@@ -121,7 +121,7 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
               </Button>
             )}
 
-            {businessCard.phone && (
+            {businessCard.phoneNumber && (
               <Button
                 variant="outline"
                 size="sm"
@@ -133,7 +133,7 @@ export const PhotographerCard = ({ businessCard, isOpen, onClose }: Photographer
               </Button>
             )}
 
-            {businessCard.whatsapp && (
+            {businessCard.wathLink && (
               <Button
                 variant="outline"
                 size="sm"

@@ -45,7 +45,7 @@ export const GalleryHeader = ({
   const { currentUser } = useMultiUserAuth();
   const isMobile = useIsMobile();
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
-    const [isPhotographerCardOpen, setIsPhotographerCardOpen] = useState(false);
+  const [isPhotographerCardOpen, setIsPhotographerCardOpen] = useState(false);
   const columnOptions = isMobile 
     ? [
         { value: 1, icon: Grid, label: "עמודה 1" },

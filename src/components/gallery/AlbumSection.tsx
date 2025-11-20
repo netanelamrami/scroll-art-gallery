@@ -78,19 +78,52 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
               }
             }
             
-            return albumsToShow.slice(0, visibleCount).map((album) => (
-              <Button
-                key={album.id}
-                variant={selectedAlbum === album.id ? "secondary" : "ghost"}
-                className={cn(
-                  "h-8 px-2 text-sm whitespace-nowrap transition-all",
-                  selectedAlbum === album.id && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
-                )}
-                onClick={() => onAlbumClick(album.id)}
-              >
-                {album.name}
-              </Button>
-            ));
+            return albumsToShow.slice(0, visibleCount).map((album) => {
+              const albumImages = getImagesByAlbum ? getImagesByAlbum(album.id) : [];
+              const imageCount = albumImages.length;
+
+              const handleAlbumClickLocal = () => {
+                const isCurrentlySelected = selectedAlbum === album.id;
+                
+                // Call parent's onAlbumClick (which handles toggle)
+                onAlbumClick(album.id);
+                
+                // Only scroll if we're selecting a new album (not deselecting)
+                if (!isCurrentlySelected) {
+                  setTimeout(() => {
+                    const albumElement = document.getElementById(`album-${album.id}`);
+                    if (albumElement) {
+                      const offset = 150; // Account for sticky headers
+                      const elementPosition = albumElement.getBoundingClientRect().top;
+                      const offsetPosition = elementPosition + window.pageYOffset - offset;
+                      
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                      });
+                    }
+                  }, 100);
+                }
+              };
+
+              return (
+                <Button
+                  key={album.id}
+                  variant={selectedAlbum === album.id ? "secondary" : "ghost"}
+                  className={cn(
+                    "h-8 px-2 text-sm whitespace-nowrap transition-all",
+                    selectedAlbum === album.id && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
+                  )}
+                  onClick={handleAlbumClickLocal}
+                >
+                  <Folder className="h-3.5 w-3.5 mr-1" />
+                  {album.name}
+                  <span className="text-xs text-muted-foreground ml-1">
+                    ({imageCount})
+                  </span>
+                </Button>
+              );
+            });
           })()}
           {(() => {
             const visibleCount = window.innerWidth >= 768 ? 8 : 8;

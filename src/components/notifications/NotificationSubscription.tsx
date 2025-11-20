@@ -131,8 +131,11 @@ useEffect(() => {
     setCurrentStep("complete");
 
     //change notification preference
-    const content = isEmailMode ? formData.email : `${formData.countryCode}${formData.phone}`;
-    setSendNotification(currentUser.id, true, content, isEmailMode);
+const content = isEmailMode 
+  ? formData.email 
+  : `${formData.countryCode}${formData.phone.startsWith('05') ? formData.phone.substring(1) : formData.phone}`;
+    console.log(content)
+  setSendNotification(currentUser.id, true, content, isEmailMode);
     if(isEmailMode){
       await apiService.sendWelcomeEmail(content,event.eventLink, currentUser.id)
     }else{
@@ -354,9 +357,20 @@ const validatePhoneNumber = (number: string, countryCode: string): boolean => {
                   >
                   {t('common.back')}
                 </Button>
-                <Button type="submit" className="flex-1" onClick={() => handleContactSubmit(isEmailMode ? formData.email : `${formData.countryCode}${formData.phone}`,true)}>
-                  {t('auth.sendCode')}
-                </Button>
+              <Button
+                type="submit"
+                className="flex-1"
+                onClick={() => {
+                  const content = isEmailMode
+                    ? formData.email
+                    : `${formData.countryCode}${formData.phone.startsWith('05') ? formData.phone.substring(1) : formData.phone}`;
+
+                  handleContactSubmit(content, true);
+                }}
+              >
+                {t('auth.sendCode')}
+              </Button>
+
               </div>
             </>
             )}

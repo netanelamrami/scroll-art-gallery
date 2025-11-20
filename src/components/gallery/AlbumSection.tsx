@@ -53,28 +53,12 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   };
 
   return (
-    <div className="sticky top-10 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full" dir={language === 'he' ? 'ltr' : 'rtl'}>
-      {/* Collapsed view - horizontal bar */}
-      <div className="flex items-center justify-between gap-2 mb-1 overflow-x-auto pt-2">
-        {/* Favorites album on the left */}
-        <div className="flex items-center flex-shrink-0 ">
-          {favoritesAlbum && (
-            <Button
-              variant={selectedAlbum === 'favorites' ? "secondary" : "ghost"}
-              className={cn(
-                "h-8 px-2 text-sm sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all",
-                selectedAlbum === 'favorites' && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
-              )}
-              onClick={() => onAlbumClick('favorites')}
-            >
-            <Heart style={{ height: 16, width: 16 }} />
-              {/* <Star className="text-yellow-500 h-3 w-3 sm:h-4 sm:w-4 fill-current" /> */}
-              <span className="hidden sm:inline">{language === 'he' ? 'נבחרות' : 'Favorites'}</span>
-              <span className="text-sm text-muted-foreground">({favoritesAlbum.imageCount})</span>
-            </Button>
-          )}
-        </div>
-
+<div
+  className={`sticky ${event.isBussinessCardVisible && event?.businessCard?.name ? 'top-14' : 'top-10'} z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full `}
+  dir={language === 'he' ? 'rtl' : 'ltr'}
+>      {/* Collapsed view - horizontal bar */}
+      <div className="flex items-center justify-between gap-2 mb-1 overflow-x-auto pt-2 ">
+        
         {/* Other albums on the right - collapsed view with expand button */}
         <div className="flex items-center gap-1 overflow-x-auto flex-shrink min-w-0 thin-scrollbar" dir={language === 'he' ? 'rtl' : 'ltr'}>
           {/* Show selected album first if it's not in the initial visible albums */}
@@ -130,6 +114,26 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
             {isExpanded ? <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5" /> : <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" />}
           </Button> */}
         </div>
+
+{/* Favorites album on the left */}
+        <div className="flex items-center flex-shrink-0 ">
+          {favoritesAlbum && (
+            <Button
+              variant={selectedAlbum === 'favorites' ? "secondary" : "ghost"}
+              className={cn(
+                "h-8 px-2 text-sm sm:px-3 sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all",
+                selectedAlbum === 'favorites' && "bg-accent/70 border-2 border-accent text-accent-foreground hover:bg-accent/80 font-semibold"
+              )}
+              onClick={() => onAlbumClick('favorites')}
+            >
+            <Heart style={{ height: 16, width: 16 }} />
+              {/* <Star className="text-yellow-500 h-3 w-3 sm:h-4 sm:w-4 fill-current" /> */}
+              <span className="hidden sm:inline">{language === 'he' ? 'נבחרות' : 'Favorites'}</span>
+              <span className="text-sm text-muted-foreground">({favoritesAlbum.imageCount})</span>
+            </Button>
+          )}
+        </div>
+
       </div>
 
       {/* Expanded view - full album grid */}

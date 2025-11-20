@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
-import { Grid, LayoutGrid, Grid3x3, MoreVertical, Download, CheckSquare, Share2, X } from "lucide-react";
+import { Grid, LayoutGrid, Grid3x3, MoreVertical, Download, CheckSquare, Share2, X, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { event } from "@/types/event";
 import { UserAvatarStack } from "@/components/ui/UserAvatarStack";
@@ -10,6 +10,7 @@ import { NotificationBell } from "../notifications/NotificationBell";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMultiUserAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PhotographerCard } from "./PhotographerCard";
 
 interface GalleryHeaderProps {
   event: event;
@@ -44,6 +45,7 @@ export const GalleryHeader = ({
   const { currentUser } = useMultiUserAuth();
   const isMobile = useIsMobile();
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+    const [isPhotographerCardOpen, setIsPhotographerCardOpen] = useState(false);
   const columnOptions = isMobile 
     ? [
         { value: 1, icon: Grid, label: "עמודה 1" },
@@ -59,12 +61,23 @@ export const GalleryHeader = ({
     <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-sm w-full left-0 flex" dir={language === 'he' ? 'rtl' : 'ltr'} >
       <div className="w-full px-2 py-2 pb-1 left-0">
         <div className="flex items-center justify-between left-0">
-          <div className="flex ">
+          <div className="flex flex-col gap-0.5">
             <h1 className="text-lg font-bold text-foreground left-0" dir="ltr">
             {event?.id === 694
               ? (language === 'he' ? 'הקונגרס הציוני הל״ט' : 'The 39th Zionist Congress')
-              : event?.name}
+              : event?.name.replace(/<br\s*\/?>|\n/g, ' ')}
             </h1>
+
+            {/* Photographer Name */}
+            {event?.businessCard?.name &&  event.isBussinessCardVisible && (
+              <button
+                onClick={() => setIsPhotographerCardOpen(true)}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors group"
+              >
+                <Camera className="h-3 w-3" />
+                <span className="group-hover:underline">{event.businessCard.name}</span>
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-1">
             {/* Mobile: Three dots menu for download/select when not authenticated or no images */}
@@ -112,6 +125,14 @@ export const GalleryHeader = ({
           </div>
         </div>
       </div>
+      {/* Photographer Card Modal */}
+      {event?.businessCard && (
+        <PhotographerCard
+          businessCard={event.businessCard}
+          isOpen={isPhotographerCardOpen}
+          onClose={() => setIsPhotographerCardOpen(false)}
+        />
+      )}
     </div>
-  );
+    );
 };

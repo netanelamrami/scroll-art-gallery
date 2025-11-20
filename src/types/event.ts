@@ -1,5 +1,7 @@
 // import { event } from '@/types/event';
 
+import { BusinessCard } from "./businessCard";
+
 // import { BusinessCard } from "./businessCard";
 // import { RegisterByEnum, EventLockEnum, EventLanguageEnum } from "./enums"; // אם יש לך enums
 
@@ -18,6 +20,8 @@ export interface event {
   excelRun: boolean;
   eventPhoto: string;
   // businessCard: BusinessCard;
+  businessCard?: BusinessCard;
+   isBussinessCardVisible: boolean;
   payOneEvent: string;
   withPhotos: boolean;
   withSmartSms: boolean;

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useStatistics } from "@/hooks/useStatistics";
 import { event } from "@/types/event";
 
 interface GalleryImageCardProps {

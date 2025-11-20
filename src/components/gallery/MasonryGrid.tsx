@@ -2,6 +2,8 @@ import React from "react";
 import { GalleryImage } from "@/types/gallery";
 import { MasonryColumn } from "./MasonryColumn";
 import { event } from "@/types/event";
+import { Album } from "@/types/gallery";
+import { AlbumDivider } from "./AlbumDivider";
 
 interface MasonryGridProps {
   images: GalleryImage[];
@@ -15,6 +17,8 @@ interface MasonryGridProps {
   onToggleFavorite?: (imageId: string) => void;
   onImageDropdownClick?: (imageId: string, position: { x: number; y: number }) => void;
   onShare?: (imageId: string) => void;
+  showAlbumDividers?: boolean;
+  albums?: Album[];
 }
 
 export const MasonryGrid = ({
@@ -28,7 +32,9 @@ export const MasonryGrid = ({
   favoriteImages = new Set(),
   onToggleFavorite,
   onImageDropdownClick,
-  onShare
+  onShare,
+  showAlbumDividers = false,
+  albums = []
 }: MasonryGridProps) => {
   // אלגוריתם מאוזן משופר - מחשב גובה אמיתי ומאזן טוב יותר
   const distributeImagesBalanced = (images: GalleryImage[], numColumns: number) => {
@@ -46,6 +52,71 @@ export const MasonryGrid = ({
     return columnArrays;
   };
 
+  // Group images by album if showAlbumDividers is true
+  if (showAlbumDividers && albums.length > 0) {
+    const imagesByAlbum = new Map<string, GalleryImage[]>();
+    const albumOrder: string[] = [];
+    
+    // Group images by their albumId
+    images.forEach((image) => {
+      const albumId = image.albumId?.toString() || 'unknown';
+      if (!imagesByAlbum.has(albumId)) {
+        imagesByAlbum.set(albumId, []);
+        albumOrder.push(albumId);
+      }
+      imagesByAlbum.get(albumId)!.push(image);
+    });
+
+    return (
+      <div className="w-full">
+        {albumOrder.map((albumId, index) => {
+          const albumImages = imagesByAlbum.get(albumId) || [];
+          const album = albums.find(a => a.id.toString() === albumId);
+          
+          if (albumImages.length === 0) return null;
+          
+          const albumColumns = distributeImagesBalanced(albumImages, columns);
+          
+          return (
+            <div key={albumId}>
+              {/* Show divider before each album except the first one */}
+              {index > 0 && album && (
+                <AlbumDivider
+                  albumId={albumId}
+                  albumName={album.name}
+                  imageCount={albumImages.length}
+                />
+              )}
+              
+              <div
+                className="grid gap-0.5"
+                style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+              >
+                {albumColumns.map((columnImages, colIndex) => (
+                  <MasonryColumn
+                    key={`${albumId}-col-${colIndex}`}
+                    images={columnImages}
+                    event={event}
+                    onImageClick={onImageClick}
+                    allImages={albumImages}
+                    isSelectionMode={isSelectionMode}
+                    selectedImages={selectedImages}
+                    onImageSelection={onImageSelection}
+                    favoriteImages={favoriteImages}
+                    onToggleFavorite={onToggleFavorite}
+                    onImageDropdownClick={onImageDropdownClick}
+                    onShare={onShare}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Default behavior without album dividers
   const columnArrays = distributeImagesBalanced(images, columns);
 
   return (
@@ -65,8 +136,8 @@ export const MasonryGrid = ({
           onImageSelection={onImageSelection}
           favoriteImages={favoriteImages}
           onToggleFavorite={onToggleFavorite}
-              onImageDropdownClick={onImageDropdownClick}
-              onShare={onShare}
+          onImageDropdownClick={onImageDropdownClick}
+          onShare={onShare}
         />
       ))}
     </div>

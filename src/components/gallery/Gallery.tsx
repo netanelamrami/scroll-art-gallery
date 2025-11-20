@@ -120,17 +120,18 @@ export const Gallery = ({
     setDisplayedImagesCount(30);
   }, [images]);
 
-  useEffect(() => {
-    if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
-      onAlbumClick(firstAlbum);
-    }
-  }, [firstAlbum, albums, selectedAlbum, onAlbumClick]);
+  // Removed auto-select logic - let users see all albums with dividers by default
+  // useEffect(() => {
+  //   if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
+  //     onAlbumClick(firstAlbum);
+  //   }
+  // }, [firstAlbum, albums, selectedAlbum, onAlbumClick]);
 
-    useEffect(() => {
-    if (firstAlbum != null) {
-      onAlbumClick(firstAlbum);
-    }
-  }, [firstAlbum]);
+  // useEffect(() => {
+  //   if (firstAlbum != null) {
+  //     onAlbumClick(firstAlbum);
+  //   }
+  // }, [firstAlbum]);
   // Reset displayed images count when images change
 
   // Infinite scroll effect - updated to use filtered images
@@ -333,16 +334,21 @@ export const Gallery = ({
     }
   };
 
-  const handleAlbumClick = (albumId: string) => {
+  const handleAlbumClick = (albumId: string | null) => {
     if (onAlbumClick) {
-      onAlbumClick(albumId);
+      // If albumId is null or clicking the same album, deselect it
+      if (albumId === null || selectedAlbum === albumId) {
+        onAlbumClick(null as any); // Deselect album - show all with dividers
+      } else {
+        onAlbumClick(albumId);
+      }
     } else if (albumId === 'favorites') {
       // Fallback handling
       toast({
         title: t('toast.error.title'),
         description: t('common.favorites'),
       });
-    } else {
+    } else if (albumId) {
       //setLocalSelectedAlbum(albumId);
       toast({
         title: t('toast.error.title'),
@@ -531,7 +537,7 @@ export const Gallery = ({
         ) : null;
       })()}
 
-      {/* Gallery Grid */}
+      {/* Gallery Grid with Album Dividers */}
       <div className="w-full px-0 py-4 relative">
         {images.length === 0 ? (
           <EmptyPhotosState type={galleryType === 'all' ? 'allPhotos' : 'myPhotos'} />
@@ -555,10 +561,7 @@ export const Gallery = ({
                 const result = await shareImage(image.largeSrc || image.src, image.id);
                 
                 if (result.success && result.method === 'native') {
-                  // toast({
-                  //   title: 'שיתוף הושלם',
-                  //   description: 'התמונה שותפה בהצלחה',
-                  // });
+                  // Success
                 } else if (result.success && result.method === 'options') {
                   setShareModalImage({
                     url: image.largeSrc || image.src,
@@ -572,6 +575,8 @@ export const Gallery = ({
                   });
                 }
               }}
+              showAlbumDividers={!selectedAlbum}
+              albums={albums}
             />
             
             {/* Load More Trigger & Loader */}

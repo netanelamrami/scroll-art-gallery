@@ -271,6 +271,7 @@ const onUserClickedLoadImages = () => {
 
   const handleAlbumClick = (albumId: string) => {
     setSelectedAlbum(albumId);
+    console.log('Album clicked:', albumId);
     if (albumId === 'favorites') {
       handleViewFavorites();
     } else {

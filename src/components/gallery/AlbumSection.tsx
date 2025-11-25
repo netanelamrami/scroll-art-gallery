@@ -116,7 +116,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                   )}
                   onClick={handleAlbumClickLocal}
                 >
-                  <Folder className="h-3.5 w-3.5 mr-1" />
+                  {/* <Folder className="h-3.5 w-3.5 mr-1" /> */}
                   {album.name}
                   <span className="text-xs text-muted-foreground ml-1">
                     ({imageCount})
@@ -148,7 +148,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
           </Button> */}
         </div>
 
-{/* Favorites album on the left */}
+        {/* Favorites album on the left */}
         <div className="flex items-center flex-shrink-0 ">
           {favoritesAlbum && (
             <Button

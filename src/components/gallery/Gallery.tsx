@@ -146,19 +146,14 @@ export const Gallery = ({
             currentImages = getImagesByAlbum(selectedAlbum);
           }
         }
-        console.log('currentImages length',albums );
-        console.log('no more images to load', displayedImagesCount + 30 >= currentImages.length);
         if (entries[0].isIntersecting && !isLoadingMore && displayedImagesCount < currentImages.length) {
-
           setIsLoadingMore(true);
           // Simulate loading delay
           setTimeout(() => {
             setDisplayedImagesCount(prev => Math.min(prev + 30, currentImages.length));
             setIsLoadingMore(false);
-            console.log('loaded more images',displayedImagesCount);
           }, 1000);
         }
-    
       },
       { threshold: 0.1 }
     );
@@ -190,25 +185,10 @@ export const Gallery = ({
   }, []);
 
 
-useEffect(() => {
-  setDisplayedImagesCount(0);
-      let currentImages = images;
-        if (selectedAlbum) {
-          if (selectedAlbum === 'favorites') {
-            currentImages = images.filter(img => favoriteImages.has(img.id));
-          } else {
-            currentImages = getImagesByAlbum(selectedAlbum);
-          }
-        }
-      if(displayedImagesCount + 30 >= currentImages.length && selectedAlbum) {
-          const nextAlbumIndex = albums.findIndex(album => album.id === selectedAlbum) ;
-          console.log('nextAlbumIndex', nextAlbumIndex, selectedAlbum);
-          const nextAlbum = nextAlbumIndex < albums.length ? albums[nextAlbumIndex + 1].id : null;
-          setDisplayedImagesCount(0);
-          onAlbumClick(nextAlbum)
-          console.log('switching to next album', nextAlbum);
-        }
-}, [selectedAlbum]);
+  // Reset displayed images when album changes
+  useEffect(() => {
+    setDisplayedImagesCount(30);
+  }, [selectedAlbum]);
 
   const handleImageClick = (image: GalleryImage, index: number) => {
     if (isSelectionMode) {

@@ -57,7 +57,7 @@ export const MasonryGrid = ({
     const imagesByAlbum = new Map<string, GalleryImage[]>();
     const albumOrder: string[] = [];
     
-    // Group images by their albumId
+    // Group images by their albumId - only the currently loaded images
     images.forEach((image) => {
       const albumId = image.albumId?.toString() || 'unknown';
       if (!imagesByAlbum.has(albumId)) {
@@ -67,6 +67,9 @@ export const MasonryGrid = ({
       imagesByAlbum.get(albumId)!.push(image);
     });
 
+    // Track cumulative loaded images to determine if we should show dividers
+    let cumulativeLoadedImages = 0;
+    
     return (
       <div className="w-full">
         {albumOrder.map((albumId, index) => {
@@ -75,16 +78,32 @@ export const MasonryGrid = ({
           
           if (albumImages.length === 0) return null;
           
+          // Check if this is the last album being loaded (partial load)
+          const loadedImagesBeforeThisAlbum = cumulativeLoadedImages;
+          cumulativeLoadedImages += albumImages.length;
+          const isLastLoadedAlbum = index === albumOrder.length - 1;
+          
+          // Get total images in this album from the albums prop
+          const totalImagesInAlbum = album?.imageCount || albumImages.length;
+          const allAlbumImagesLoaded = albumImages.length >= totalImagesInAlbum;
+          
+          // Show divider only if:
+          // 1. It's not the first album (index > 0)
+          // 2. AND either:
+          //    a. All images from the previous album are loaded (we're done with it)
+          //    b. OR this is not the last album being loaded (meaning we've moved past it)
+          const shouldShowDivider = index > 0 && album;
+          
           const albumColumns = distributeImagesBalanced(albumImages, columns);
           
           return (
             <div key={albumId}>
               {/* Show divider before each album except the first one */}
-              {index > 0 && album && (
+              {shouldShowDivider && (
                 <AlbumDivider
                   albumId={albumId}
                   albumName={album.name}
-                  imageCount={albumImages.length}
+                  imageCount={totalImagesInAlbum}
                 />
               )}
               

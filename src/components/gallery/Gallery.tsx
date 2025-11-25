@@ -138,12 +138,6 @@ export const Gallery = ({
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // When an album is selected, load all its images at once
-        if (selectedAlbum) {
-          return; // Don't paginate when an album is selected
-        }
-        
-        // Otherwise, load albums progressively
         const totalAlbums = albums.filter(a => a.id !== 'favorites').length;
         
         if (entries[0].isIntersecting && !isLoadingMore && displayedAlbumsCount < totalAlbums) {
@@ -188,11 +182,15 @@ export const Gallery = ({
   // Reset displayed albums when album changes
   useEffect(() => {
     if (selectedAlbum) {
-      setDisplayedAlbumsCount(albums.length); // Show all when album selected
+      // When selecting an album, show that album + 1 more album initially
+      const selectedAlbumIndex = albums.findIndex(a => a.id === selectedAlbum);
+      if (selectedAlbumIndex !== -1) {
+        setDisplayedAlbumsCount(selectedAlbumIndex + 2); // Show selected + next album
+      }
     } else {
       setDisplayedAlbumsCount(1); // Reset to first album when no album selected
     }
-  }, [selectedAlbum, albums.length]);
+  }, [selectedAlbum, albums]);
 
   const handleImageClick = (image: GalleryImage, index: number) => {
     if (isSelectionMode) {
@@ -473,17 +471,33 @@ export const Gallery = ({
     }
   };
 
-  // Get images to display - either filtered by album or by number of albums loaded
+  // Get images to display - load albums progressively
   const getDisplayedImages = () => {
-    if (selectedAlbum) {
-      // When album is selected, show all its images
+    if (selectedAlbum && selectedAlbum === 'favorites') {
+      // Favorites album - show only favorites
       return filteredImages;
     }
     
-    // When no album selected, load albums progressively
-    const albumsToLoad = albums
-      .filter(a => a.id !== 'favorites')
-      .slice(0, displayedAlbumsCount);
+    // Get the albums to load
+    const allAlbums = albums.filter(a => a.id !== 'favorites');
+    let albumsToLoad: typeof allAlbums = [];
+    
+    if (selectedAlbum) {
+      // When an album is selected, start from that album
+      const selectedIndex = allAlbums.findIndex(a => a.id === selectedAlbum);
+      if (selectedIndex !== -1) {
+        // Load from selected album onwards, up to displayedAlbumsCount total
+        const albumsFromSelected = allAlbums.slice(selectedIndex);
+        const numberOfAlbumsToShow = Math.min(
+          displayedAlbumsCount - selectedIndex,
+          albumsFromSelected.length
+        );
+        albumsToLoad = albumsFromSelected.slice(0, numberOfAlbumsToShow);
+      }
+    } else {
+      // No album selected - load from the beginning
+      albumsToLoad = allAlbums.slice(0, displayedAlbumsCount);
+    }
     
     const displayedImagesList: GalleryImage[] = [];
     albumsToLoad.forEach(album => {
@@ -607,7 +621,13 @@ export const Gallery = ({
             />
             
             {/* Load More Trigger & Loader */}
-            {!selectedAlbum && displayedAlbumsCount < albums.filter(a => a.id !== 'favorites').length && (
+            {(() => {
+              const totalAlbums = albums.filter(a => a.id !== 'favorites').length;
+              const shouldShowLoader = selectedAlbum && selectedAlbum !== 'favorites'
+                ? displayedAlbumsCount < totalAlbums // Always check if there are more albums
+                : displayedAlbumsCount < totalAlbums;
+              
+              return shouldShowLoader && (
               <div ref={loadMoreRef} className="w-full py-4 flex justify-center">
                 {isLoadingMore ? (
                   <div className="flex items-center justify-center">
@@ -625,7 +645,8 @@ export const Gallery = ({
                   <div className="h-4" />
                 )}
               </div>
-            )}
+              );
+            })()}
           </>
         )}
       </div>

@@ -26,10 +26,7 @@ export const FAQSupportDialog = ({ isOpen, setIsOpen, questions, event }: FAQSup
     setFaq(questions);
   }, [questions, language]);
 
-  useEffect(() =>{
-    console.log(isOpen)
-  },[isOpen])
-  
+
   const toggleAnswer = (idx: number) => {
     setFaq(faq =>
       faq.map((q, i) =>

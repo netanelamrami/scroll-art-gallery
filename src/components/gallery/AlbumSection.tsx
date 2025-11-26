@@ -6,6 +6,7 @@ import { DownloadModal } from "./DownloadModal";
 import { GalleryImage } from "@/types/gallery";
 import { Album } from "@/types/gallery";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AlbumSectionProps {
   albums: Album[];
@@ -26,6 +27,7 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
   // Separate favorites album from API albums
   const favoritesAlbum = albums.find(album => album.id === 'favorites');
   const apiAlbums = albums.filter(album => album.id !== 'favorites');
+  const isMobile = useIsMobile();
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -118,9 +120,12 @@ export const AlbumSection = ({ albums = [], onAlbumClick, selectedAlbum, allImag
                 >
                   {/* <Folder className="h-3.5 w-3.5 mr-1" /> */}
                   {album.name}
-                  <span className="text-xs text-muted-foreground ml-1">
-                    ({imageCount})
-                  </span>
+                      {!isMobile &&(
+                        <span className="text-xs text-muted-foreground ml-1">
+                            ({imageCount})
+                        </span>
+                      )} 
+                                
                 </Button>
               );
             });

@@ -81,7 +81,8 @@ export const Gallery = ({
   const { toast } = useToast();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  
+  const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
+
   // Use albums hook
   const { albums, getImagesByAlbum, firstAlbum } = useAlbums(event.id.toString(), images);
 
@@ -115,11 +116,16 @@ export const Gallery = ({
 
 
 
-  // Reset displayed albums count when images change
-  useEffect(() => {
-    setDisplayedAlbumsCount(1);
-  }, [images]);
 
+// useEffect(() => {
+//   const observer = new IntersectionObserver(([entry]) => {
+//     if (entry.isIntersecting && displayedImagesCount < filteredImages.length) {
+//       setDisplayedImagesCount(count => Math.min(count + 30, filteredImages.length));
+//     }
+//   });
+//   if (loadMoreRef.current) observer.observe(loadMoreRef.current);
+//   return () => observer.disconnect();
+// }, [displayedImagesCount, filteredImages.length]);
   // Removed auto-select logic - let users see all albums with dividers by default
   // useEffect(() => {
   //   if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
@@ -133,13 +139,22 @@ export const Gallery = ({
   //   }
   // }, [firstAlbum]);
   // Reset displayed images count when images change
+useEffect(() => {
+      console.log('useEffect for observer run, loadMoreRef.current =', loadMoreRef.current);
 
+}, []);
   // Infinite scroll effect - load albums one by one
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        console.log(displayedAlbumsCount, albums, selectedAlbum, isLoadingMore);
+        if (entries[0].isIntersecting) {
+        setIsLoadingMore(true);
+          setTimeout(() => {
+            setDisplayedImagesCount(prev => prev + 30); // Reset displayed images count when albums change
+            setIsLoadingMore(false);
+        }, 800);    }
         const totalAlbums = albums.filter(a => a.id !== 'favorites').length;
-        
         if (entries[0].isIntersecting && !isLoadingMore && displayedAlbumsCount < totalAlbums) {
           setIsLoadingMore(true);
           setTimeout(() => {
@@ -504,11 +519,13 @@ export const Gallery = ({
       const albumImages = getImagesByAlbum(album.id);
       displayedImagesList.push(...albumImages);
     });
+    console.log('Displayed Images Count:', displayedImagesList.slice(0, displayedImagesCount),displayedImagesCount);
     
     return displayedImagesList;
   };
   
   const displayedImages = getDisplayedImages();
+const visibleImages = displayedImages.slice(0, displayedImagesCount);
 
   return (
     <div className="min-h-screen bg-background">
@@ -585,7 +602,7 @@ export const Gallery = ({
         ) : (
           <>
             <MasonryGrid
-              images={displayedImages}
+              images={visibleImages}
               event={event}
               onImageClick={handleImageClick}
               columns={columns}
@@ -616,7 +633,7 @@ export const Gallery = ({
                   });
                 }
               }}
-              showAlbumDividers={!selectedAlbum}
+              showAlbumDividers={true}
               albums={albums}
             />
             
@@ -656,13 +673,13 @@ export const Gallery = ({
         <LightboxModal
           isOpen={isLightboxOpen}
           event={event}
-          images={filteredImages}
+          images={visibleImages}
           currentIndex={selectedImageIndex || 0}
           onClose={handleCloseLightbox}
           onNext={handleNextImage}
           onPrevious={handlePreviousImage}
-          isFavorite={selectedImageIndex !== null ? favoriteImages.has(filteredImages[selectedImageIndex]?.id) : false}
-          onToggleFavorite={selectedImageIndex !== null ? () => onToggleFavorite(filteredImages[selectedImageIndex].id) : undefined}
+          isFavorite={selectedImageIndex !== null ? favoriteImages.has(visibleImages[selectedImageIndex]?.id) : false}
+          onToggleFavorite={selectedImageIndex !== null ? () => onToggleFavorite(visibleImages[selectedImageIndex].id) : undefined}
           galleryType={galleryType}
         />
       )}

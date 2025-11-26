@@ -48,10 +48,8 @@ export const MasonryGrid = ({
       columnArrays[shortestColumnIndex].push(image);
       columnHeights[shortestColumnIndex] += (image.photoHeight || 0) + 4;
     });
-    console.log(columnArrays)
     return columnArrays;
   };
-
   // Group images by album if showAlbumDividers is true
   if (showAlbumDividers && albums.length > 0) {
     const imagesByAlbum = new Map<string, GalleryImage[]>();
@@ -93,7 +91,6 @@ export const MasonryGrid = ({
           //    a. All images from the previous album are loaded (we're done with it)
           //    b. OR this is not the last album being loaded (meaning we've moved past it)
           const shouldShowDivider = index > 0 && album;
-          
           const albumColumns = distributeImagesBalanced(albumImages, columns);
           
           return (

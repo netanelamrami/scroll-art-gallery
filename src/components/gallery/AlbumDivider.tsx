@@ -17,14 +17,11 @@ export const AlbumDivider = ({ albumName, albumId, imageCount }: AlbumDividerPro
       className="w-full py-8 flex items-center justify-center"
       dir={language === 'he' ? 'rtl' : 'ltr'}
     >
-      <div className="flex items-center gap-4 px-6 py-4 bg-gradient-to-r from-transparent via-accent/20 to-transparent border-y border-accent/30 rounded-lg backdrop-blur-sm animate-fade-in">
-        <div className="flex items-center gap-2 text-foreground">
-          {/* <Folder className="h-5 w-5 text-primary" /> */}
-          <h2 className="text-xl font-bold">{albumName}</h2>
-          {/* <span className="text-sm text-muted-foreground">
-            ({imageCount} {language === 'he' ? 'תמונות' : 'photos'})
-          </span> */}
-        </div>
+      <div className="inline-flex items-center gap-2 px-6 py-3 bg-background/95 border border-border/50 rounded-full shadow-sm backdrop-blur-sm animate-fade-in">
+        <span className="text-2xl font-bold text-foreground">{albumName}</span>
+        <span className="text-lg text-muted-foreground">
+          ({imageCount})
+        </span>
       </div>
     </div>
   );

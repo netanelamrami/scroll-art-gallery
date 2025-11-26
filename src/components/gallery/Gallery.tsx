@@ -81,7 +81,6 @@ export const Gallery = ({
   const { toast } = useToast();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
 
   // Use albums hook
   const { albums, getImagesByAlbum, firstAlbum } = useAlbums(event.id.toString(), images);
@@ -134,8 +133,6 @@ export const Gallery = ({
   //   }
   // }, [firstAlbum]);
   // Reset displayed images count when images change
-useEffect(() => {
-      console.log('useEffect for observer run, loadMoreRef.current =', loadMoreRef.current);
 
   // Infinite scroll effect - load 30 images at a time
   useEffect(() => {
@@ -189,7 +186,9 @@ useEffect(() => {
     if (isSelectionMode) {
       handleImageSelection(image.id);
     } else {
-      setSelectedImageIndex(index);
+      console.log('Opening lightbox at index', index);
+      const globalIndex = visibleImages.findIndex(img => img.id === image.id);
+      setSelectedImageIndex(globalIndex);
       setIsLightboxOpen(true);
     }
   };
@@ -507,7 +506,7 @@ useEffect(() => {
   
   const displayedImages = getDisplayedImages();
 const visibleImages = displayedImages.slice(0, displayedImagesCount);
-
+console.log('Visible images count:', visibleImages);
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}

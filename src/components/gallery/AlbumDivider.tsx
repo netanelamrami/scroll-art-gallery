@@ -21,9 +21,9 @@ export const AlbumDivider = ({ albumName, albumId, imageCount }: AlbumDividerPro
         <div className="flex items-center gap-2 text-foreground">
           {/* <Folder className="h-5 w-5 text-primary" /> */}
           <h2 className="text-xl font-bold">{albumName}</h2>
-          <span className="text-sm text-muted-foreground">
+          {/* <span className="text-sm text-muted-foreground">
             ({imageCount} {language === 'he' ? 'תמונות' : 'photos'})
-          </span>
+          </span> */}
         </div>
       </div>
     </div>

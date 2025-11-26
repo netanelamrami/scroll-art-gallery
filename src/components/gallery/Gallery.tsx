@@ -70,7 +70,7 @@ export const Gallery = ({
   const [selectedImages, setSelectedImages] = useState<Set<string>>(externalSelectedImages || new Set());
   // const [localSelectedAlbum, setLocalSelectedAlbum] = useState<string | null>(null);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
-  const [displayedAlbumsCount, setDisplayedAlbumsCount] = useState(1);
+  const [displayedImagesCount, setDisplayedImagesCount] = useState(30);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [localGalleryType, setLocalGalleryType] = useState(galleryType || 'all');
  const [qrCode, setQrCode] = useState<string>('');
@@ -116,16 +116,11 @@ export const Gallery = ({
 
 
 
+  // Reset displayed images count when images change
+  useEffect(() => {
+    setDisplayedImagesCount(30);
+  }, [images]);
 
-// useEffect(() => {
-//   const observer = new IntersectionObserver(([entry]) => {
-//     if (entry.isIntersecting && displayedImagesCount < filteredImages.length) {
-//       setDisplayedImagesCount(count => Math.min(count + 30, filteredImages.length));
-//     }
-//   });
-//   if (loadMoreRef.current) observer.observe(loadMoreRef.current);
-//   return () => observer.disconnect();
-// }, [displayedImagesCount, filteredImages.length]);
   // Removed auto-select logic - let users see all albums with dividers by default
   // useEffect(() => {
   //   if (firstAlbum != null && albums.length > 0 && !selectedAlbum && onAlbumClick) {
@@ -142,25 +137,16 @@ export const Gallery = ({
 useEffect(() => {
       console.log('useEffect for observer run, loadMoreRef.current =', loadMoreRef.current);
 
-}, []);
-  // Infinite scroll effect - load albums one by one
+  // Infinite scroll effect - load 30 images at a time
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        console.log(displayedAlbumsCount, albums, selectedAlbum, isLoadingMore);
-        if (entries[0].isIntersecting) {
-        setIsLoadingMore(true);
-          setTimeout(() => {
-            setDisplayedImagesCount(prev => prev + 30); // Reset displayed images count when albums change
-            setIsLoadingMore(false);
-        }, 800);    }
-        const totalAlbums = albums.filter(a => a.id !== 'favorites').length;
-        if (entries[0].isIntersecting && !isLoadingMore && displayedAlbumsCount < totalAlbums) {
+        if (entries[0].isIntersecting && !isLoadingMore) {
           setIsLoadingMore(true);
           setTimeout(() => {
-            setDisplayedAlbumsCount(prev => Math.min(prev + 1, totalAlbums));
+            setDisplayedImagesCount(prev => prev + 30);
             setIsLoadingMore(false);
-          }, 800);
+          }, 300);
         }
       },
       { threshold: 0.1 }
@@ -171,7 +157,7 @@ useEffect(() => {
     }
 
     return () => observer.disconnect();
-  }, [displayedAlbumsCount, albums, selectedAlbum, isLoadingMore]);
+  }, [displayedImagesCount, isLoadingMore]);
 
   // Responsive columns based on screen size
   useEffect(() => {
@@ -194,18 +180,10 @@ useEffect(() => {
   }, []);
 
 
-  // Reset displayed albums when album changes
+  // Reset displayed images when album changes
   useEffect(() => {
-    if (selectedAlbum) {
-      // When selecting an album, show that album + 1 more album initially
-      const selectedAlbumIndex = albums.findIndex(a => a.id === selectedAlbum);
-      if (selectedAlbumIndex !== -1) {
-        setDisplayedAlbumsCount(selectedAlbumIndex + 2); // Show selected + next album
-      }
-    } else {
-      setDisplayedAlbumsCount(1); // Reset to first album when no album selected
-    }
-  }, [selectedAlbum, albums]);
+    setDisplayedImagesCount(30);
+  }, [selectedAlbum]);
 
   const handleImageClick = (image: GalleryImage, index: number) => {
     if (isSelectionMode) {
@@ -486,42 +464,45 @@ useEffect(() => {
     }
   };
 
-  // Get images to display - load albums progressively
+  // Get images to display - load 30 images at a time
   const getDisplayedImages = () => {
     if (selectedAlbum && selectedAlbum === 'favorites') {
-      // Favorites album - show only favorites
-      return filteredImages;
+      // Favorites album - paginate through favorites
+      return filteredImages.slice(0, displayedImagesCount);
     }
     
-    // Get the albums to load
+    // Get all albums to load
     const allAlbums = albums.filter(a => a.id !== 'favorites');
-    let albumsToLoad: typeof allAlbums = [];
     
     if (selectedAlbum) {
       // When an album is selected, start from that album
       const selectedIndex = allAlbums.findIndex(a => a.id === selectedAlbum);
       if (selectedIndex !== -1) {
-        // Load from selected album onwards, up to displayedAlbumsCount total
         const albumsFromSelected = allAlbums.slice(selectedIndex);
-        const numberOfAlbumsToShow = Math.min(
-          displayedAlbumsCount - selectedIndex,
-          albumsFromSelected.length
-        );
-        albumsToLoad = albumsFromSelected.slice(0, numberOfAlbumsToShow);
+        
+        // Collect images starting from selected album
+        const displayedImagesList: GalleryImage[] = [];
+        for (const album of albumsFromSelected) {
+          const albumImages = getImagesByAlbum(album.id);
+          displayedImagesList.push(...albumImages);
+        }
+        
+        // Return only first displayedImagesCount images
+        return displayedImagesList.slice(0, displayedImagesCount);
       }
     } else {
-      // No album selected - load from the beginning
-      albumsToLoad = allAlbums.slice(0, displayedAlbumsCount);
+      // No album selected - load images from all albums
+      const displayedImagesList: GalleryImage[] = [];
+      for (const album of allAlbums) {
+        const albumImages = getImagesByAlbum(album.id);
+        displayedImagesList.push(...albumImages);
+      }
+      
+      // Return only first displayedImagesCount images
+      return displayedImagesList.slice(0, displayedImagesCount);
     }
     
-    const displayedImagesList: GalleryImage[] = [];
-    albumsToLoad.forEach(album => {
-      const albumImages = getImagesByAlbum(album.id);
-      displayedImagesList.push(...albumImages);
-    });
-    console.log('Displayed Images Count:', displayedImagesList.slice(0, displayedImagesCount),displayedImagesCount);
-    
-    return displayedImagesList;
+    return [];
   };
   
   const displayedImages = getDisplayedImages();
@@ -638,32 +619,22 @@ const visibleImages = displayedImages.slice(0, displayedImagesCount);
             />
             
             {/* Load More Trigger & Loader */}
-            {(() => {
-              const totalAlbums = albums.filter(a => a.id !== 'favorites').length;
-              const shouldShowLoader = selectedAlbum && selectedAlbum !== 'favorites'
-                ? displayedAlbumsCount < totalAlbums // Always check if there are more albums
-                : displayedAlbumsCount < totalAlbums;
-              
-              return shouldShowLoader && (
+            {displayedImagesCount < filteredImages.length && (
               <div ref={loadMoreRef} className="w-full py-4 flex justify-center">
                 {isLoadingMore ? (
                   <div className="flex items-center justify-center">
-                  <div className={`flex  flex-col  items-center gap-3 `}>
-                    <span className="text-muted-foreground text-sm ">
-                      {/* animate-pulse */}
-                      {/* {t('auth.loading')} */}
-                      Powered by Pixshare AI
+                    <div className={`flex flex-col items-center gap-3`}>
+                      <span className="text-muted-foreground text-sm">
+                        Powered by Pixshare AI
                       </span>
                       <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-300 border-t-black"></div>
                     </div>
-
                   </div>
                 ) : (
                   <div className="h-4" />
                 )}
               </div>
-              );
-            })()}
+            )}
           </>
         )}
       </div>
